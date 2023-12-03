@@ -4,4 +4,5 @@
     <string name="emailHint">enter email</string>
     <string name="passwordHint">enter password</string>
     <string name="SignUpButton">Sign Up</string>
+    <string name="stories">Stories</string>
 </resources>
