@@ -1,12 +1,12 @@
-package com.example.chartracker.stories
+package com.chartracker.stories
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chartracker.database.StoriesEntity
-import com.example.chartracker.databinding.ListItemStoryBinding
+import com.chartracker.database.StoriesEntity
+import com.chartracker.databinding.ListItemStoryBinding
 
 // implementing ListAdapter means it handles a lot for us
 class StoryAdapter: ListAdapter<StoriesEntity, StoryAdapter.StoryViewHolder>(StoryDiffCallback()){

@@ -1,4 +1,4 @@
-package com.example.chartracker
+package com.chartracker
 
 import org.junit.Test
 

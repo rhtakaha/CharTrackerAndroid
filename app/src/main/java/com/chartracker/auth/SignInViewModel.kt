@@ -1,4 +1,4 @@
-package com.example.chartracker.auth
+package com.chartracker.auth
 
 import android.util.Log
 import androidx.lifecycle.LiveData

@@ -1,10 +1,10 @@
-package com.example.chartracker.stories
+package com.chartracker.stories
 
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.example.chartracker.R
-import com.example.chartracker.database.StoriesEntity
+import com.chartracker.R
+import com.chartracker.database.StoriesEntity
 
 @BindingAdapter("storyName")
 fun TextView.setStoryName(item: StoriesEntity?){

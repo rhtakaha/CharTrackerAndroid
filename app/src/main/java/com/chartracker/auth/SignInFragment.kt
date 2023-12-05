@@ -1,4 +1,4 @@
-package com.example.chartracker.auth
+package com.chartracker.auth
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.chartracker.R
-import com.example.chartracker.databinding.FragmentSignInBinding
+import com.chartracker.R
+import com.chartracker.databinding.FragmentSignInBinding
 
 class SignInFragment : Fragment() {
 
@@ -25,7 +25,7 @@ class SignInFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 //        val binding: FragmentSignInBinding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_sign_in, container, false)
 
         val binding = FragmentSignInBinding.inflate(inflater)

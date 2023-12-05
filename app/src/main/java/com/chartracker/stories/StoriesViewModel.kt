@@ -1,8 +1,8 @@
-package com.example.chartracker.stories
+package com.chartracker.stories
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.chartracker.database.StoriesEntity
+import com.chartracker.database.StoriesEntity
 
 class StoriesViewModel : ViewModel() {
     val stories = MutableLiveData<MutableList<StoriesEntity>>()

@@ -1,7 +1,8 @@
-package com.example.chartracker
+package com.chartracker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.chartracker.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

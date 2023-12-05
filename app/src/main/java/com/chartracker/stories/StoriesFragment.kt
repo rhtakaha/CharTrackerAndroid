@@ -1,4 +1,4 @@
-package com.example.chartracker.stories
+package com.chartracker.stories
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import com.example.chartracker.R
-import com.example.chartracker.databinding.FragmentStoriesBinding
+import com.chartracker.R
+import com.chartracker.databinding.FragmentStoriesBinding
 
 class StoriesFragment : Fragment() {
 

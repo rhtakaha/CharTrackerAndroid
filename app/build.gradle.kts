@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.chartracker"
+    namespace = "com.chartracker"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.chartracker"
+        applicationId = "com.chartracker"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

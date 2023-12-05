@@ -1,4 +1,4 @@
-package com.example.chartracker.database
+package com.chartracker.database
 
 data class StoriesEntity (
     val name: String,
