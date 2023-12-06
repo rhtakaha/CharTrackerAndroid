@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -61,5 +62,10 @@ dependencies {
     // Testing Navigation TODO should be useful later
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
 
-
+    //Firebase
+    // "When using the BoM, don't specify versions in Firebase dependencies"
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation("com.google.firebase:firebase-firestore")
+    //TODO need to add all dependencies for Firebase as we go
+    // (cloud storage and auth for sure later)
 }
