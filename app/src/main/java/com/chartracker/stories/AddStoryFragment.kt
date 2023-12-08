@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.chartracker.R
+import com.chartracker.database.StoriesEntity
 import com.chartracker.databinding.FragmentAddStoryBinding
 
 class AddStoryFragment : Fragment() {
@@ -34,10 +35,10 @@ class AddStoryFragment : Fragment() {
         })
 
         binding.addStoriesSubmit.setOnClickListener {
-            viewModel.submitStory(binding.addStoryTitle.text.toString(),
+            viewModel.submitStory(StoriesEntity(binding.addStoryTitle.text.toString(),
                 binding.addStoryGenre.text.toString(),
                 binding.addStoryType.text.toString(),
-                binding.addStoryAuthor.text.toString())
+                binding.addStoryAuthor.text.toString()))
         }
 
         return binding.root

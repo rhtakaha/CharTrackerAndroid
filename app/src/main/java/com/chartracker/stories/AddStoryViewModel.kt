@@ -4,9 +4,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.chartracker.database.DatabaseAccess
+import com.chartracker.database.StoriesEntity
+import kotlinx.coroutines.launch
 
 const val TAG = "AddStoryVM"
 class AddStoryViewModel : ViewModel() {
+    val db = DatabaseAccess()
 
     //navigation for after adding a story (or canceling)
     private val _addStoryNavigate = MutableLiveData<Boolean>()
@@ -25,8 +30,12 @@ class AddStoryViewModel : ViewModel() {
 
     /*function that calls a database access method to create the story in Firebase
         also calls navigation*/
-    fun submitStory(title: String, genre: String, type: String, author: String){
-        Log.i(TAG, "Creation of new story initiated")
-        onAddStoryNavigate()
+    fun submitStory(story: StoriesEntity){
+        viewModelScope.launch {
+            Log.i(TAG, "Creation of new story initiated")
+            db.createStory(story)
+            onAddStoryNavigate()
+        }
+
     }
 }

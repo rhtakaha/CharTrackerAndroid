@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.chartracker.R
 import com.chartracker.databinding.FragmentStoriesBinding
 
@@ -33,6 +34,14 @@ class StoriesFragment : Fragment() {
             it?.let {
                 Log.i("StoriesFrag", "noticed change in the stories")
                 adapter.submitList(it)
+            }
+        })
+
+        //observer to navigate to adding a story
+        viewModel.addStoryNavigate.observe(viewLifecycleOwner, Observer {
+            if (it){
+                findNavController().navigate(R.id.action_storiesFragment_to_addStoryFragment)
+                viewModel.onAddStoryNavigateComplete()
             }
         })
 

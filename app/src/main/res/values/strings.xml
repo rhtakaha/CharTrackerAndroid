@@ -16,4 +16,5 @@
     <string name="author_hint">Enter author</string>
     <string name="submit">Submit</string>
     <string name="cancel">Cancel</string>
+    <string name="add_story_desc">Add a new story</string>
 </resources>

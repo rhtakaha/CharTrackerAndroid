@@ -13,11 +13,24 @@ private const val TAG = "dbAccess"
 class DatabaseAccess {
     private val db = Firebase.firestore
 
+    /*creates a new story in Firebase*/
+    suspend fun createStory(story: StoriesEntity){
+        db.collection("users").document("1oWdT6v9mMl0oIMb0Sj7").collection("stories")
+            .add(story)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+
+    }
+
 
     //TODO Eventually going to probably have a function running in the background
     // which updates the offline cache and then when the user uses the app it pulls
     // from offline unless a change was made
-    suspend fun getStory(): MutableList<StoriesEntity> {
+    suspend fun getStories(): MutableList<StoriesEntity> {
             val stories = mutableListOf<StoriesEntity>()
             // Source can be CACHE, SERVER, or DEFAULT.
             val source = Source.DEFAULT

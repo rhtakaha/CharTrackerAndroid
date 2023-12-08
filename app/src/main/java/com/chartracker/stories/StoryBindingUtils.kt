@@ -9,7 +9,7 @@ import com.chartracker.database.StoriesEntity
 @BindingAdapter("storyName")
 fun TextView.setStoryName(item: StoriesEntity?){
     item?.let {
-        text = item.name
+        text = item.title
     }
 }
 

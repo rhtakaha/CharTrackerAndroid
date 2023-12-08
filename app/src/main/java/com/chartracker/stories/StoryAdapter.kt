@@ -45,7 +45,7 @@ class StoryAdapter: ListAdapter<StoriesEntity, StoryAdapter.StoryViewHolder>(Sto
 // using Diff Util to manage when to remake an item because it changed
 class StoryDiffCallback: DiffUtil.ItemCallback<StoriesEntity>(){
     override fun areItemsTheSame(oldItem: StoriesEntity, newItem: StoriesEntity): Boolean {
-        return oldItem.name == newItem.name
+        return oldItem.title == newItem.title
     }
 
     override fun areContentsTheSame(oldItem: StoriesEntity, newItem: StoriesEntity): Boolean {

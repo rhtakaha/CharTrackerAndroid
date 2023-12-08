@@ -1,6 +1,8 @@
 package com.chartracker.stories
 
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,8 +21,21 @@ class StoriesViewModel : ViewModel() {
 ////        stories.value?.add(StoriesEntity("Lord of the Rings"))
 ////        stories.value?.add(StoriesEntity("Ender's Game"))
         viewModelScope.launch {
-            stories.value = db.getStory()
+            stories.value = db.getStories()
         }
+    }
 
+    private val _addStoryNavigate = MutableLiveData<Boolean>()
+    val addStoryNavigate: LiveData<Boolean>
+        get() = _addStoryNavigate
+
+    fun onAddStoryNavigate(){
+        Log.i(com.chartracker.auth.TAG, "add story nav initiated")
+        _addStoryNavigate.value = true
+    }
+
+    fun onAddStoryNavigateComplete(){
+        Log.i(com.chartracker.auth.TAG, "add story nav completed")
+        _addStoryNavigate.value = false
     }
 }
