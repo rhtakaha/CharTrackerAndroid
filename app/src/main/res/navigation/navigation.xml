@@ -15,5 +15,17 @@
     <fragment
         android:id="@+id/storiesFragment"
         android:name="com.chartracker.stories.StoriesFragment"
-        android:label="StoriesFragment" />
+        android:label="StoriesFragment" >
+        <action
+            android:id="@+id/action_storiesFragment_to_addStoryFragment"
+            app:destination="@id/addStoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addStoryFragment"
+        android:name="com.chartracker.stories.AddStoryFragment"
+        android:label="AddStoryFragment" >
+        <action
+            android:id="@+id/action_addStoryFragment_to_storiesFragment"
+            app:destination="@id/storiesFragment" />
+    </fragment>
 </navigation>
