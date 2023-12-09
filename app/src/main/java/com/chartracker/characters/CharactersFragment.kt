@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.chartracker.R
 import com.chartracker.databinding.FragmentCharactersBinding
 
@@ -36,6 +37,13 @@ class CharactersFragment : Fragment() {
             it?.let {
                 Log.i(TAG, "noticed change in the characters")
                 adapter.submitList(it)
+            }
+        })
+
+        viewModel.charactersToEditStoryNavigate.observe(viewLifecycleOwner, Observer {
+            if (it){
+                findNavController().navigate(CharactersFragmentDirections.actionCharactersFragmentToEditStoryFragment())
+                viewModel.onCharactersToEditStoryNavigateComplete()
             }
         })
 

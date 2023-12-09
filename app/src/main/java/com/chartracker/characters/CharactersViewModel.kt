@@ -1,5 +1,7 @@
 package com.chartracker.characters
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,5 +18,19 @@ class CharactersViewModel : ViewModel() {
         viewModelScope.launch {
             characters.value = db.getCharacters("test")
         }
+    }
+
+    private val _charactersToEditStoryNavigate = MutableLiveData<Boolean>()
+    val charactersToEditStoryNavigate: LiveData<Boolean>
+        get() = _charactersToEditStoryNavigate
+
+    fun onCharactersToEditStoryNavigate(){
+        Log.i("CharVM", "nav from chars to edit story initiated")
+        _charactersToEditStoryNavigate.value = true
+    }
+
+    fun onCharactersToEditStoryNavigateComplete(){
+        Log.i("CharVM", "nav from chars to edit story completed")
+        _charactersToEditStoryNavigate.value = false
     }
 }

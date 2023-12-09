@@ -13,6 +13,26 @@ private const val TAG = "dbAccess"
 class DatabaseAccess {
     private val db = Firebase.firestore
 
+    suspend fun getStory(storyTitle: String): StoriesEntity{
+        var story: StoriesEntity = StoriesEntity()
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .whereEqualTo("title", storyTitle)
+            .get()
+            .addOnSuccessListener { document ->
+                if (!document.isEmpty){
+                    story = document.documents[0].toObject()!!
+                }else{
+                    Log.w(TAG, "Error: could not find the document ")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+        return story
+    }
+
     /**/
     suspend fun getCharacters(storyTitle: String): MutableList<CharacterEntity>{
         val characters = mutableListOf<CharacterEntity>()

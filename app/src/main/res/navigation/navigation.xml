@@ -41,5 +41,16 @@
         <action
             android:id="@+id/action_charactersFragment_to_storiesFragment"
             app:destination="@id/storiesFragment" />
+        <action
+            android:id="@+id/action_charactersFragment_to_editStoryFragment"
+            app:destination="@id/editStoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editStoryFragment"
+        android:name="com.chartracker.stories.EditStoryFragment"
+        android:label="EditStoryFragment" >
+        <action
+            android:id="@+id/action_editStoryFragment_to_storiesFragment"
+            app:destination="@id/storiesFragment" />
     </fragment>
 </navigation>
