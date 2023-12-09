@@ -13,6 +13,35 @@ private const val TAG = "dbAccess"
 class DatabaseAccess {
     private val db = Firebase.firestore
 
+    /**/
+    suspend fun getCharacters(storyTitle: String): MutableList<CharacterEntity>{
+        val characters = mutableListOf<CharacterEntity>()
+        // Source can be CACHE, SERVER, or DEFAULT.
+        val source = Source.DEFAULT
+
+        //getting every document in the characters subcollection of that particular story
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document("WUR94RDRzhz48acdTLja")
+            .collection("characters")// for now just want to see character recyclerView worked, TODO figure out how this would work (a query probably)
+            .get(source)
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    characters.add(document.toObject<CharacterEntity>())
+                    Log.i(TAG, "${document.id} => ${document.data}")
+                }
+                Log.i(TAG, "success")
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }.await()
+
+        Log.i(TAG, "returning!")
+        return characters
+    }
+
     /*creates a new story in Firebase*/
     suspend fun createStory(story: StoriesEntity){
         db.collection("users").document("1oWdT6v9mMl0oIMb0Sj7").collection("stories")
@@ -31,26 +60,26 @@ class DatabaseAccess {
     // which updates the offline cache and then when the user uses the app it pulls
     // from offline unless a change was made
     suspend fun getStories(): MutableList<StoriesEntity> {
-            val stories = mutableListOf<StoriesEntity>()
-            // Source can be CACHE, SERVER, or DEFAULT.
-            val source = Source.DEFAULT
+        val stories = mutableListOf<StoriesEntity>()
+        // Source can be CACHE, SERVER, or DEFAULT.
+        val source = Source.DEFAULT
 
-            //getting every document in the story subcollection
-            db.collection("users")
-                .document("1oWdT6v9mMl0oIMb0Sj7")
-                .collection("stories")
-                .get(source)
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        stories.add(document.toObject<StoriesEntity>())
-                        Log.i(TAG, "${document.id} => ${document.data}")
-                    }
-                    Log.i(TAG, "success")
-
+        //getting every document in the story subcollection
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .get(source)
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    stories.add(document.toObject<StoriesEntity>())
+                    Log.i(TAG, "${document.id} => ${document.data}")
                 }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "Error getting documents: ", exception)
-                }.await()
+                Log.i(TAG, "success")
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }.await()
 
         Log.i(TAG, "returning!")
         return stories

@@ -25,6 +25,7 @@ class StoriesViewModel : ViewModel() {
         }
     }
 
+    //for navigating when adding a story
     private val _addStoryNavigate = MutableLiveData<Boolean>()
     val addStoryNavigate: LiveData<Boolean>
         get() = _addStoryNavigate
@@ -37,5 +38,20 @@ class StoriesViewModel : ViewModel() {
     fun onAddStoryNavigateComplete(){
         Log.i(com.chartracker.auth.TAG, "add story nav completed")
         _addStoryNavigate.value = false
+    }
+
+    // for navigating when to a story
+    private val _storyClickedNavigate = MutableLiveData<String?>()
+    val storyClickedNavigate: LiveData<String?>
+        get() = _storyClickedNavigate
+
+    fun onStoryClickedNavigate(storyTitle: String){
+        Log.i(com.chartracker.auth.TAG, "story clicked nav initiated")
+        _storyClickedNavigate.value = storyTitle
+    }
+
+    fun onStoryClickedNavigateComplete(){
+        Log.i(com.chartracker.auth.TAG, "story clicked nav completed")
+        _storyClickedNavigate.value = null
     }
 }

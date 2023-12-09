@@ -9,13 +9,13 @@ import com.chartracker.database.StoriesEntity
 import com.chartracker.databinding.ListItemStoryBinding
 
 // implementing ListAdapter means it handles a lot for us
-class StoryAdapter: ListAdapter<StoriesEntity, StoryAdapter.StoryViewHolder>(StoryDiffCallback()){
+class StoryAdapter(private val clickListener: StoryListener): ListAdapter<StoriesEntity, StoryAdapter.StoryViewHolder>(StoryDiffCallback()){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
         return StoryViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position)!!, clickListener)
     }
 
     //ViewHolder class to build a recyclerview item
@@ -29,8 +29,9 @@ class StoryAdapter: ListAdapter<StoriesEntity, StoryAdapter.StoryViewHolder>(Sto
             }
         }
 
-         fun bind(item: StoriesEntity) {
+         fun bind(item: StoriesEntity, clickListener: StoryListener) {
              binding.story = item
+             binding.clickListener = clickListener
              binding.executePendingBindings()
              //don't need these since doing data binding in the xml
 //             binding.storyName.text = item.name
@@ -51,5 +52,10 @@ class StoryDiffCallback: DiffUtil.ItemCallback<StoriesEntity>(){
     override fun areContentsTheSame(oldItem: StoriesEntity, newItem: StoriesEntity): Boolean {
         return oldItem == newItem
     }
+
+}
+
+class StoryListener(val clickListener: (storyTitle: String) -> Unit){
+    fun onClick(story: StoriesEntity) = clickListener(story.title!!)
 
 }
