@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.chartracker.R
 import com.chartracker.databinding.FragmentCharactersBinding
@@ -18,6 +19,7 @@ const val TAG = "CharFrag"
 class CharactersFragment : Fragment() {
 
     private lateinit var viewModel: CharactersViewModel
+    private lateinit var viewModelFactory: CharactersViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,7 +27,11 @@ class CharactersFragment : Fragment() {
     ): View {
         val binding: FragmentCharactersBinding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_characters, container, false)
 
-        viewModel = CharactersViewModel()
+        val args = CharactersFragmentArgs.fromBundle(requireArguments())
+        Toast.makeText(context, "story navigated from ${args.storyTitle}", Toast.LENGTH_LONG).show()
+
+        viewModelFactory = CharactersViewModelFactory(args.storyTitle)
+        viewModel = ViewModelProvider(this, viewModelFactory)[CharactersViewModel::class.java]
         binding.charactersViewModel = viewModel
 
         val adapter = CharacterAdapter()
@@ -42,14 +48,11 @@ class CharactersFragment : Fragment() {
 
         viewModel.charactersToEditStoryNavigate.observe(viewLifecycleOwner, Observer {
             if (it){
-                findNavController().navigate(CharactersFragmentDirections.actionCharactersFragmentToEditStoryFragment())
+                findNavController().navigate(CharactersFragmentDirections.actionCharactersFragmentToEditStoryFragment(args.storyTitle))
                 viewModel.onCharactersToEditStoryNavigateComplete()
             }
         })
 
-        //TODO will need to get this to the viewModel so we can run a db access method there to query off the title
-        var args = CharactersFragmentArgs.fromBundle(requireArguments())
-        Toast.makeText(context, "story navigated from ${args.storyTitle}", Toast.LENGTH_LONG).show()
 
 
         return binding.root

@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.chartracker.databinding.FragmentEditStoryBinding
 
 class EditStoryFragment : Fragment() {
 
     private lateinit var viewModel: EditStoryViewModel
+    private lateinit var viewModelFactory: EditStoryViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,7 +23,10 @@ class EditStoryFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        viewModel = EditStoryViewModel()
+        val args = EditStoryFragmentArgs.fromBundle(requireArguments())
+
+        viewModelFactory = EditStoryViewModelFactory(args.storyTitle)
+        viewModel = ViewModelProvider(this, viewModelFactory)[EditStoryViewModel::class.java]
         binding.viewModel = viewModel
 
         viewModel.editStoryNavigate.observe(viewLifecycleOwner, Observer {

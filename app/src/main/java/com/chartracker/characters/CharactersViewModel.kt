@@ -9,12 +9,13 @@ import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
 import kotlinx.coroutines.launch
 
-class CharactersViewModel : ViewModel() {
+class CharactersViewModel(private val storyTitle: String): ViewModel() {
     val characters = MutableLiveData<MutableList<CharacterEntity>>()
     val db = DatabaseAccess()
 
     init {
         //for testing purposes right now
+        Log.i("CharVM", "story title: $storyTitle")
         viewModelScope.launch {
             characters.value = db.getCharacters("test")
         }
