@@ -50,7 +50,7 @@
         android:name="com.chartracker.stories.EditStoryFragment"
         android:label="EditStoryFragment" >
         <argument
-            android:name="storyTitle"
+            android:name="storyId"
             app:argType="string" />
         <action
             android:id="@+id/action_editStoryFragment_to_storiesFragment"

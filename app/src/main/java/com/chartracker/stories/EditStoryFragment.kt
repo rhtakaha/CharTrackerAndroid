@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.chartracker.database.StoriesEntity
 import com.chartracker.databinding.FragmentEditStoryBinding
 
 class EditStoryFragment : Fragment() {
@@ -25,7 +26,7 @@ class EditStoryFragment : Fragment() {
 
         val args = EditStoryFragmentArgs.fromBundle(requireArguments())
 
-        viewModelFactory = EditStoryViewModelFactory(args.storyTitle)
+        viewModelFactory = EditStoryViewModelFactory(args.storyId)
         viewModel = ViewModelProvider(this, viewModelFactory)[EditStoryViewModel::class.java]
         binding.viewModel = viewModel
 
@@ -35,6 +36,15 @@ class EditStoryFragment : Fragment() {
                 viewModel.onEditStoryNavigateComplete()
             }
         })
+
+        binding.editStoriesSubmit.setOnClickListener {
+            viewModel.submitStoryUpdate(
+                StoriesEntity(binding.editStoryTitle.text.toString(),
+                    binding.editStoryGenre.text.toString(),
+                    binding.editStoryType.text.toString(),
+                    binding.editStoryAuthor.text.toString())
+            )
+        }
 
         return binding.root
     }

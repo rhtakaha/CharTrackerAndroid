@@ -48,7 +48,7 @@ class CharactersFragment : Fragment() {
 
         viewModel.charactersToEditStoryNavigate.observe(viewLifecycleOwner, Observer {
             if (it){
-                findNavController().navigate(CharactersFragmentDirections.actionCharactersFragmentToEditStoryFragment(args.storyTitle))
+                findNavController().navigate(CharactersFragmentDirections.actionCharactersFragmentToEditStoryFragment(viewModel.storyId))
                 viewModel.onCharactersToEditStoryNavigateComplete()
             }
         })

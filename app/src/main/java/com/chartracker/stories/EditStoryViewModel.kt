@@ -9,15 +9,14 @@ import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.StoriesEntity
 import kotlinx.coroutines.launch
 
-class EditStoryViewModel(private val storyTitle: String): ViewModel() {
+class EditStoryViewModel(private val storyId: String): ViewModel() {
     var story = MutableLiveData<StoriesEntity>()
     val db = DatabaseAccess()
 
-    //TODO finish after refactoring CharactersVieModel and EditStoryViewModel with the factory pattern so we can access the arguments
     init {
-        Log.i("EditStoryVM", " got story title $storyTitle")
+        Log.i("EditStoryVM", " got story ID $storyId")
         viewModelScope.launch {
-            story.value = db.getStory(storyTitle)
+            story.value = db.getStoryFromId(storyId)
         }
     }
 
@@ -33,5 +32,13 @@ class EditStoryViewModel(private val storyTitle: String): ViewModel() {
     fun onEditStoryNavigateComplete(){
         Log.i("EditStoryVM", "nav from edit story back to stories completed")
         _editStoryNavigate.value = false
+    }
+
+    fun submitStoryUpdate(story: StoriesEntity){
+        viewModelScope.launch {
+            Log.i("EditStoryVM", "starting to update story")
+            db.updateStory(storyId, story)
+            onEditStoryNavigate()
+        }
     }
 }

@@ -9,15 +9,18 @@ import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
 import kotlinx.coroutines.launch
 
-class CharactersViewModel(private val storyTitle: String): ViewModel() {
+open class CharactersViewModel(private val storyTitle: String): ViewModel() {
     val characters = MutableLiveData<MutableList<CharacterEntity>>()
     val db = DatabaseAccess()
+    lateinit var storyId: String
 
     init {
         //for testing purposes right now
         Log.i("CharVM", "story title: $storyTitle")
         viewModelScope.launch {
-            characters.value = db.getCharacters("test")
+            storyId = db.getDocId(storyTitle)
+            Log.i("CharVM", "doc ID is: $storyId")
+            characters.value = db.getCharacters(storyId)
         }
     }
 
