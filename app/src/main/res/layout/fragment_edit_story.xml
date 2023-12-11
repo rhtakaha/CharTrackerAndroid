@@ -54,7 +54,8 @@
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/title_hint"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:text="@{viewModel.story.title.toString()}" />
 
                 <TextView
                     android:id="@+id/edit_story_genre_prompt"
@@ -69,7 +70,8 @@
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/genre_hint"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:text="@{viewModel.story.genre.toString()}"/>
 
                 <TextView
                     android:id="@+id/edit_story_type_prompt"
@@ -84,7 +86,8 @@
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/type_hint"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:text="@{viewModel.story.type.toString()}"/>
 
                 <TextView
                     android:id="@+id/edit_story_author_prompt"
@@ -99,7 +102,8 @@
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/author_hint"
-                    android:inputType="text|textPersonName" />
+                    android:inputType="text|textPersonName"
+                    android:text="@{viewModel.story.author.toString()}"/>
 
             </LinearLayout>
 

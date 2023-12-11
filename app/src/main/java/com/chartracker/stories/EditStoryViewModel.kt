@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.StoriesEntity
+import kotlinx.coroutines.launch
 
 class EditStoryViewModel(private val storyTitle: String): ViewModel() {
     var story = MutableLiveData<StoriesEntity>()
@@ -14,9 +16,9 @@ class EditStoryViewModel(private val storyTitle: String): ViewModel() {
     //TODO finish after refactoring CharactersVieModel and EditStoryViewModel with the factory pattern so we can access the arguments
     init {
         Log.i("EditStoryVM", " got story title $storyTitle")
-//        viewModelScope.launch {
-//            story.value = db.getStory()
-//        }
+        viewModelScope.launch {
+            story.value = db.getStory(storyTitle)
+        }
     }
 
     private val _editStoryNavigate = MutableLiveData<Boolean>()

@@ -23,6 +23,7 @@ class DatabaseAccess {
             .addOnSuccessListener { document ->
                 if (!document.isEmpty){
                     story = document.documents[0].toObject()!!
+                    Log.w(TAG, "Successfully retrieved the document ")
                 }else{
                     Log.w(TAG, "Error: could not find the document ")
                 }
@@ -30,6 +31,7 @@ class DatabaseAccess {
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
             }
+            .await()
         return story
     }
 
@@ -56,7 +58,8 @@ class DatabaseAccess {
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "Error getting documents: ", exception)
-            }.await()
+            }
+            .await()
 
         Log.i(TAG, "returning!")
         return characters
