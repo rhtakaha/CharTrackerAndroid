@@ -48,11 +48,18 @@ class CharactersFragment : Fragment() {
         viewModel.charactersToEditStoryNavigate.observe(viewLifecycleOwner) {
             if (it) {
                 findNavController().navigate(
-                    CharactersFragmentDirections.actionCharactersFragmentToEditStoryFragment(
-                        viewModel.storyId
-                    )
+                    CharactersFragmentDirections.actionCharactersFragmentToEditStoryFragment(viewModel.storyId)
                 )
                 viewModel.onCharactersToEditStoryNavigateComplete()
+            }
+        }
+
+        viewModel.charactersToAddCharacterNavigate.observe(viewLifecycleOwner){
+            if (it){
+                findNavController().navigate(
+                    CharactersFragmentDirections.actionCharactersFragmentToAddCharacterFragment(viewModel.storyId, args.storyTitle)
+                )
+                viewModel.onCharactersToAddCharacterNavigateComplete()
             }
         }
 

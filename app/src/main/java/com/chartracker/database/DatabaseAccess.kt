@@ -14,6 +14,22 @@ class DatabaseAccess {
     private val tag = "dbAccess"
     private val db = Firebase.firestore
 
+    /* creates a character document in the given story*/
+    suspend fun createCharacter(storyId: String, character: CharacterEntity){
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .add(character)
+            .addOnSuccessListener { documentReference ->
+                Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(tag, "Error adding document", e)
+            }
+    }
+
     //TODO figure out how best to handle the characters subcollection
     //  1) query all the characters and delete them manually here (probably not recommended)
     //  2) can try the cloud function as in the documentation (no part of the spark plan)
@@ -148,7 +164,6 @@ class DatabaseAccess {
             .addOnFailureListener { e ->
                 Log.w(tag, "Error adding document", e)
             }
-
     }
 
 

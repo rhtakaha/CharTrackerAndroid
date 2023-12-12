@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class AddStoryViewModel : ViewModel() {
     private val tag = "AddStoryVM"
-    val db = DatabaseAccess()
+    private val db = DatabaseAccess()
 
     //navigation for after adding a story (or canceling)
     private val _addStoryNavigate = MutableLiveData<Boolean>()
@@ -37,6 +37,5 @@ class AddStoryViewModel : ViewModel() {
             db.createStory(story)
             onAddStoryNavigate()
         }
-
     }
 }

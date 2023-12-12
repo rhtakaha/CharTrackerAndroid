@@ -37,4 +37,18 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
         Log.i("CharVM", "nav from chars to edit story completed")
         _charactersToEditStoryNavigate.value = false
     }
+
+    private val _charactersToAddCharacterNavigate = MutableLiveData<Boolean>()
+    val charactersToAddCharacterNavigate: LiveData<Boolean>
+        get() = _charactersToAddCharacterNavigate
+
+    fun onCharactersToAddCharacterNavigate(){
+        Log.i("CharVM", "nav from chars to add chars initiated")
+        _charactersToAddCharacterNavigate.value = true
+    }
+
+    fun onCharactersToAddCharacterNavigateComplete(){
+        Log.i("CharVM", "nav from chars to add chars completed")
+        _charactersToAddCharacterNavigate.value = false
+    }
 }
