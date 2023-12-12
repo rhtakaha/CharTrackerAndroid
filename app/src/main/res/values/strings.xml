@@ -20,4 +20,5 @@
     <string name="characters">Characters</string>
     <string name="add_character_desc">Add a character</string>
     <string name="edit_story">Edit story</string>
+    <string name="delete">Delete</string>
 </resources>

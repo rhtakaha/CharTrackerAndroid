@@ -41,4 +41,12 @@ class EditStoryViewModel(private val storyId: String): ViewModel() {
             onEditStoryNavigate()
         }
     }
+
+    fun submitStoryDelete(){
+        viewModelScope.launch {
+            Log.i("EditStoryVM", "starting to delete story")
+            db.deleteStory(storyId)
+            onEditStoryNavigate()
+        }
+    }
 }

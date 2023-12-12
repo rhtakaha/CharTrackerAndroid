@@ -13,6 +13,21 @@ private const val TAG = "dbAccess"
 class DatabaseAccess {
     private val db = Firebase.firestore
 
+    //TODO figure out how best to handle the characters subcollection
+    //  1) query all the characters and delete them manually here (probably not recommended)
+    //  2) can try the cloud function as in the documentation (no part of the spark plan)
+    /*more complex because Story can (will) have a subcollection and cannot easily delete them together
+    * it isn't recommended to do the deletion on mobile clients either so just going to delete the story doc which should work for now*/
+    suspend fun deleteStory(storyId: String){
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document(storyId)
+            .delete()
+            .addOnSuccessListener { Log.d(TAG, "Story successfully deleted!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error deleting story", e) }
+    }
+
     suspend fun getDocId(storyTitle: String): String{
         var story: String = ""
         db.collection("users")
@@ -36,11 +51,11 @@ class DatabaseAccess {
     }
 
     /*update the document associated with the given Id with the given StoriesEntity*/
-    suspend fun updateStory(storyID: String, story: StoriesEntity){
+    suspend fun updateStory(storyId: String, story: StoriesEntity){
         db.collection("users")
             .document("1oWdT6v9mMl0oIMb0Sj7")
             .collection("stories")
-            .document(storyID)
+            .document(storyId)
             .set(story)
             .addOnSuccessListener { Log.d(TAG, "Story successfully updated!") }
             .addOnFailureListener { e -> Log.w(TAG, "Error updating story", e) }

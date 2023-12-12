@@ -46,6 +46,10 @@ class EditStoryFragment : Fragment() {
             )
         }
 
+        binding.editStoriesDelete.setOnClickListener {
+            viewModel.submitStoryDelete()
+        }
+
         return binding.root
     }
 
