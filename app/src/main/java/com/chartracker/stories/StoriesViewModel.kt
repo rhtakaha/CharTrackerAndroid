@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 
 class StoriesViewModel : ViewModel() {
+    private val tag = "StoriesVM"
     val stories = MutableLiveData<MutableList<StoriesEntity>>()
     val db = DatabaseAccess()
 
@@ -31,12 +32,12 @@ class StoriesViewModel : ViewModel() {
         get() = _addStoryNavigate
 
     fun onAddStoryNavigate(){
-        Log.i(com.chartracker.auth.TAG, "add story nav initiated")
+        Log.i(tag, "add story nav initiated")
         _addStoryNavigate.value = true
     }
 
     fun onAddStoryNavigateComplete(){
-        Log.i(com.chartracker.auth.TAG, "add story nav completed")
+        Log.i(tag, "add story nav completed")
         _addStoryNavigate.value = false
     }
 
@@ -46,12 +47,12 @@ class StoriesViewModel : ViewModel() {
         get() = _storyClickedNavigate
 
     fun onStoryClickedNavigate(storyTitle: String){
-        Log.i(com.chartracker.auth.TAG, "story clicked nav initiated")
+        Log.i(tag, "story clicked nav initiated")
         _storyClickedNavigate.value = storyTitle
     }
 
     fun onStoryClickedNavigateComplete(){
-        Log.i(com.chartracker.auth.TAG, "story clicked nav completed")
+        Log.i(tag, "story clicked nav completed")
         _storyClickedNavigate.value = null
     }
 }

@@ -9,8 +9,9 @@ import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.StoriesEntity
 import kotlinx.coroutines.launch
 
-const val TAG = "AddStoryVM"
+
 class AddStoryViewModel : ViewModel() {
+    private val tag = "AddStoryVM"
     val db = DatabaseAccess()
 
     //navigation for after adding a story (or canceling)
@@ -19,12 +20,12 @@ class AddStoryViewModel : ViewModel() {
         get() = _addStoryNavigate
 
     fun onAddStoryNavigate(){
-        Log.i(TAG, "nav from add story back to stories initiated")
+        Log.i(tag, "nav from add story back to stories initiated")
         _addStoryNavigate.value = true
     }
 
     fun onAddStoryNavigateComplete(){
-        Log.i(TAG, "nav from add story back to stories completed")
+        Log.i(tag, "nav from add story back to stories completed")
         _addStoryNavigate.value = false
     }
 
@@ -32,7 +33,7 @@ class AddStoryViewModel : ViewModel() {
         also calls navigation*/
     fun submitStory(story: StoriesEntity){
         viewModelScope.launch {
-            Log.i(TAG, "Creation of new story initiated")
+            Log.i(tag, "Creation of new story initiated")
             db.createStory(story)
             onAddStoryNavigate()
         }

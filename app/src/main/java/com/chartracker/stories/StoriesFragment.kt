@@ -7,14 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.chartracker.R
 import com.chartracker.databinding.FragmentStoriesBinding
 
 
 class StoriesFragment : Fragment() {
-    val TAG = "StoriesFrag"
+    private val tag = "StoriesFrag"
 
     private lateinit var viewModel: StoriesViewModel
 
@@ -24,7 +24,7 @@ class StoriesFragment : Fragment() {
     ): View {
         val binding: FragmentStoriesBinding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_stories, container, false)
 
-        viewModel = StoriesViewModel()
+        viewModel = ViewModelProvider(this)[StoriesViewModel::class.java]
         binding.storiesViewModel = viewModel
 
         //adding recyclerview adapter
@@ -33,28 +33,32 @@ class StoriesFragment : Fragment() {
         })
         binding.storiesList.adapter = adapter
 
-        viewModel.storyClickedNavigate.observe(viewLifecycleOwner, Observer {
-            if (it != null){
-                findNavController().navigate(StoriesFragmentDirections.actionStoriesFragmentToCharactersFragment(it))
+        viewModel.storyClickedNavigate.observe(viewLifecycleOwner) {
+            if (it != null) {
+                findNavController().navigate(
+                    StoriesFragmentDirections.actionStoriesFragmentToCharactersFragment(
+                        it
+                    )
+                )
                 viewModel.onStoryClickedNavigateComplete()
             }
-        })
+        }
 
         //let the adapter know when the stories changes
-        viewModel.stories.observe(viewLifecycleOwner, Observer{
+        viewModel.stories.observe(viewLifecycleOwner) {
             it?.let {
-                Log.i(TAG, "noticed change in the stories")
+                Log.i(tag, "noticed change in the stories")
                 adapter.submitList(it)
             }
-        })
+        }
 
         //observer to navigate to adding a story
-        viewModel.addStoryNavigate.observe(viewLifecycleOwner, Observer {
-            if (it){
-                findNavController().navigate(R.id.action_storiesFragment_to_addStoryFragment)
+        viewModel.addStoryNavigate.observe(viewLifecycleOwner) {
+            if (it) {
+                findNavController().navigate(StoriesFragmentDirections.actionStoriesFragmentToAddStoryFragment())
                 viewModel.onAddStoryNavigateComplete()
             }
-        })
+        }
 
         return binding.root
     }

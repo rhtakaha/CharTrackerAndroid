@@ -5,9 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.chartracker.R
 import com.chartracker.database.StoriesEntity
 import com.chartracker.databinding.FragmentAddStoryBinding
 
@@ -24,15 +23,15 @@ class AddStoryFragment : Fragment() {
         //allows LiveData to be monitored
         binding.lifecycleOwner = this
 
-        viewModel = AddStoryViewModel()
+        viewModel = ViewModelProvider(this)[AddStoryViewModel::class.java]
         binding.viewModel = viewModel
 
-        viewModel.addStoryNavigate.observe(viewLifecycleOwner, Observer {
-            if (it){
-                findNavController().navigate(R.id.action_addStoryFragment_to_storiesFragment)
+        viewModel.addStoryNavigate.observe(viewLifecycleOwner) {
+            if (it) {
+                findNavController().navigate(AddStoryFragmentDirections.actionAddStoryFragmentToStoriesFragment())
                 viewModel.onAddStoryNavigateComplete()
             }
-        })
+        }
 
         binding.addStoriesSubmit.setOnClickListener {
             viewModel.submitStory(StoriesEntity(binding.addStoryTitle.text.toString(),

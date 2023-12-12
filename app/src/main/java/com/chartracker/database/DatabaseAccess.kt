@@ -8,9 +8,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 
-private const val TAG = "dbAccess"
+
 
 class DatabaseAccess {
+    private val tag = "dbAccess"
     private val db = Firebase.firestore
 
     //TODO figure out how best to handle the characters subcollection
@@ -24,8 +25,8 @@ class DatabaseAccess {
             .collection("stories")
             .document(storyId)
             .delete()
-            .addOnSuccessListener { Log.d(TAG, "Story successfully deleted!") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error deleting story", e) }
+            .addOnSuccessListener { Log.d(tag, "Story successfully deleted!") }
+            .addOnFailureListener { e -> Log.w(tag, "Error deleting story", e) }
     }
 
     suspend fun getDocId(storyTitle: String): String{
@@ -38,13 +39,13 @@ class DatabaseAccess {
             .addOnSuccessListener { document ->
                 if (!document.isEmpty){
                     story = document.documents[0].id
-                    Log.w(TAG, "Successfully retrieved the document ID")
+                    Log.w(tag, "Successfully retrieved the document ID")
                 }else{
-                    Log.w(TAG, "Error: could not find the document ID")
+                    Log.w(tag, "Error: could not find the document ID")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
+                Log.w(tag, "Error getting documents: ", exception)
             }
             .await()
         return story
@@ -57,8 +58,8 @@ class DatabaseAccess {
             .collection("stories")
             .document(storyId)
             .set(story)
-            .addOnSuccessListener { Log.d(TAG, "Story successfully updated!") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error updating story", e) }
+            .addOnSuccessListener { Log.d(tag, "Story successfully updated!") }
+            .addOnFailureListener { e -> Log.w(tag, "Error updating story", e) }
     }
 
     /*Document ID to story*/
@@ -72,13 +73,13 @@ class DatabaseAccess {
             .addOnSuccessListener { document ->
                 if (document != null){
                     story = document.toObject()!!
-                    Log.w(TAG, "Successfully retrieved the story from the given ID ")
+                    Log.w(tag, "Successfully retrieved the story from the given ID ")
                 }else{
-                    Log.w(TAG, "Error: could not find the story from the given ID ")
+                    Log.w(tag, "Error: could not find the story from the given ID ")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting story from the given ID: ", exception)
+                Log.w(tag, "Error getting story from the given ID: ", exception)
             }
             .await()
         return story
@@ -95,13 +96,13 @@ class DatabaseAccess {
             .addOnSuccessListener { document ->
                 if (!document.isEmpty){
                     story = document.documents[0].toObject()!!
-                    Log.w(TAG, "Successfully retrieved the document ")
+                    Log.w(tag, "Successfully retrieved the document ")
                 }else{
-                    Log.w(TAG, "Error: could not find the document ")
+                    Log.w(tag, "Error: could not find the document ")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
+                Log.w(tag, "Error getting documents: ", exception)
             }
             .await()
         return story
@@ -123,17 +124,17 @@ class DatabaseAccess {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     characters.add(document.toObject<CharacterEntity>())
-                    Log.i(TAG, "${document.id} => ${document.data}")
+                    Log.i(tag, "${document.id} => ${document.data}")
                 }
-                Log.i(TAG, "success")
+                Log.i(tag, "success")
 
             }
             .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
+                Log.d(tag, "Error getting documents: ", exception)
             }
             .await()
 
-        Log.i(TAG, "returning!")
+        Log.i(tag, "returning!")
         return characters
     }
 
@@ -142,10 +143,10 @@ class DatabaseAccess {
         db.collection("users").document("1oWdT6v9mMl0oIMb0Sj7").collection("stories")
             .add(story)
             .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+                Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
+                Log.w(tag, "Error adding document", e)
             }
 
     }
@@ -167,33 +168,33 @@ class DatabaseAccess {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     stories.add(document.toObject<StoriesEntity>())
-                    Log.i(TAG, "${document.id} => ${document.data}")
+                    Log.i(tag, "${document.id} => ${document.data}")
                 }
-                Log.i(TAG, "success")
+                Log.i(tag, "success")
 
             }
             .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
+                Log.d(tag, "Error getting documents: ", exception)
             }.await()
 
-        Log.i(TAG, "returning!")
+        Log.i(tag, "returning!")
         return stories
     }
 
     //WORKS
     suspend fun getUser(){
-        Log.i(TAG, "trying to get the USER")
+        Log.i(tag, "trying to get the USER")
         val docRef = db.collection("users").document("1oWdT6v9mMl0oIMb0Sj7")
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                    Log.d(tag, "DocumentSnapshot data: ${document.data}")
                 } else {
-                    Log.d(TAG, "No such document")
+                    Log.d(tag, "No such document")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
+                Log.d(tag, "get failed with ", exception)
             }
     }
 }
