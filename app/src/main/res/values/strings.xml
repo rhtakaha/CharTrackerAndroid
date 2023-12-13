@@ -48,4 +48,7 @@
     <string name="bio_hint">Enter important info</string>
     <string name="faction">Faction</string>
     <string name="faction_hint">Enter faction</string>
+    <string name="allies">Allies</string>
+    <string name="enemies">Enemies</string>
+    <string name="neutral">Neutral</string>
 </resources>

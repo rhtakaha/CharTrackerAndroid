@@ -42,6 +42,7 @@ class CharactersFragment : Fragment() {
             it?.let {
                 Log.i(tag, "noticed change in the characters")
                 adapter.submitList(it)
+                viewModel.updateCharsStringList()
             }
         }
 
@@ -57,7 +58,7 @@ class CharactersFragment : Fragment() {
         viewModel.charactersToAddCharacterNavigate.observe(viewLifecycleOwner){
             if (it){
                 findNavController().navigate(
-                    CharactersFragmentDirections.actionCharactersFragmentToAddCharacterFragment(viewModel.storyId, args.storyTitle)
+                    CharactersFragmentDirections.actionCharactersFragmentToAddCharacterFragment(viewModel.storyId, args.storyTitle, viewModel.charactersStringList.toTypedArray())
                 )
                 viewModel.onCharactersToAddCharacterNavigateComplete()
             }

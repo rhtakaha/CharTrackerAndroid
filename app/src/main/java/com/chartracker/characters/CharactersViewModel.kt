@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 open class CharactersViewModel(private val storyTitle: String): ViewModel() {
     val characters = MutableLiveData<MutableList<CharacterEntity>>()
+    val charactersStringList = mutableListOf<String>()
     val db = DatabaseAccess()
     lateinit var storyId: String
 
@@ -21,6 +22,14 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
             storyId = db.getDocId(storyTitle)
             Log.i("CharVM", "doc ID is: $storyId")
             characters.value = db.getCharacters(storyId)
+        }
+    }
+
+    /* function to update the list of all the character names (as Strings)
+        which we will pass to edit/add Character*/
+    fun updateCharsStringList(){
+        for (character in characters.value!!){
+            character.name?.let { charactersStringList.add(it) }
         }
     }
 

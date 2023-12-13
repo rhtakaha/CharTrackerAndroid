@@ -9,9 +9,51 @@ import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
 import kotlinx.coroutines.launch
 
-class AddCharacterViewModel(private val storyId: String): ViewModel() {
+class AddCharacterViewModel(private val storyId: String, val charsList: List<String>): ViewModel() {
     private val tag = "AddCharVM"
     private val db = DatabaseAccess()
+
+    val allies = mutableListOf<String>()
+
+    fun alliesUpdated(charName: String, selected: Boolean){
+        if (selected){
+            //if selected add
+            allies.add(charName)
+        }else{
+            // if unselected then remove
+            allies.remove(charName)
+        }
+    }
+
+    val enemies = mutableListOf<String>()
+
+    fun enemiesUpdated(charName: String, selected: Boolean){
+        if (selected){
+            //if selected add
+            enemies.add(charName)
+        }else{
+            // if unselected then remove
+            enemies.remove(charName)
+        }
+    }
+
+    val neutral = mutableListOf<String>()
+
+    fun neutralsUpdated(charName: String, selected: Boolean){
+        if (selected){
+            //if selected add
+            neutral.add(charName)
+        }else{
+            // if unselected then remove
+            neutral.remove(charName)
+        }
+    }
+
+
+
+//    private val _charList =MutableLiveData<List<String>>()
+//    val charList: LiveData<List<String>>
+//        get() = _charList
 
     //navigation for after adding a story (or canceling)
     private val _addCharacterNavigate = MutableLiveData<Boolean>()

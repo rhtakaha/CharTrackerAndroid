@@ -237,50 +237,42 @@
                     android:hint="@string/faction_hint"
                     android:inputType="text" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/add_character_allies_prompt"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/author" />-->
+                <TextView
+                    android:id="@+id/add_character_allies_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/allies" />
 
-<!--                <EditText-->
-<!--                    android:id="@+id/add_character_allies"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="@dimen/input_text_height"-->
-<!--                    android:layout_marginBottom="@dimen/default_margin"-->
-<!--                    android:autofillHints=""-->
-<!--                    android:hint="@string/author_hint"-->
-<!--                    android:inputType="text" />-->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/add_character_allies_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/default_margin"/>
 
-<!--                <TextView-->
-<!--                    android:id="@+id/add_character_enemies_prompt"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/author" />-->
+                <TextView
+                    android:id="@+id/add_character_enemies_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enemies" />
 
-<!--                <EditText-->
-<!--                    android:id="@+id/add_character_enemies"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="@dimen/input_text_height"-->
-<!--                    android:layout_marginBottom="@dimen/default_margin"-->
-<!--                    android:autofillHints=""-->
-<!--                    android:hint="@string/author_hint"-->
-<!--                    android:inputType="text" />-->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/add_character_enemies_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/default_margin"/>
 
-<!--                <TextView-->
-<!--                    android:id="@+id/add_character_neutral_prompt"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/author" />-->
+                <TextView
+                    android:id="@+id/add_character_neutral_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/neutral" />
 
-<!--                <EditText-->
-<!--                    android:id="@+id/add_character_neutral"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="@dimen/input_text_height"-->
-<!--                    android:layout_marginBottom="@dimen/default_margin"-->
-<!--                    android:autofillHints=""-->
-<!--                    android:hint="@string/author_hint"-->
-<!--                    android:inputType="text" />-->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/add_character_neutral_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/default_margin"/>
+
 
             </LinearLayout>
 
