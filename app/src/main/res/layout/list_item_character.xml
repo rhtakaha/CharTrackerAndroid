@@ -8,11 +8,16 @@
         <variable
             name="character"
             type="com.chartracker.database.CharacterEntity" />
+
+        <variable
+            name="clickListener"
+            type="com.chartracker.characters.CharacterListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(character)}">
 
         <ImageView
             android:id="@+id/character_image"

@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chartracker.database.CharacterEntity
 import com.chartracker.databinding.ListItemCharacterBinding
 
-class CharacterAdapter: ListAdapter<CharacterEntity, CharacterAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterAdapter.CharacterViewHolder {
-        return CharacterAdapter.CharacterViewHolder.from(parent)
+class CharacterAdapter(private val clickListener: CharacterListener): ListAdapter<CharacterEntity, CharacterAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
+        return CharacterViewHolder.from(parent)
     }
 
-    override fun onBindViewHolder(holder: CharacterAdapter.CharacterViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
+        holder.bind(getItem(position), clickListener)
     }
 
     //ViewHolder class to build a recyclerview item
@@ -28,8 +28,9 @@ class CharacterAdapter: ListAdapter<CharacterEntity, CharacterAdapter.CharacterV
             }
         }
 
-        fun bind(item: CharacterEntity) {
+        fun bind(item: CharacterEntity, clickListener: CharacterListener) {
             binding.character = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
             //don't need these since doing data binding in the xml
 //             binding.storyName.text = item.name
@@ -50,5 +51,10 @@ class CharacterDiffCallback: DiffUtil.ItemCallback<CharacterEntity>(){
     override fun areContentsTheSame(oldItem: CharacterEntity, newItem: CharacterEntity): Boolean {
         return oldItem == newItem
     }
+
+}
+
+class CharacterListener(val clickListener: (charName: String) -> Unit){
+    fun onClick(character: CharacterEntity) = clickListener(character.name!!)
 
 }

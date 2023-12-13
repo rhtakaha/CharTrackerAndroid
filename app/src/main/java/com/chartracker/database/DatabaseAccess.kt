@@ -14,6 +14,30 @@ class DatabaseAccess {
     private val tag = "dbAccess"
     private val db = Firebase.firestore
 
+    suspend fun getCharacter(storyId: String, charName: String): CharacterEntity{
+        var character = CharacterEntity()
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .whereEqualTo("name", charName)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.documents[0] != null){
+                    character = documents.documents[0].toObject<CharacterEntity>()!!
+                    Log.w(tag, "Successfully retrieved the character ")
+                }else{
+                    Log.w(tag, "Error: could not find the character ")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(tag, "Error getting character: ", exception)
+            }
+            .await()
+        return character
+    }
+
     /* creates a character document in the given story*/
     suspend fun createCharacter(storyId: String, character: CharacterEntity){
         db.collection("users")

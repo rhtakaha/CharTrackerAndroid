@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_charactersFragment_to_addCharacterFragment"
             app:destination="@id/addCharacterFragment" />
+        <action
+            android:id="@+id/action_charactersFragment_to_characterDetailsFragment"
+            app:destination="@id/characterDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/editStoryFragment"
@@ -76,5 +79,22 @@
             android:id="@+id/action_addCharacterFragment_to_charactersFragment"
             app:destination="@id/charactersFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/characterDetailsFragment"
+        android:name="com.chartracker.characters.CharacterDetailsFragment"
+        android:label="CharacterDetailsFragment" >
+        <action
+            android:id="@+id/action_characterDetailsFragment_to_charactersFragment"
+            app:destination="@id/charactersFragment" />
+        <argument
+            android:name="charName"
+            app:argType="string" />
+        <argument
+            android:name="storyId"
+            app:argType="string" />
+        <argument
+            android:name="storyTitle"
+            app:argType="string" />
     </fragment>
 </navigation>

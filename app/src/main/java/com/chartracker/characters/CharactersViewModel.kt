@@ -15,6 +15,7 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
     val db = DatabaseAccess()
     lateinit var storyId: String
 
+    val tag = "CharVM"
     init {
         //for testing purposes right now
         Log.i("CharVM", "story title: $storyTitle")
@@ -38,12 +39,12 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
         get() = _charactersToEditStoryNavigate
 
     fun onCharactersToEditStoryNavigate(){
-        Log.i("CharVM", "nav from chars to edit story initiated")
+        Log.i(tag, "nav from chars to edit story initiated")
         _charactersToEditStoryNavigate.value = true
     }
 
     fun onCharactersToEditStoryNavigateComplete(){
-        Log.i("CharVM", "nav from chars to edit story completed")
+        Log.i(tag, "nav from chars to edit story completed")
         _charactersToEditStoryNavigate.value = false
     }
 
@@ -52,12 +53,27 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
         get() = _charactersToAddCharacterNavigate
 
     fun onCharactersToAddCharacterNavigate(){
-        Log.i("CharVM", "nav from chars to add chars initiated")
+        Log.i(tag, "nav from chars to add chars initiated")
         _charactersToAddCharacterNavigate.value = true
     }
 
     fun onCharactersToAddCharacterNavigateComplete(){
-        Log.i("CharVM", "nav from chars to add chars completed")
+        Log.i(tag, "nav from chars to add chars completed")
         _charactersToAddCharacterNavigate.value = false
+    }
+
+    // for navigating when clicked on a character
+    private val _characterClickedNavigate = MutableLiveData<String?>()
+    val characterClickedNavigate: LiveData<String?>
+        get() = _characterClickedNavigate
+
+    fun onCharacterClickedNavigate(charName: String){
+        Log.i(tag, "character clicked nav initiated")
+        _characterClickedNavigate.value = charName
+    }
+
+    fun onCharacterClickedNavigateComplete(){
+        Log.i(tag, "character clicked nav completed")
+        _characterClickedNavigate.value = null
     }
 }

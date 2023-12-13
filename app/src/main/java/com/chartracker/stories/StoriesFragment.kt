@@ -36,9 +36,7 @@ class StoriesFragment : Fragment() {
         viewModel.storyClickedNavigate.observe(viewLifecycleOwner) {
             if (it != null) {
                 findNavController().navigate(
-                    StoriesFragmentDirections.actionStoriesFragmentToCharactersFragment(
-                        it
-                    )
+                    StoriesFragmentDirections.actionStoriesFragmentToCharactersFragment(it)
                 )
                 viewModel.onStoryClickedNavigateComplete()
             }

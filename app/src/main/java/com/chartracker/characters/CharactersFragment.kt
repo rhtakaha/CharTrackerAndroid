@@ -33,8 +33,19 @@ class CharactersFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)[CharactersViewModel::class.java]
         binding.charactersViewModel = viewModel
 
-        val adapter = CharacterAdapter()
+        val adapter = CharacterAdapter(CharacterListener {
+            charName ->  viewModel.onCharacterClickedNavigate(charName)
+        })
         binding.charactersList.adapter = adapter
+
+        viewModel.characterClickedNavigate.observe(viewLifecycleOwner) {
+            if (it != null) {
+                findNavController().navigate(
+                    CharactersFragmentDirections.actionCharactersFragmentToCharacterDetailsFragment(it, viewModel.storyId, args.storyTitle)
+                )
+                viewModel.onCharacterClickedNavigateComplete()
+            }
+        }
 
         // observer for
         //let the adapter know when the stories changes

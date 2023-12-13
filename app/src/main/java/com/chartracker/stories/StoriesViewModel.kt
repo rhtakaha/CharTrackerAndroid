@@ -41,7 +41,7 @@ class StoriesViewModel : ViewModel() {
         _addStoryNavigate.value = false
     }
 
-    // for navigating when to a story
+    // for navigating when clicked on a story
     private val _storyClickedNavigate = MutableLiveData<String?>()
     val storyClickedNavigate: LiveData<String?>
         get() = _storyClickedNavigate
