@@ -14,6 +14,66 @@ class DatabaseAccess {
     private val tag = "dbAccess"
     private val db = Firebase.firestore
 
+    suspend fun updateCharacter(storyId: String, charId: String, character: CharacterEntity){
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .document(charId)
+            .set(character)
+            .addOnSuccessListener { Log.d(tag, "Character successfully updated!") }
+            .addOnFailureListener { e -> Log.w(tag, "Error updating character", e) }
+    }
+
+    suspend fun getCharacterId(storyId: String, charName: String): String{
+        var character = ""
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .whereEqualTo("name", charName)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.documents[0] != null){
+                    character = documents.documents[0].id
+                    Log.w(tag, "Successfully retrieved the character ")
+                }else{
+                    Log.w(tag, "Error: could not find the character ")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(tag, "Error getting character: ", exception)
+            }
+            .await()
+        return character
+    }
+
+    suspend fun getCharacterFromId(storyId: String, charId: String): CharacterEntity{
+        var character = CharacterEntity()
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .document(charId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null){
+                    character = document.toObject<CharacterEntity>()!!
+                    Log.w(tag, "Successfully retrieved the character ")
+                }else{
+                    Log.w(tag, "Error: could not find the character ")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(tag, "Error getting character: ", exception)
+            }
+            .await()
+        return character
+    }
+
     suspend fun getCharacter(storyId: String, charName: String): CharacterEntity{
         var character = CharacterEntity()
         db.collection("users")
@@ -69,7 +129,7 @@ class DatabaseAccess {
             .addOnFailureListener { e -> Log.w(tag, "Error deleting story", e) }
     }
 
-    suspend fun getDocId(storyTitle: String): String{
+    suspend fun getStoryId(storyTitle: String): String{
         var story: String = ""
         db.collection("users")
             .document("1oWdT6v9mMl0oIMb0Sj7")

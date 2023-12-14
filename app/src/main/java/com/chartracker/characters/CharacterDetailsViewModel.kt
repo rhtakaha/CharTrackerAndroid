@@ -14,10 +14,12 @@ class CharacterDetailsViewModel(val storyId: String, val storyTitle: String, val
     private val db = DatabaseAccess()
 
     var character = MutableLiveData<CharacterEntity>()
+    lateinit var charId: String
 
     init {
         viewModelScope.launch {
-            character.value = db.getCharacter(storyId, charName)
+            charId = db.getCharacterId(storyId,charName)
+            character.value = db.getCharacterFromId(storyId, charId)
         }
     }
 

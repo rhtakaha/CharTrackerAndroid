@@ -20,7 +20,7 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
         //for testing purposes right now
         Log.i("CharVM", "story title: $storyTitle")
         viewModelScope.launch {
-            storyId = db.getDocId(storyTitle)
+            storyId = db.getStoryId(storyTitle)
             Log.i("CharVM", "doc ID is: $storyId")
             characters.value = db.getCharacters(storyId)
         }

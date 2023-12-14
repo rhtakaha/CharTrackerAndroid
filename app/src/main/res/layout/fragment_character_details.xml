@@ -264,7 +264,8 @@
             android:text="@string/edit"
             app:layout_constraintBottom_toBottomOf="@+id/character_details_delete"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/character_details_delete" />
+            app:layout_constraintStart_toEndOf="@+id/character_details_delete"
+            android:onClick="@{() -> viewModel.onCharDetailsToEditCharNavigate()}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

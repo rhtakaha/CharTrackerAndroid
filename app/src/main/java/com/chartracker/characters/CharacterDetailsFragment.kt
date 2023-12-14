@@ -29,8 +29,21 @@ class CharacterDetailsFragment : Fragment() {
         binding.viewModel = viewModel
 
         viewModel.charDetailsToCharsNavigate.observe(viewLifecycleOwner) {
-            findNavController().navigate(CharacterDetailsFragmentDirections.actionCharacterDetailsFragmentToCharactersFragment(args.storyTitle))
-            viewModel.onCharDetailsToCharsNavigateComplete()
+            if(it) {
+                findNavController().navigate(
+                    CharacterDetailsFragmentDirections.actionCharacterDetailsFragmentToCharactersFragment(args.storyTitle)
+                )
+                viewModel.onCharDetailsToCharsNavigateComplete()
+            }
+        }
+
+        viewModel.charDetailsToEditCharNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(
+                    CharacterDetailsFragmentDirections.actionCharacterDetailsFragmentToEditCharacterFragment(args.charName, args.storyId, args.storyTitle, viewModel.charId, args.storyChars)
+                )
+                viewModel.onCharDetailsToEditCharNavigateComplete()
+            }
         }
 
         return binding.root

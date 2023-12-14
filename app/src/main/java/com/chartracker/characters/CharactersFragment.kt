@@ -41,7 +41,7 @@ class CharactersFragment : Fragment() {
         viewModel.characterClickedNavigate.observe(viewLifecycleOwner) {
             if (it != null) {
                 findNavController().navigate(
-                    CharactersFragmentDirections.actionCharactersFragmentToCharacterDetailsFragment(it, viewModel.storyId, args.storyTitle)
+                    CharactersFragmentDirections.actionCharactersFragmentToCharacterDetailsFragment(it, viewModel.storyId, args.storyTitle, viewModel.charactersStringList.toTypedArray())
                 )
                 viewModel.onCharacterClickedNavigateComplete()
             }

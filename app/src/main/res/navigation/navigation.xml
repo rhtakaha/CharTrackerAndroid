@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
     app:startDestination="@id/signInFragment">
 
@@ -96,5 +97,35 @@
         <argument
             android:name="storyTitle"
             app:argType="string" />
+        <action
+            android:id="@+id/action_characterDetailsFragment_to_editCharacterFragment"
+            app:destination="@id/editCharacterFragment" />
+        <argument
+            android:name="storyChars"
+            app:argType="string[]" />
+    </fragment>
+    <fragment
+        android:id="@+id/editCharacterFragment"
+        android:name="com.chartracker.characters.EditCharacterFragment"
+        android:label="fragment_edit_character"
+        tools:layout="@layout/fragment_edit_character" >
+        <action
+            android:id="@+id/action_editCharacterFragment_to_characterDetailsFragment"
+            app:destination="@id/characterDetailsFragment" />
+        <argument
+            android:name="charName"
+            app:argType="string" />
+        <argument
+            android:name="storyId"
+            app:argType="string" />
+        <argument
+            android:name="storyTitle"
+            app:argType="string" />
+        <argument
+            android:name="charId"
+            app:argType="string" />
+        <argument
+            android:name="storyChars"
+            app:argType="string[]" />
     </fragment>
 </navigation>

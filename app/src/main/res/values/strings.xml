@@ -53,4 +53,5 @@
     <string name="neutral">Neutral</string>
     <string name="character_details">Character Details</string>
     <string name="edit">Edit</string>
+    <string name="edit_character">Edit Character</string>
 </resources>
