@@ -41,21 +41,31 @@ class DatabaseAccess {
                         if (a is List<*>) {
                             a = a.filter { it != charName }
                         }
-                        batch.update(document.reference, "allies", a)
+                        //only bother with the operation if it does something
+                        if (a != document.data["allies"]){
+                            batch.update(document.reference, "allies", a)
+                        }
+
 
                         // remove the deleted character from the enemies and update
                         var e = document.data["enemies"]
                         if (e is List<*>) {
                             e = e.filter { it != charName }
                         }
-                        batch.update(document.reference, "enemies", e)
+                        //only bother with the operation if it does something
+                        if (e != document.data["enemies"]) {
+                            batch.update(document.reference, "enemies", e)
+                        }
 
                         // remove the deleted character from the neutral and update
                         var n = document.data["neutral"]
                         if (n is List<*>) {
                             n = n.filter { it != charName }
                         }
-                        batch.update(document.reference, "neutral", n)
+                        //only bother with the operation if it does something
+                        if (n != document.data["neutral"]){
+                            batch.update(document.reference, "neutral", n)
+                        }
                     }
 
                     // delete this character
