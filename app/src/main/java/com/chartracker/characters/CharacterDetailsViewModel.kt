@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CharacterDetailsViewModel(val storyId: String, val storyTitle: String, val charName: String) : ViewModel() {
@@ -51,5 +53,14 @@ class CharacterDetailsViewModel(val storyId: String, val storyTitle: String, val
     fun onCharDetailsToCharsNavigateComplete(){
         Log.i(tag, "nav from Character details back to Characters completed")
         _charDetailsToCharsNavigate.value = false
+    }
+
+    fun submitCharacterDelete(){
+        CoroutineScope(Dispatchers.IO).launch {
+            Log.i(tag, "starting to delete character")
+            db.deleteCharacter(storyId, charId, charName)
+
+        }
+        onCharDetailsToCharsNavigate()
     }
 }

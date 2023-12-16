@@ -254,8 +254,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/character_details_edit"
             app:layout_constraintStart_toEndOf="@+id/character_details_scroll"
-            app:layout_constraintStart_toStartOf="parent"
-            android:onClick="@{() -> viewModel.onCharDetailsToCharsNavigate()}"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/character_details_edit"

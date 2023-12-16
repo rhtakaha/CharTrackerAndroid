@@ -46,6 +46,10 @@ class CharacterDetailsFragment : Fragment() {
             }
         }
 
+        binding.characterDetailsDelete.setOnClickListener {
+            viewModel.submitCharacterDelete()
+        }
+
         return binding.root
     }
 

@@ -1,6 +1,7 @@
 package com.chartracker.database
 
 import android.util.Log
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
@@ -13,6 +14,65 @@ import kotlinx.coroutines.tasks.await
 class DatabaseAccess {
     private val tag = "dbAccess"
     private val db = Firebase.firestore
+
+
+
+    /* first queries for characters with a relationship with the to be deleted character
+    *   modifies those characters to remove the to be deleted character AND deletes the character ATOMICALLY*/
+    suspend fun deleteCharacter(storyId: String, charId: String, charName: String){
+        db.collection("users")
+            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .where(Filter.or(
+                Filter.arrayContains("allies", charName),
+                Filter.arrayContains("enemies", charName),
+                Filter.arrayContains("neutral", charName)
+            ))
+            .get()
+            .addOnSuccessListener { documents ->
+                db.runBatch { batch ->
+                    //query for and update all characters that have this character as an ally/enemy/neutral
+                    for( document in documents){
+                        // remove the deleted character from the allies and update
+                        document.data["allies"]
+                        var a = document.data["allies"]
+                        if (a is List<*>) {
+                            a = a.filter { it != charName }
+                        }
+                        batch.update(document.reference, "allies", a)
+
+                        // remove the deleted character from the enemies and update
+                        var e = document.data["enemies"]
+                        if (e is List<*>) {
+                            e = e.filter { it != charName }
+                        }
+                        batch.update(document.reference, "enemies", e)
+
+                        // remove the deleted character from the neutral and update
+                        var n = document.data["neutral"]
+                        if (n is List<*>) {
+                            n = n.filter { it != charName }
+                        }
+                        batch.update(document.reference, "neutral", n)
+                    }
+
+                    // delete this character
+                    batch.delete(db.collection("users")
+                        .document("1oWdT6v9mMl0oIMb0Sj7")
+                        .collection("stories")
+                        .document(storyId)
+                        .collection("characters")
+                        .document(charId))
+
+                }.addOnCompleteListener { Log.d(tag, "batch success!") }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(tag, "Error querying related characters: ", exception)
+            }
+            .await()
+    }
 
     suspend fun updateCharacter(storyId: String, charId: String, character: CharacterEntity){
         db.collection("users")
