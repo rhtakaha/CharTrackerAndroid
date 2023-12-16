@@ -29,6 +29,7 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
     /* function to update the list of all the character names (as Strings)
         which we will pass to edit/add Character*/
     fun updateCharsStringList(){
+        charactersStringList.clear()
         for (character in characters.value!!){
             character.name?.let { charactersStringList.add(it) }
         }
