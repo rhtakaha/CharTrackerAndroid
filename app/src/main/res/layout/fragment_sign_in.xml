@@ -63,22 +63,34 @@
             android:layout_marginBottom="@dimen/default_margin"
             android:onClick="@{() -> viewModel.onSignInNavigate()}"
             android:text="@string/SignIn"
-            app:layout_constraintBottom_toTopOf="@+id/button"
+            app:layout_constraintBottom_toTopOf="@+id/sign_up_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/sign_up_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin"
             android:text="@string/SignUpButton"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/settings_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/signInButton"
             android:onClick="@{() -> viewModel.onSignInToSignUpNavigate()}"/>
+
+        <Button
+            android:id="@+id/settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:onClick="@{() -> viewModel.onSignInToSettingsNavigate()}"
+            android:text="@string/settings"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sign_up_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

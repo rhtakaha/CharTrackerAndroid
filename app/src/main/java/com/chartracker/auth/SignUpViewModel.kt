@@ -50,6 +50,7 @@ class SignUpViewModel : ViewModel() {
                     // If sign in fails, display a message to the user.
                     Log.w(tag, "createUserWithEmail:failure", task.exception)
                     onSignUpFailed()
+                    //TODO need to flush out the user message since things like a non email, email in use, etc
                 }
             }
     }

@@ -55,4 +55,6 @@
     <string name="edit">Edit</string>
     <string name="edit_character">Edit Character</string>
     <string name="password_confirm">Confirm password</string>
+    <string name="sign_out">Sign out</string>
+    <string name="settings">Settings</string>
 </resources>

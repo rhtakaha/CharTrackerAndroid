@@ -40,6 +40,13 @@ class SignInFragment : Fragment() {
             }
         }
 
+        viewModel.signInToSettingsNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingsFragment())
+                viewModel.onSignInToSettingsNavigateComplete()
+            }
+        }
+
         return binding.root
     }
 

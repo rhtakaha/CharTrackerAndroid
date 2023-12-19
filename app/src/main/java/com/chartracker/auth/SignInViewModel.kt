@@ -35,4 +35,18 @@ class SignInViewModel : ViewModel() {
         Log.i(tag, "sign in to sign up nav completed")
         _signInToSignUpNavigate.value = false
     }
+
+    private val _signInToSettingsNavigate = MutableLiveData<Boolean>()
+    val signInToSettingsNavigate: LiveData<Boolean>
+        get() = _signInToSettingsNavigate
+
+    fun onSignInToSettingsNavigate(){
+        Log.i(tag, "sign in to settings nav initiated")
+        _signInToSettingsNavigate.value = true
+    }
+
+    fun onSignInToSettingsNavigateComplete(){
+        Log.i(tag, "sign in to settings nav completed")
+        _signInToSettingsNavigate.value = false
+    }
 }
