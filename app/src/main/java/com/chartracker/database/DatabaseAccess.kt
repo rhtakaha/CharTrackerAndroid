@@ -1,6 +1,7 @@
 package com.chartracker.database
 
 import android.util.Log
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
@@ -14,7 +15,18 @@ import kotlinx.coroutines.tasks.await
 class DatabaseAccess {
     private val tag = "dbAccess"
     private val db = Firebase.firestore
+    private val auth = Firebase.auth
 
+    /*creates a new user in Firebase*/
+    suspend fun createUser(user: UserEntity){
+        auth.currentUser?.let {
+            db.collection("users")
+                .document(it.uid)
+                .set(user)
+                .addOnSuccessListener { Log.d(tag, "Successfully made the user document") }
+                .addOnFailureListener { e -> Log.w(tag, "Error writing user document", e) }
+        }
+    }
 
 
     /* first queries for characters with a relationship with the to be deleted character
