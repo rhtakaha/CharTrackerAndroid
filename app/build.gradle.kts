@@ -67,6 +67,7 @@ dependencies {
     // "When using the BoM, don't specify versions in Firebase dependencies"
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-auth")
     //TODO need to add all dependencies for Firebase as we go
     // (cloud storage and auth for sure later)
 }

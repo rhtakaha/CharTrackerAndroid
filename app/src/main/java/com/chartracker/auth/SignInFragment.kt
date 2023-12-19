@@ -33,6 +33,13 @@ class SignInFragment : Fragment() {
             }
         }
 
+        viewModel.signInToSignUpNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSignUpFragment())
+                viewModel.onSignInToSignUpNavigateComplete()
+            }
+        }
+
         return binding.root
     }
 

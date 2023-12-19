@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">CharTracker</string>
     <string name="SignIn">Sign In</string>
-    <string name="emailHint">enter email</string>
-    <string name="passwordHint">enter password</string>
+    <string name="emailHint">Enter email</string>
+    <string name="passwordHint">Enter password</string>
     <string name="SignUpButton">Sign Up</string>
     <string name="stories">Stories</string>
     <string name="add_story">Add Story</string>
@@ -54,4 +54,5 @@
     <string name="character_details">Character Details</string>
     <string name="edit">Edit</string>
     <string name="edit_character">Edit Character</string>
+    <string name="password_confirm">Confirm password</string>
 </resources>

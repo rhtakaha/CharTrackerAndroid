@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_signInFragment_to_storiesFragment"
             app:destination="@id/storiesFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
     </fragment>
     <fragment
         android:id="@+id/storiesFragment"
@@ -127,5 +130,13 @@
         <argument
             android:name="storyChars"
             app:argType="string[]" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.chartracker.auth.SignUpFragment"
+        android:label="SignUpFragment" >
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
 </navigation>
