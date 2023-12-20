@@ -23,10 +23,9 @@ class AddCharacterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentAddCharacterBinding.inflate(inflater)
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val args = AddCharacterFragmentArgs.fromBundle(requireArguments())
-
-        binding.lifecycleOwner = this
 
         viewModelFactory = AddCharacterViewModelFactory(args.storyId, args.storyChars.toList())
         viewModel = ViewModelProvider(this, viewModelFactory)[AddCharacterViewModel::class.java]

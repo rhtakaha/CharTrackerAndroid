@@ -24,8 +24,7 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentSignUpBinding.inflate(inflater)
-
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProvider(this)[SignUpViewModel::class.java]
         binding.viewModel = viewModel

@@ -22,8 +22,7 @@ class EditCharacterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentEditCharacterBinding.inflate(inflater)
-
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val args = EditCharacterFragmentArgs.fromBundle(requireArguments())
 
@@ -37,8 +36,6 @@ class EditCharacterFragment : Fragment() {
             setupEnemyChips(binding, viewModel, args.charName)
             setupNeutralChips(binding, viewModel, args.charName)
         }
-
-
 
         viewModel.editCharacterNavigate.observe(viewLifecycleOwner) {
             if (it){

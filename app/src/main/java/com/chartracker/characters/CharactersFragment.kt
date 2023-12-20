@@ -7,10 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.chartracker.R
 import com.chartracker.databinding.FragmentCharactersBinding
 
 class CharactersFragment : Fragment() {
@@ -23,7 +21,8 @@ class CharactersFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: FragmentCharactersBinding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_characters, container, false)
+        val binding = FragmentCharactersBinding.inflate(inflater)
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val args = CharactersFragmentArgs.fromBundle(requireArguments())
 

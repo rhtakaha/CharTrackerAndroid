@@ -21,7 +21,7 @@ class AddStoryFragment : Fragment() {
         val binding = FragmentAddStoryBinding.inflate(inflater)
 
         //allows LiveData to be monitored
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProvider(this)[AddStoryViewModel::class.java]
         binding.viewModel = viewModel

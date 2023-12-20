@@ -22,7 +22,7 @@ class SignInFragment : Fragment() {
         val binding = FragmentSignInBinding.inflate(inflater)
 
         //allows LiveData to be monitored
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = ViewModelProvider(this)[SignInViewModel::class.java]
         binding.viewModel = viewModel
@@ -56,7 +56,11 @@ class SignInFragment : Fragment() {
         }
 
         binding.signInButton.setOnClickListener {
-            viewModel.signInWithEmailPassword(binding.signInEmail.text.toString(), binding.signInPassword.text.toString())
+            if (binding.signInEmail.text.toString() != "" && binding.signInPassword.text.toString() != "") {
+                viewModel.signInWithEmailPassword(binding.signInEmail.text.toString(), binding.signInPassword.text.toString())
+            }else{
+                Toast.makeText(context, "Enter email and password", Toast.LENGTH_LONG).show()
+            }
         }
 
         return binding.root

@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.chartracker.database.StoriesEntity
@@ -21,8 +20,7 @@ class EditStoryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentEditStoryBinding.inflate(inflater)
-
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val args = EditStoryFragmentArgs.fromBundle(requireArguments())
 
@@ -30,12 +28,12 @@ class EditStoryFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)[EditStoryViewModel::class.java]
         binding.viewModel = viewModel
 
-        viewModel.editStoryNavigate.observe(viewLifecycleOwner, Observer {
-            if (it){
+        viewModel.editStoryNavigate.observe(viewLifecycleOwner) {
+            if (it) {
                 findNavController().navigate(EditStoryFragmentDirections.actionEditStoryFragmentToStoriesFragment())
                 viewModel.onEditStoryNavigateComplete()
             }
-        })
+        }
 
         binding.editStoriesSubmit.setOnClickListener {
             viewModel.submitStoryUpdate(
