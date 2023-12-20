@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -27,7 +26,6 @@ class CharactersFragment : Fragment() {
         val binding: FragmentCharactersBinding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_characters, container, false)
 
         val args = CharactersFragmentArgs.fromBundle(requireArguments())
-        Toast.makeText(context, "story navigated from ${args.storyTitle}", Toast.LENGTH_LONG).show()
 
         viewModelFactory = CharactersViewModelFactory(args.storyTitle)
         viewModel = ViewModelProvider(this, viewModelFactory)[CharactersViewModel::class.java]

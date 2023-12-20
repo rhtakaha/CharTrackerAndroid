@@ -33,7 +33,7 @@ class DatabaseAccess {
     *   modifies those characters to remove the to be deleted character AND deletes the character ATOMICALLY*/
     suspend fun deleteCharacter(storyId: String, charId: String, charName: String){
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
@@ -82,7 +82,7 @@ class DatabaseAccess {
 
                     // delete this character
                     batch.delete(db.collection("users")
-                        .document("1oWdT6v9mMl0oIMb0Sj7")
+                        .document(auth.currentUser!!.uid)
                         .collection("stories")
                         .document(storyId)
                         .collection("characters")
@@ -98,7 +98,7 @@ class DatabaseAccess {
 
     suspend fun updateCharacter(storyId: String, charId: String, character: CharacterEntity){
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
@@ -111,7 +111,7 @@ class DatabaseAccess {
     suspend fun getCharacterId(storyId: String, charName: String): String{
         var character = ""
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
@@ -135,7 +135,7 @@ class DatabaseAccess {
     suspend fun getCharacterFromId(storyId: String, charId: String): CharacterEntity{
         var character = CharacterEntity()
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
@@ -159,7 +159,7 @@ class DatabaseAccess {
     suspend fun getCharacter(storyId: String, charName: String): CharacterEntity{
         var character = CharacterEntity()
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
@@ -183,7 +183,7 @@ class DatabaseAccess {
     /* creates a character document in the given story*/
     suspend fun createCharacter(storyId: String, character: CharacterEntity){
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
@@ -203,7 +203,7 @@ class DatabaseAccess {
     * it isn't recommended to do the deletion on mobile clients either so just going to delete the story doc which should work for now*/
     suspend fun deleteStory(storyId: String){
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .delete()
@@ -214,7 +214,7 @@ class DatabaseAccess {
     suspend fun getStoryId(storyTitle: String): String{
         var story: String = ""
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .whereEqualTo("title", storyTitle)
             .get()
@@ -236,7 +236,7 @@ class DatabaseAccess {
     /*update the document associated with the given Id with the given StoriesEntity*/
     suspend fun updateStory(storyId: String, story: StoriesEntity){
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .set(story)
@@ -248,7 +248,7 @@ class DatabaseAccess {
     suspend fun getStoryFromId(storyId: String): StoriesEntity{
         var story: StoriesEntity = StoriesEntity()
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .get()
@@ -271,7 +271,7 @@ class DatabaseAccess {
     suspend fun getStory(storyTitle: String): StoriesEntity{
         var story: StoriesEntity = StoriesEntity()
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .whereEqualTo("title", storyTitle)
             .get()
@@ -298,7 +298,7 @@ class DatabaseAccess {
 
         //getting every document in the characters subcollection of that particular story
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
@@ -322,7 +322,9 @@ class DatabaseAccess {
 
     /*creates a new story in Firebase*/
     suspend fun createStory(story: StoriesEntity){
-        db.collection("users").document("1oWdT6v9mMl0oIMb0Sj7").collection("stories")
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
             .add(story)
             .addOnSuccessListener { documentReference ->
                 Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
@@ -343,7 +345,7 @@ class DatabaseAccess {
 
         //getting every document in the story subcollection
         db.collection("users")
-            .document("1oWdT6v9mMl0oIMb0Sj7")
+            .document(auth.currentUser!!.uid)
             .collection("stories")
             .get(source)
             .addOnSuccessListener { result ->
@@ -360,22 +362,5 @@ class DatabaseAccess {
 
         Log.i(tag, "returning!")
         return stories
-    }
-
-    //WORKS
-    suspend fun getUser(){
-        Log.i(tag, "trying to get the USER")
-        val docRef = db.collection("users").document("1oWdT6v9mMl0oIMb0Sj7")
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(tag, "DocumentSnapshot data: ${document.data}")
-                } else {
-                    Log.d(tag, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(tag, "get failed with ", exception)
-            }
     }
 }
