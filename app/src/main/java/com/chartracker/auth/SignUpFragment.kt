@@ -58,7 +58,7 @@ class SignUpFragment : Fragment() {
         binding.signUpSubmit.setOnClickListener {
             if(binding.signUpPasswordFirst.text.toString() == binding.signUpPasswordSecond.text.toString()){
                 // if the passwords match then go ahead
-                viewModel.signUpUserWithEmailPassword(binding.signUpEmailAddress.text.toString(), binding.signUpPasswordFirst.toString())
+                viewModel.signUpUserWithEmailPassword(binding.signUpEmailAddress.text.toString(), binding.signUpPasswordFirst.text.toString())
             }else{
                 //passwords don't match so let the user know
                 Toast.makeText(context, "Passwords do not match!", Toast.LENGTH_LONG).show()

@@ -22,14 +22,14 @@
             android:layout_marginTop="@dimen/default_margin"
             android:layout_marginBottom="@dimen/default_margin"
             android:text="@string/SignIn"
-            app:layout_constraintBottom_toTopOf="@+id/editTextTextEmailAddress"
+            app:layout_constraintBottom_toTopOf="@+id/sign_in_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <EditText
-            android:id="@+id/editTextTextEmailAddress"
+            android:id="@+id/sign_in_email"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/input_text_height"
             android:layout_marginBottom="@dimen/default_margin"
@@ -37,13 +37,13 @@
             android:ems="10"
             android:hint="@string/emailHint"
             android:inputType="textEmailAddress"
-            app:layout_constraintBottom_toTopOf="@+id/editTextPassword"
+            app:layout_constraintBottom_toTopOf="@+id/sign_in_password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/signIn" />
 
         <EditText
-            android:id="@+id/editTextPassword"
+            android:id="@+id/sign_in_password"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/input_text_height"
             android:layout_marginBottom="@dimen/default_margin"
@@ -51,22 +51,21 @@
             android:ems="10"
             android:hint="@string/passwordHint"
             android:inputType="textPassword"
-            app:layout_constraintBottom_toTopOf="@+id/signInButton"
+            app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />
+            app:layout_constraintTop_toBottomOf="@+id/sign_in_email" />
 
         <Button
-            android:id="@+id/signInButton"
+            android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin"
-            android:onClick="@{() -> viewModel.onSignInNavigate()}"
             android:text="@string/SignIn"
             app:layout_constraintBottom_toTopOf="@+id/sign_up_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+            app:layout_constraintTop_toBottomOf="@+id/sign_in_password" />
 
         <Button
             android:id="@+id/sign_up_button"
@@ -77,7 +76,7 @@
             app:layout_constraintBottom_toTopOf="@id/settings_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/signInButton"
+            app:layout_constraintTop_toBottomOf="@+id/sign_in_button"
             android:onClick="@{() -> viewModel.onSignInToSignUpNavigate()}"/>
 
         <Button

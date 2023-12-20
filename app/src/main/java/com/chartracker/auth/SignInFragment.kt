@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.chartracker.databinding.FragmentSignInBinding
@@ -45,6 +46,17 @@ class SignInFragment : Fragment() {
                 findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingsFragment())
                 viewModel.onSignInToSettingsNavigateComplete()
             }
+        }
+
+        viewModel.signInFailed.observe(viewLifecycleOwner) {
+            if (it){
+                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                viewModel.onSignInFailedComplete()
+            }
+        }
+
+        binding.signInButton.setOnClickListener {
+            viewModel.signInWithEmailPassword(binding.signInEmail.text.toString(), binding.signInPassword.text.toString())
         }
 
         return binding.root
