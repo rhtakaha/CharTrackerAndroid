@@ -1,9 +1,17 @@
 package com.chartracker.auth
 
+import android.app.Application
 import android.util.Log
+import android.widget.Toast
+import androidx.credentials.CreatePasswordRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.exceptions.CreateCredentialCancellationException
+import androidx.credentials.exceptions.CreateCredentialException
+import androidx.credentials.exceptions.CreateCredentialNoCreateOptionException
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.UserEntity
 import com.google.firebase.auth.ktx.auth
@@ -12,10 +20,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SignUpViewModel : ViewModel() {
+class SignUpViewModel(private val application: Application) : AndroidViewModel(application) {
     private val tag = "SignUpVM"
     private val auth = Firebase.auth
     private val db = DatabaseAccess()
+    private  var credentialManager = CredentialManager.create(application)
 
     private val _signUpNavigate = MutableLiveData<Boolean>()
     val signUpNavigate: LiveData<Boolean>
@@ -54,7 +63,12 @@ class SignUpViewModel : ViewModel() {
                     CoroutineScope(Dispatchers.IO).launch {
                         //try and set up their document here, TODO mitigate failure -do again later?
                         db.createUser(UserEntity(auth.currentUser?.email))
+
                     }
+                    viewModelScope.launch {
+                        saveCredentials(email, password)
+                    }
+
                     onSignUpNavigate()
                 } else {
                     // If sign in fails, display a message to the user.
@@ -63,5 +77,29 @@ class SignUpViewModel : ViewModel() {
                     //TODO need to flush out the user message since things like a non email, email in use, etc
                 }
             }
+    }
+
+    //NOTE: NOT 100% IF THIS WORKS SINCE DON'T HAVE A PASSWORD MANAGER SETUP
+    private suspend fun saveCredentials(email: String, password: String){
+        try {
+            //Ask the user for permission to add the credentials to their store
+            credentialManager.createCredential(
+                request = CreatePasswordRequest(email, password),
+                context = application,
+            )
+            Log.i("CredentialTest", "Credentials successfully added")
+        }
+        catch (e: CreateCredentialCancellationException) {
+            //do nothing, the user chose not to save the credential
+            Log.i("CredentialTest", "User cancelled the save")
+        }
+        catch (e: CreateCredentialNoCreateOptionException){
+            Log.i("CredentialTest", "no option to save credentials")
+        }
+        catch (e: CreateCredentialException) {
+            Log.i("CredentialTest", "Credential save error", e)
+            Toast.makeText(application, "Error saving credentials", Toast.LENGTH_LONG).show()
+        }
+
     }
 }

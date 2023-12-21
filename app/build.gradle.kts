@@ -68,6 +68,14 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
+
+    //needed for Google Authentication
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Credential Manager
+    implementation("androidx.credentials:credentials:1.3.0-alpha01")
+
+
     //TODO need to add all dependencies for Firebase as we go
     // (cloud storage and auth for sure later)
 }

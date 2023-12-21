@@ -57,4 +57,5 @@
     <string name="password_confirm">Confirm password</string>
     <string name="sign_out">Sign out</string>
     <string name="settings">Settings</string>
+    <string name="sign_in_credentials">Sign In With Saved Credentials</string>
 </resources>

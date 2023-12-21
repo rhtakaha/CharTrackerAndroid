@@ -12,7 +12,6 @@ import com.chartracker.databinding.FragmentSignInBinding
 
 class SignInFragment : Fragment() {
 
-
     private lateinit var viewModel: SignInViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +60,10 @@ class SignInFragment : Fragment() {
             }else{
                 Toast.makeText(context, "Enter email and password", Toast.LENGTH_LONG).show()
             }
+        }
+
+        binding.signInSavedCredentialsButton.setOnClickListener {
+            viewModel.signInWithSavedCredentials()
         }
 
         return binding.root
