@@ -26,56 +26,23 @@
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
             android:layout_marginBottom="@dimen/default_margin"
+            android:contentDescription="@string/story_image_desc"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars"
-            app:storyImage="@{story}"/>
+            app:storyImage="@{story}"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/story_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/story_image"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Name"
-            app:storyName="@{story}"/>
-
-        <TextView
-            android:id="@+id/story_genre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            app:layout_constraintEnd_toStartOf="@+id/story_type"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/story_image"
-            app:layout_constraintTop_toBottomOf="@+id/story_name"
-            tools:text="Genre"
-            app:storyGenre="@{story}"/>
-
-        <TextView
-            android:id="@+id/story_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/story_genre"
-            app:layout_constraintTop_toTopOf="@+id/story_genre"
-            tools:text="Type"
-            app:storyType="@{story}"/>
-
-        <TextView
-            android:id="@+id/story_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/story_image"
-            app:layout_constraintTop_toBottomOf="@+id/story_genre"
-            tools:text="Author"
-            app:storyAuthor="@{story}"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:storyName="@{story}"
+            tools:text="Name" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

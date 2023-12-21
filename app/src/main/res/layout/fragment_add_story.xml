@@ -58,6 +58,21 @@
                     android:inputType="text" />
 
                 <TextView
+                    android:id="@+id/add_story_author_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/author" />
+
+                <EditText
+                    android:id="@+id/add_story_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/input_text_height"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:autofillHints=""
+                    android:hint="@string/author_hint"
+                    android:inputType="text|textPersonName" />
+
+                <TextView
                     android:id="@+id/add_story_genre_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -87,20 +102,7 @@
                     android:hint="@string/type_hint"
                     android:inputType="text" />
 
-                <TextView
-                    android:id="@+id/add_story_author_prompt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/author" />
 
-                <EditText
-                    android:id="@+id/add_story_author"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/input_text_height"
-                    android:layout_marginBottom="@dimen/default_margin"
-                    android:autofillHints=""
-                    android:hint="@string/author_hint"
-                    android:inputType="text|textPersonName" />
 
             </LinearLayout>
 

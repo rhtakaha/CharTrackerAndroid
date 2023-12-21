@@ -69,9 +69,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
 
-    //needed for Google Authentication
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
     // Credential Manager
     implementation("androidx.credentials:credentials:1.3.0-alpha01")
 

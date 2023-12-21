@@ -14,6 +14,72 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/characters_story_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="@{charactersViewModel.story.title}"
+            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintStart_toEndOf="@id/characters_story_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Story Title" />
+
+        <TextView
+            android:id="@+id/characters_story_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="@{charactersViewModel.story.author}"
+            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintStart_toEndOf="@id/characters_story_image"
+            app:layout_constraintTop_toBottomOf="@id/characters_story_title"
+            tools:text="Story Author" />
+
+        <ImageView
+            android:id="@+id/characters_story_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:contentDescription="@string/story_image_desc"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:storyImage="@{charactersViewModel.story}"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/characters_story_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="@{charactersViewModel.story.genre}"
+            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintStart_toEndOf="@id/characters_story_image"
+            app:layout_constraintTop_toBottomOf="@id/characters_story_author"
+            tools:text="Story Genre" />
+
+
+        <TextView
+            android:id="@+id/characters_story_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="@{charactersViewModel.story.type}"
+            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintStart_toEndOf="@+id/characters_story_image"
+            app:layout_constraintTop_toBottomOf="@+id/characters_story_genre"
+            tools:text="Story Type" />
+
+        <TextView
             android:id="@+id/characters_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,6 +87,17 @@
             android:text="@string/characters"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/characters_story_type" />
+
+        <Button
+            android:id="@+id/edit_story_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> charactersViewModel.onCharactersToEditStoryNavigate()}"
+            android:text="@string/edit_story"
+            app:layout_constraintBottom_toTopOf="@+id/characters_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/characters_title"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -42,21 +119,11 @@
             android:clickable="true"
             android:contentDescription="@string/add_character_desc"
             android:focusable="true"
+            android:onClick="@{() -> charactersViewModel.onCharactersToAddCharacterNavigate()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@android:drawable/ic_input_add"
-            android:onClick="@{() -> charactersViewModel.onCharactersToAddCharacterNavigate()}"/>
+            app:srcCompat="@android:drawable/ic_input_add" />
 
-        <Button
-            android:id="@+id/edit_story_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edit_story"
-            app:layout_constraintBottom_toTopOf="@+id/characters_list"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/characters_title"
-            app:layout_constraintTop_toTopOf="parent"
-            android:onClick="@{() -> charactersViewModel.onCharactersToEditStoryNavigate()}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

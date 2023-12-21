@@ -58,6 +58,22 @@
                     android:text="@{viewModel.story.title.toString()}" />
 
                 <TextView
+                    android:id="@+id/edit_story_author_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/author" />
+
+                <EditText
+                    android:id="@+id/edit_story_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/input_text_height"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:autofillHints=""
+                    android:hint="@string/author_hint"
+                    android:inputType="text|textPersonName"
+                    android:text="@{viewModel.story.author.toString()}"/>
+
+                <TextView
                     android:id="@+id/edit_story_genre_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -89,21 +105,7 @@
                     android:inputType="text"
                     android:text="@{viewModel.story.type.toString()}"/>
 
-                <TextView
-                    android:id="@+id/edit_story_author_prompt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/author" />
 
-                <EditText
-                    android:id="@+id/edit_story_author"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/input_text_height"
-                    android:layout_marginBottom="@dimen/default_margin"
-                    android:autofillHints=""
-                    android:hint="@string/author_hint"
-                    android:inputType="text|textPersonName"
-                    android:text="@{viewModel.story.author.toString()}"/>
 
             </LinearLayout>
 
