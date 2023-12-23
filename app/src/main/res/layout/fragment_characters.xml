@@ -21,7 +21,7 @@
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
             android:text="@{charactersViewModel.story.title}"
-            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/characters_story_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Story Title" />
@@ -34,7 +34,7 @@
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
             android:text="@{charactersViewModel.story.author}"
-            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/characters_story_image"
             app:layout_constraintTop_toBottomOf="@id/characters_story_title"
             tools:text="Story Author" />
@@ -60,7 +60,7 @@
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
             android:text="@{charactersViewModel.story.genre}"
-            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/characters_story_image"
             app:layout_constraintTop_toBottomOf="@id/characters_story_author"
             tools:text="Story Genre" />
@@ -74,7 +74,7 @@
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
             android:text="@{charactersViewModel.story.type}"
-            app:layout_constraintEnd_toStartOf="@+id/edit_story_button"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/characters_story_image"
             app:layout_constraintTop_toBottomOf="@+id/characters_story_genre"
             tools:text="Story Type" />
@@ -88,17 +88,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/characters_story_type" />
-
-        <Button
-            android:id="@+id/edit_story_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{() -> charactersViewModel.onCharactersToEditStoryNavigate()}"
-            android:text="@string/edit_story"
-            app:layout_constraintBottom_toTopOf="@+id/characters_list"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/characters_title"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/characters_list"

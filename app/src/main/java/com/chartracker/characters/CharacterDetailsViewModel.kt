@@ -45,7 +45,7 @@ class CharacterDetailsViewModel(val storyId: String, val storyTitle: String, val
     val charDetailsToCharsNavigate: LiveData<Boolean>
         get() = _charDetailsToCharsNavigate
 
-    fun onCharDetailsToCharsNavigate(){
+    private fun onCharDetailsToCharsNavigate(){
         Log.i(tag, "nav from Character details back to Characters initiated")
         _charDetailsToCharsNavigate.value = true
     }

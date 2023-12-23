@@ -71,7 +71,7 @@ class CharacterDetailsFragment : Fragment(), MenuProvider {
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         // Add menu items here
-        menuInflater.inflate(R.menu.action_bar_menu, menu)
+        menuInflater.inflate(R.menu.action_bar_edit_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -79,6 +79,7 @@ class CharacterDetailsFragment : Fragment(), MenuProvider {
         when(menuItem.itemId){
             android.R.id.home -> return false
             R.id.action_bar_settings -> viewModel.onSettingsNavigate()
+            R.id.action_bar_edit -> viewModel.onCharDetailsToEditCharNavigate()
             else -> return true
         }
         return true

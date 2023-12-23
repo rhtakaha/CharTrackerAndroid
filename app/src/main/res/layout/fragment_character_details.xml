@@ -252,19 +252,10 @@
             android:layout_marginBottom="@dimen/default_margin"
             android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/character_details_edit"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/character_details_scroll"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/character_details_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edit"
-            app:layout_constraintBottom_toBottomOf="@+id/character_details_delete"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/character_details_delete"
-            android:onClick="@{() -> viewModel.onCharDetailsToEditCharNavigate()}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
