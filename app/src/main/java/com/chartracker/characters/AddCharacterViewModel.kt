@@ -60,7 +60,7 @@ class AddCharacterViewModel(private val storyId: String, val charsList: List<Str
     val addCharacterNavigate: LiveData<Boolean>
         get() = _addCharacterNavigate
 
-    fun onAddCharacterNavigate(){
+    private fun onAddCharacterNavigate(){
         Log.i(tag, "nav from add Character back to Characters initiated")
         _addCharacterNavigate.value = true
     }

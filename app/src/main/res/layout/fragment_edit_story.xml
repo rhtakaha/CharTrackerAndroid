@@ -32,6 +32,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_stories_title"
+            app:layout_constraintBottom_toTopOf="@id/edit_stories_submit"
             app:layout_constraintVertical_bias="0.0"
             tools:context=".stories.AddStoryFragment">
 
@@ -113,35 +114,24 @@
         </ScrollView>
 
         <Button
-            android:id="@+id/edit_stories_cancel"
+            android:id="@+id/edit_stories_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin"
-            android:text="@string/cancel"
+            android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/edit_stories_submit"
             app:layout_constraintStart_toEndOf="@+id/edit_story_scroll"
-            app:layout_constraintStart_toStartOf="parent"
-            android:onClick="@{() -> viewModel.onEditStoryNavigate()}"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/edit_stories_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/submit"
-            app:layout_constraintBottom_toBottomOf="@+id/edit_stories_cancel"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_stories_delete"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/edit_stories_cancel"/>
-
-        <Button
-            android:id="@+id/edit_stories_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/default_margin"
-            android:text="@string/delete"
-            app:layout_constraintBottom_toTopOf="@+id/edit_stories_cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/edit_stories_delete"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

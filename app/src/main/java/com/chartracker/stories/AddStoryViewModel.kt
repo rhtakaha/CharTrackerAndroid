@@ -19,7 +19,7 @@ class AddStoryViewModel : ViewModel() {
     val addStoryNavigate: LiveData<Boolean>
         get() = _addStoryNavigate
 
-    fun onAddStoryNavigate(){
+    private fun onAddStoryNavigate(){
         Log.i(tag, "nav from add story back to stories initiated")
         _addStoryNavigate.value = true
     }

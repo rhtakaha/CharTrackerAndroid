@@ -69,7 +69,7 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
     val editCharacterNavigate: LiveData<Boolean>
         get() = _editCharacterNavigate
 
-    fun onEditCharacterNavigate(){
+    private fun onEditCharacterNavigate(){
         Log.i("EditCharVM", "nav from edit character back to character details initiated")
         _editCharacterNavigate.value = true
     }

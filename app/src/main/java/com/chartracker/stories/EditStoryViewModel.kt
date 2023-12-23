@@ -24,7 +24,7 @@ class EditStoryViewModel(private val storyId: String): ViewModel() {
     val editStoryNavigate: LiveData<Boolean>
         get() = _editStoryNavigate
 
-    fun onEditStoryNavigate(){
+    private fun onEditStoryNavigate(){
         Log.i("EditStoryVM", "nav from edit story back to stories initiated")
         _editStoryNavigate.value = true
     }

@@ -32,7 +32,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_characters_title"
-            app:layout_constraintBottom_toTopOf="@+id/edit_character_cancel"
+            app:layout_constraintBottom_toTopOf="@+id/edit_character_submit"
             app:layout_constraintVertical_bias="0.0"
             tools:context=".stories.EditCharacterFragment">
 
@@ -293,24 +293,13 @@
         </ScrollView>
 
         <Button
-            android:id="@+id/edit_character_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/default_margin"
-            android:text="@string/cancel"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/edit_character_submit"
-            app:layout_constraintStart_toEndOf="@+id/edit_characters_scroll"
-            app:layout_constraintStart_toStartOf="parent"
-            android:onClick="@{() -> viewModel.onEditCharacterNavigate()}"/>
-
-        <Button
             android:id="@+id/edit_character_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_margin"
             android:text="@string/submit"
-            app:layout_constraintBottom_toBottomOf="@+id/edit_character_cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/edit_character_cancel"/>
+            app:layout_constraintStart_toStartOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
