@@ -51,10 +51,6 @@ class EditStoryFragment : Fragment(), MenuProvider{
             )
         }
 
-        binding.editStoriesDelete.setOnClickListener {
-            viewModel.submitStoryDelete()
-        }
-
         viewModel.settingsNavigate.observe(viewLifecycleOwner) {
             if (it){
                 findNavController().navigate(EditStoryFragmentDirections.actionEditStoryFragmentToSettingsFragment())
@@ -70,7 +66,7 @@ class EditStoryFragment : Fragment(), MenuProvider{
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         // Add menu items here
-        menuInflater.inflate(R.menu.action_bar_menu, menu)
+        menuInflater.inflate(R.menu.action_bar_delete_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -78,6 +74,7 @@ class EditStoryFragment : Fragment(), MenuProvider{
         when(menuItem.itemId){
             android.R.id.home -> return false
             R.id.action_bar_settings -> viewModel.onSettingsNavigate()
+            R.id.action_bar_delete -> viewModel.submitStoryDelete()
             else -> return true
         }
         return true

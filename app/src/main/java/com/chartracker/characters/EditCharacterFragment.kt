@@ -43,10 +43,17 @@ class EditCharacterFragment : Fragment(), MenuProvider {
             setupNeutralChips(binding, viewModel, args.charName)
         }
 
-        viewModel.editCharacterNavigate.observe(viewLifecycleOwner) {
+        viewModel.editCharacterToCharacterDetailsNavigate.observe(viewLifecycleOwner) {
             if (it){
                 findNavController().navigate(EditCharacterFragmentDirections.actionEditCharacterFragmentToCharacterDetailsFragment(args.charName, args.storyId, args.storyTitle, args.storyChars))
-                viewModel.onEditCharacterNavigateComplete()
+                viewModel.onEditCharacterToCharacterDetailsNavigateComplete()
+            }
+        }
+
+        viewModel.editCharacterToCharactersNavigate.observe(viewLifecycleOwner) {
+            if (it) {
+                findNavController().navigate(EditCharacterFragmentDirections.actionEditCharacterFragmentToCharactersFragment(args.storyTitle))
+                viewModel.onEditCharacterToCharactersNavigateComplete()
             }
         }
 
@@ -88,7 +95,7 @@ class EditCharacterFragment : Fragment(), MenuProvider {
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         // Add menu items here
-        menuInflater.inflate(R.menu.action_bar_menu, menu)
+        menuInflater.inflate(R.menu.action_bar_delete_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -96,6 +103,7 @@ class EditCharacterFragment : Fragment(), MenuProvider {
         when(menuItem.itemId){
             android.R.id.home -> return false
             R.id.action_bar_settings -> viewModel.onSettingsNavigate()
+            R.id.action_bar_delete -> viewModel.submitCharacterDelete()
             else -> return true
         }
         return true

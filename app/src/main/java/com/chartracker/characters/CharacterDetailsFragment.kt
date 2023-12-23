@@ -34,14 +34,14 @@ class CharacterDetailsFragment : Fragment(), MenuProvider {
         viewModel = ViewModelProvider(this, viewModelFactory)[CharacterDetailsViewModel::class.java]
         binding.viewModel = viewModel
 
-        viewModel.charDetailsToCharsNavigate.observe(viewLifecycleOwner) {
-            if(it) {
-                findNavController().navigate(
-                    CharacterDetailsFragmentDirections.actionCharacterDetailsFragmentToCharactersFragment(args.storyTitle)
-                )
-                viewModel.onCharDetailsToCharsNavigateComplete()
-            }
-        }
+//        viewModel.charDetailsToCharsNavigate.observe(viewLifecycleOwner) {
+//            if(it) {
+//                findNavController().navigate(
+//                    CharacterDetailsFragmentDirections.actionCharacterDetailsFragmentToCharactersFragment(args.storyTitle)
+//                )
+//                viewModel.onCharDetailsToCharsNavigateComplete()
+//            }
+//        }
 
         viewModel.charDetailsToEditCharNavigate.observe(viewLifecycleOwner) {
             if (it){
@@ -50,10 +50,6 @@ class CharacterDetailsFragment : Fragment(), MenuProvider {
                 )
                 viewModel.onCharDetailsToEditCharNavigateComplete()
             }
-        }
-
-        binding.characterDetailsDelete.setOnClickListener {
-            viewModel.submitCharacterDelete()
         }
 
         viewModel.settingsNavigate.observe(viewLifecycleOwner) {

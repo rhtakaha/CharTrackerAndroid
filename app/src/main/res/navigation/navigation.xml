@@ -133,9 +133,6 @@
         android:name="com.chartracker.characters.EditCharacterFragment"
         android:label="fragment_edit_character"
         tools:layout="@layout/fragment_edit_character" >
-        <action
-            android:id="@+id/action_editCharacterFragment_to_characterDetailsFragment"
-            app:destination="@id/characterDetailsFragment" />
         <argument
             android:name="charName"
             app:argType="string" />
@@ -154,6 +151,12 @@
         <action
             android:id="@+id/action_editCharacterFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_editCharacterFragment_to_charactersFragment"
+            app:destination="@id/charactersFragment" />
+        <action
+            android:id="@+id/action_editCharacterFragment_to_characterDetailsFragment"
+            app:destination="@id/characterDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"

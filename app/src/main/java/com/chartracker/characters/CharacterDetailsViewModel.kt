@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CharacterDetailsViewModel(val storyId: String, val storyTitle: String, val charName: String) : ViewModel() {
@@ -40,29 +38,22 @@ class CharacterDetailsViewModel(val storyId: String, val storyTitle: String, val
         _charDetailsToEditCharNavigate.value = false
     }
 
-    //navigation for returning to the characters
-    private val _charDetailsToCharsNavigate = MutableLiveData<Boolean>()
-    val charDetailsToCharsNavigate: LiveData<Boolean>
-        get() = _charDetailsToCharsNavigate
+//    //navigation for returning to the characters
+//    private val _charDetailsToCharsNavigate = MutableLiveData<Boolean>()
+//    val charDetailsToCharsNavigate: LiveData<Boolean>
+//        get() = _charDetailsToCharsNavigate
+//
+//    private fun onCharDetailsToCharsNavigate(){
+//        Log.i(tag, "nav from Character details back to Characters initiated")
+//        _charDetailsToCharsNavigate.value = true
+//    }
+//
+//    fun onCharDetailsToCharsNavigateComplete(){
+//        Log.i(tag, "nav from Character details back to Characters completed")
+//        _charDetailsToCharsNavigate.value = false
+//    }
 
-    private fun onCharDetailsToCharsNavigate(){
-        Log.i(tag, "nav from Character details back to Characters initiated")
-        _charDetailsToCharsNavigate.value = true
-    }
 
-    fun onCharDetailsToCharsNavigateComplete(){
-        Log.i(tag, "nav from Character details back to Characters completed")
-        _charDetailsToCharsNavigate.value = false
-    }
-
-    fun submitCharacterDelete(){
-        CoroutineScope(Dispatchers.IO).launch {
-            Log.i(tag, "starting to delete character")
-            db.deleteCharacter(storyId, charId, charName)
-
-        }
-        onCharDetailsToCharsNavigate()
-    }
 
     private val _settingsNavigate = MutableLiveData<Boolean>()
 

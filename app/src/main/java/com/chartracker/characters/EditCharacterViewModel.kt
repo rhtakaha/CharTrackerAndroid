@@ -7,9 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EditCharacterViewModel(val storyId: String, val charId: String, val charsList: List<String>): ViewModel() {
+    val tag = "EditCharVM"
     val character = MutableLiveData<CharacterEntity>()
     val db = DatabaseAccess()
 
@@ -60,23 +63,44 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
         viewModelScope.launch {
             Log.i("EditCharVM", "starting to update character")
             db.updateCharacter(storyId, charId, character)
-            onEditCharacterNavigate()
+            onEditCharacterToCharacterDetailsNavigate()
         }
     }
 
+    fun submitCharacterDelete(){
+        CoroutineScope(Dispatchers.IO).launch {
+            Log.i(tag, "starting to delete character")
+            character.value?.name?.let { db.deleteCharacter(storyId, charId, it) }
 
-    private val _editCharacterNavigate = MutableLiveData<Boolean>()
-    val editCharacterNavigate: LiveData<Boolean>
-        get() = _editCharacterNavigate
-
-    private fun onEditCharacterNavigate(){
-        Log.i("EditCharVM", "nav from edit character back to character details initiated")
-        _editCharacterNavigate.value = true
+        }
+        onEditCharacterToCharactersNavigate()
     }
 
-    fun onEditCharacterNavigateComplete(){
+    private val _editCharacterToCharactersNavigate = MutableLiveData<Boolean>()
+    val editCharacterToCharactersNavigate: LiveData<Boolean>
+        get() = _editCharacterToCharactersNavigate
+
+    private fun onEditCharacterToCharactersNavigate(){
+        _editCharacterToCharactersNavigate.value = true
+    }
+
+    fun onEditCharacterToCharactersNavigateComplete(){
+        _editCharacterToCharactersNavigate.value = false
+    }
+
+
+    private val _editCharacterToCharacterDetailsNavigate = MutableLiveData<Boolean>()
+    val editCharacterToCharacterDetailsNavigate: LiveData<Boolean>
+        get() = _editCharacterToCharacterDetailsNavigate
+
+    private fun onEditCharacterToCharacterDetailsNavigate(){
+        Log.i("EditCharVM", "nav from edit character back to character details initiated")
+        _editCharacterToCharacterDetailsNavigate.value = true
+    }
+
+    fun onEditCharacterToCharacterDetailsNavigateComplete(){
         Log.i("EditCharVM", "nav from edit character back to character details completed")
-        _editCharacterNavigate.value = false
+        _editCharacterToCharacterDetailsNavigate.value = false
     }
 
     private val _settingsNavigate = MutableLiveData<Boolean>()
