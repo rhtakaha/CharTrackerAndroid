@@ -5,16 +5,16 @@
 
 
     <item
-        android:id="@+id/action_overflow"
+        android:id="@+id/action_bar_overflow"
         android:icon="@drawable/baseline_more_vert_24"
-        android:title="@string/settings"
+        android:title="@string/overflow_menu"
         app:showAsAction="ifRoom">
         <menu>
             <item
-                android:id="@+id/action_settings"
-            android:icon="@drawable/baseline_settings_24"
-            android:title="@string/settings"
-            app:showAsAction="ifRoom"/>
+                android:id="@+id/action_bar_settings"
+                android:icon="@drawable/baseline_settings_24"
+                android:title="@string/settings"
+                app:showAsAction="ifRoom" />
         </menu>
     </item>
 </menu>

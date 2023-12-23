@@ -63,4 +63,19 @@ class CharacterDetailsViewModel(val storyId: String, val storyTitle: String, val
         }
         onCharDetailsToCharsNavigate()
     }
+
+    private val _settingsNavigate = MutableLiveData<Boolean>()
+
+    val settingsNavigate: LiveData<Boolean>
+        get() = _settingsNavigate
+
+    fun onSettingsNavigate(){
+        Log.i("VM", "trying to nav to settings")
+        _settingsNavigate.value = true
+        Log.i("VM", "trying to nav to settings: ${_settingsNavigate.value}")
+    }
+
+    fun onSettingsNavigateComplete(){
+        _settingsNavigate.value = false
+    }
 }

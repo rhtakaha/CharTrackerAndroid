@@ -64,16 +64,17 @@ class StoriesFragment : Fragment(), MenuProvider {
             }
         }
 
+        viewModel.settingsNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(StoriesFragmentDirections.actionStoriesFragmentToSettingsFragment())
+                viewModel.onSettingsNavigateComplete()
+            }
+        }
 
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         return binding.root
-    }
-
-    override fun onPrepareMenu(menu: Menu) {
-        super.onPrepareMenu(menu)
-//        menu.clear()
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -83,8 +84,10 @@ class StoriesFragment : Fragment(), MenuProvider {
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         // Handle the menu selection
-        if (menuItem.itemId == android.R.id.home){
-            return false
+        when(menuItem.itemId){
+            android.R.id.home -> return false
+            R.id.action_bar_settings -> viewModel.onSettingsNavigate()
+            else -> return true
         }
         return true
     }

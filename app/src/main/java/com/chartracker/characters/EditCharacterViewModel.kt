@@ -78,4 +78,19 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
         Log.i("EditCharVM", "nav from edit character back to character details completed")
         _editCharacterNavigate.value = false
     }
+
+    private val _settingsNavigate = MutableLiveData<Boolean>()
+
+    val settingsNavigate: LiveData<Boolean>
+        get() = _settingsNavigate
+
+    fun onSettingsNavigate(){
+        Log.i("VM", "trying to nav to settings")
+        _settingsNavigate.value = true
+        Log.i("VM", "trying to nav to settings: ${_settingsNavigate.value}")
+    }
+
+    fun onSettingsNavigateComplete(){
+        _settingsNavigate.value = false
+    }
 }

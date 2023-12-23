@@ -15,9 +15,6 @@
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
-        <action
-            android:id="@+id/action_signInFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/storiesFragment"
@@ -29,6 +26,9 @@
         <action
             android:id="@+id/action_storiesFragment_to_charactersFragment"
             app:destination="@id/charactersFragment" />
+        <action
+            android:id="@+id/action_storiesFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addStoryFragment"
@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_addStoryFragment_to_storiesFragment"
             app:destination="@id/storiesFragment" />
+        <action
+            android:id="@+id/action_addStoryFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/charactersFragment"
@@ -57,6 +60,9 @@
         <action
             android:id="@+id/action_charactersFragment_to_characterDetailsFragment"
             app:destination="@id/characterDetailsFragment" />
+        <action
+            android:id="@+id/action_charactersFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/editStoryFragment"
@@ -68,6 +74,9 @@
         <action
             android:id="@+id/action_editStoryFragment_to_storiesFragment"
             app:destination="@id/storiesFragment" />
+        <action
+            android:id="@+id/action_editStoryFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addCharacterFragment"
@@ -85,6 +94,12 @@
         <action
             android:id="@+id/action_addCharacterFragment_to_charactersFragment"
             app:destination="@id/charactersFragment" />
+        <action
+            android:id="@+id/action_addCharacterFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_addCharacterFragment_to_settingsFragment2"
+            app:destination="@id/settingsFragment" />
 
     </fragment>
     <fragment
@@ -109,6 +124,9 @@
         <argument
             android:name="storyChars"
             app:argType="string[]" />
+        <action
+            android:id="@+id/action_characterDetailsFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/editCharacterFragment"
@@ -133,6 +151,9 @@
         <argument
             android:name="storyChars"
             app:argType="string[]" />
+        <action
+            android:id="@+id/action_editCharacterFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -145,5 +166,9 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.chartracker.util.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
 </navigation>

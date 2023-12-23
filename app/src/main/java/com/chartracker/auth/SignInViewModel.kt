@@ -53,20 +53,6 @@ class SignInViewModel(private val application: Application) : AndroidViewModel(a
         _signInToSignUpNavigate.value = false
     }
 
-    private val _signInToSettingsNavigate = MutableLiveData<Boolean>()
-    val signInToSettingsNavigate: LiveData<Boolean>
-        get() = _signInToSettingsNavigate
-
-    fun onSignInToSettingsNavigate(){
-        Log.i(tag, "sign in to settings nav initiated")
-        _signInToSettingsNavigate.value = true
-    }
-
-    fun onSignInToSettingsNavigateComplete(){
-        Log.i(tag, "sign in to settings nav completed")
-        _signInToSettingsNavigate.value = false
-    }
-
     private val _signInFailed = MutableLiveData<Boolean>()
     val signInFailed: LiveData<Boolean>
         get() = _signInFailed

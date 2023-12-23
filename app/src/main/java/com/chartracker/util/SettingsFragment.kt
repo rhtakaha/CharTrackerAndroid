@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.chartracker.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
@@ -21,6 +22,13 @@ class SettingsFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
         binding.viewmodel = viewModel
+
+        viewModel.signOutNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSignInFragment())
+                viewModel.onSignOutNavigateComplete()
+            }
+        }
 
         return binding.root
     }

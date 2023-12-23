@@ -40,13 +40,6 @@ class SignInFragment : Fragment() {
             }
         }
 
-        viewModel.signInToSettingsNavigate.observe(viewLifecycleOwner) {
-            if (it){
-                findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingsFragment())
-                viewModel.onSignInToSettingsNavigateComplete()
-            }
-        }
-
         viewModel.signInFailed.observe(viewLifecycleOwner) {
             if (it){
                 Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
