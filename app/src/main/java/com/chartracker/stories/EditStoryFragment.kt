@@ -35,10 +35,17 @@ class EditStoryFragment : Fragment(), MenuProvider{
         viewModel = ViewModelProvider(this, viewModelFactory)[EditStoryViewModel::class.java]
         binding.viewModel = viewModel
 
-        viewModel.editStoryNavigate.observe(viewLifecycleOwner) {
+        viewModel.editStoryToStoriesNavigate.observe(viewLifecycleOwner) {
             if (it) {
                 findNavController().navigate(EditStoryFragmentDirections.actionEditStoryFragmentToStoriesFragment())
-                viewModel.onEditStoryNavigateComplete()
+                viewModel.onEditStoryToStoriesNavigateComplete()
+            }
+        }
+
+        viewModel.editStoryToCharactersNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(EditStoryFragmentDirections.actionEditStoryFragmentToCharactersFragment(viewModel.story.value?.title.toString()))
+                viewModel.onEditStoryToCharactersNavigateComplete()
             }
         }
 

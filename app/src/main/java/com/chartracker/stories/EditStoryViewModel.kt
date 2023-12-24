@@ -20,25 +20,35 @@ class EditStoryViewModel(private val storyId: String): ViewModel() {
         }
     }
 
-    private val _editStoryNavigate = MutableLiveData<Boolean>()
-    val editStoryNavigate: LiveData<Boolean>
-        get() = _editStoryNavigate
+    private val _editStoryToStoriesNavigate = MutableLiveData<Boolean>()
+    val editStoryToStoriesNavigate: LiveData<Boolean>
+        get() = _editStoryToStoriesNavigate
 
-    private fun onEditStoryNavigate(){
-        Log.i("EditStoryVM", "nav from edit story back to stories initiated")
-        _editStoryNavigate.value = true
+    private fun onEditStoryToStoriesNavigate(){
+        _editStoryToStoriesNavigate.value = true
     }
 
-    fun onEditStoryNavigateComplete(){
-        Log.i("EditStoryVM", "nav from edit story back to stories completed")
-        _editStoryNavigate.value = false
+    fun onEditStoryToStoriesNavigateComplete(){
+        _editStoryToStoriesNavigate.value = false
+    }
+
+    private val _editStoryToCharactersNavigate = MutableLiveData<Boolean>()
+    val editStoryToCharactersNavigate: LiveData<Boolean>
+        get() = _editStoryToCharactersNavigate
+
+    private fun onEditStoryToCharactersNavigate(){
+        _editStoryToCharactersNavigate.value = true
+    }
+
+    fun onEditStoryToCharactersNavigateComplete(){
+        _editStoryToCharactersNavigate.value = false
     }
 
     fun submitStoryUpdate(story: StoriesEntity){
         viewModelScope.launch {
             Log.i("EditStoryVM", "starting to update story")
             db.updateStory(storyId, story)
-            onEditStoryNavigate()
+            onEditStoryToCharactersNavigate()
         }
     }
 
@@ -46,7 +56,7 @@ class EditStoryViewModel(private val storyId: String): ViewModel() {
         viewModelScope.launch {
             Log.i("EditStoryVM", "starting to delete story")
             db.deleteStory(storyId)
-            onEditStoryNavigate()
+            onEditStoryToStoriesNavigate()
         }
     }
 

@@ -36,7 +36,9 @@
         android:label="AddStoryFragment" >
         <action
             android:id="@+id/action_addStoryFragment_to_storiesFragment"
-            app:destination="@id/storiesFragment" />
+            app:destination="@id/storiesFragment"
+            app:popUpTo="@id/storiesFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_addStoryFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
@@ -73,10 +75,17 @@
             app:argType="string" />
         <action
             android:id="@+id/action_editStoryFragment_to_storiesFragment"
-            app:destination="@id/storiesFragment" />
+            app:destination="@id/storiesFragment"
+            app:popUpTo="@id/storiesFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_editStoryFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_editStoryFragment_to_charactersFragment"
+            app:destination="@id/charactersFragment"
+            app:popUpTo="@id/charactersFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/addCharacterFragment"
@@ -93,7 +102,9 @@
             app:argType="string[]" />
         <action
             android:id="@+id/action_addCharacterFragment_to_charactersFragment"
-            app:destination="@id/charactersFragment" />
+            app:destination="@id/charactersFragment"
+            app:popUpTo="@id/charactersFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_addCharacterFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
@@ -153,10 +164,14 @@
             app:destination="@id/settingsFragment" />
         <action
             android:id="@+id/action_editCharacterFragment_to_charactersFragment"
-            app:destination="@id/charactersFragment" />
+            app:destination="@id/charactersFragment"
+            app:popUpTo="@id/characterDetailsFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_editCharacterFragment_to_characterDetailsFragment"
-            app:destination="@id/characterDetailsFragment" />
+            app:destination="@id/characterDetailsFragment"
+            app:popUpTo="@id/characterDetailsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -164,7 +179,9 @@
         android:label="SignUpFragment" >
         <action
             android:id="@+id/action_signUpFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
+            app:destination="@id/signInFragment"
+            app:popUpTo="@id/signInFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
