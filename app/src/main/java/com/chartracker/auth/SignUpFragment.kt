@@ -36,13 +36,12 @@ class SignUpFragment : Fragment() {
         if (auth.currentUser != null){
             // if somehow signed in wouldn't want to be here
             viewModel.onSignUpNavigate()
-            Toast.makeText(context, "already signed in", Toast.LENGTH_LONG).show()
         }
         /*---------------------------------------------------------------------*/
 
         viewModel.signUpNavigate.observe(viewLifecycleOwner) {
             if (it) {
-                findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToSignInFragment())
+                findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToEmailVerificationFragment())
                 viewModel.onSignUpNavigateComplete()
             }
         }

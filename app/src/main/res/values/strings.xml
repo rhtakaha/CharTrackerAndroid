@@ -60,4 +60,9 @@
     <string name="sign_in_credentials">Sign In With Saved Credentials</string>
     <string name="story_image_desc">Image representing the story</string>
     <string name="overflow_menu">Overflow menu</string>
+    <string name="email_verification_instructions">A verification email was sent to the below email. Please verify to continue.</string>
+    <string name="resend">Resend</string>
+    <string name="go_to_sign_in">Continue to Sign In</string>
+    <string name="Im_verified">I\'m verified!</string>
+    <string name="change_email">Change Email</string>
 </resources>

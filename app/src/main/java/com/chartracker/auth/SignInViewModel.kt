@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class SignInViewModel(private val application: Application) : AndroidViewModel(application) {
     private val tag = "SignInVM"
-    private val auth = Firebase.auth
+    val auth = Firebase.auth
 
     private  var credentialManager = CredentialManager.create(application)
 
@@ -67,6 +67,18 @@ class SignInViewModel(private val application: Application) : AndroidViewModel(a
         _signInFailed.value = false
     }
 
+    private val _signInEmailUnverified = MutableLiveData<Boolean>()
+    val signInEmailUnverified: LiveData<Boolean>
+        get() = _signInEmailUnverified
+
+    private fun onSignInEmailUnverified(){
+        _signInEmailUnverified.value = true
+    }
+
+    fun onSignInEmailUnverifiedComplete(){
+        _signInEmailUnverified.value = false
+    }
+
     fun signInWithEmailPassword(email: String, password: String){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -74,8 +86,15 @@ class SignInViewModel(private val application: Application) : AndroidViewModel(a
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(tag, "signInWithEmail:success")
 
-                    // go to their stories page
-                    onSignInNavigate()
+                    //check if their email is verified
+                    if (auth.currentUser!!.isEmailVerified){
+                        // go to their stories page
+                        onSignInNavigate()
+                    }else{
+                        // if their email is unverified
+                        onSignInEmailUnverified()
+                    }
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(tag, "signInWithEmail:failure", task.exception)

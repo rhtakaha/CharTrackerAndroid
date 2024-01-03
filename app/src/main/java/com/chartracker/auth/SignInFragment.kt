@@ -47,6 +47,14 @@ class SignInFragment : Fragment() {
             }
         }
 
+        viewModel.signInEmailUnverified.observe(viewLifecycleOwner) {
+            if (it){
+                Toast.makeText(context, "Email is unverified. Verify to continue.", Toast.LENGTH_LONG).show()
+                findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToEmailVerificationFragment())
+                viewModel.onSignInEmailUnverifiedComplete()
+            }
+        }
+
         binding.signInButton.setOnClickListener {
             if (binding.signInEmail.text.toString() != "" && binding.signInPassword.text.toString() != "") {
                 viewModel.signInWithEmailPassword(binding.signInEmail.text.toString(), binding.signInPassword.text.toString())
