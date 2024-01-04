@@ -55,6 +55,13 @@ class SignInFragment : Fragment() {
             }
         }
 
+        viewModel.sentPasswordReset.observe(viewLifecycleOwner){
+            if (it) {
+                Toast.makeText(context, "password reset email sent", Toast.LENGTH_LONG).show()
+                viewModel.onSentPasswordResetComplete()
+            }
+        }
+
         binding.signInButton.setOnClickListener {
             if (binding.signInEmail.text.toString() != "" && binding.signInPassword.text.toString() != "") {
                 viewModel.signInWithEmailPassword(binding.signInEmail.text.toString(), binding.signInPassword.text.toString())
@@ -63,8 +70,21 @@ class SignInFragment : Fragment() {
             }
         }
 
+        binding.signInPasswordReset.setOnClickListener {
+            if (binding.signInEmail.text.toString() != "") {
+                viewModel.sendPasswordResetEmail(binding.signInEmail.text.toString())
+            }else{
+                Toast.makeText(context, "Enter email", Toast.LENGTH_LONG).show()
+            }
+        }
+
         binding.signInSavedCredentialsButton.setOnClickListener {
             viewModel.signInWithSavedCredentials()
+        }
+
+        if(viewModel.auth.currentUser != null){
+            // if we are already signed in take us to the stories page
+            viewModel.onSignInNavigate()
         }
 
         return binding.root

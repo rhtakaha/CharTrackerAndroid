@@ -79,6 +79,28 @@ class SignInViewModel(private val application: Application) : AndroidViewModel(a
         _signInEmailUnverified.value = false
     }
 
+    private val _sentPasswordReset = MutableLiveData<Boolean>()
+    val sentPasswordReset: LiveData<Boolean>
+        get() = _sentPasswordReset
+
+    private fun onSentPasswordReset(){
+        _sentPasswordReset.value = true
+    }
+
+    fun onSentPasswordResetComplete(){
+        _sentPasswordReset.value = false
+    }
+
+    fun sendPasswordResetEmail(email: String){
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(tag, "Email sent.")
+                    onSentPasswordReset()
+                }
+            }
+    }
+
     fun signInWithEmailPassword(email: String, password: String){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->

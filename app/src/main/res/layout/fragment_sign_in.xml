@@ -84,11 +84,21 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin"
             android:text="@string/SignUpButton"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/sign_in_password_reset"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sign_in_saved_credentials_button"
             android:onClick="@{() -> viewModel.onSignInToSignUpNavigate()}"/>
+
+        <Button
+            android:id="@+id/sign_in_password_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password_reset"
+            app:layout_constraintTop_toBottomOf="@+id/sign_up_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
