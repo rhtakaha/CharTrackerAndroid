@@ -65,4 +65,8 @@
     <string name="go_to_sign_in">Continue to Sign In</string>
     <string name="Im_verified">I\'m verified!</string>
     <string name="change_email">Change Email</string>
+    <string name="update_email">Update Email</string>
+    <string name="current_email_header">Current Email</string>
+    <string name="new_email">Input new email</string>
+    <string name="email_update_instructions">A verification email will be sent to the new email. Verify that email to complete the update.</string>
 </resources>

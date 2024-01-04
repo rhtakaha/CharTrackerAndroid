@@ -23,6 +23,18 @@ class SettingsViewModel : ViewModel() {
         _signOutNavigate.value = false
     }
 
+    private val _settingsToUpdateEmailNavigate = MutableLiveData<Boolean>()
+    val settingsToUpdateEmailNavigate: LiveData<Boolean>
+        get() = _settingsToUpdateEmailNavigate
+
+    fun onSettingsToUpdateEmailNavigate(){
+        _settingsToUpdateEmailNavigate.value = true
+    }
+
+    fun onSettingsToUpdateEmailNavigateComplete(){
+        _settingsToUpdateEmailNavigate.value = false
+    }
+
     fun signOut(){
         if (auth.currentUser != null) {
             auth.signOut()
