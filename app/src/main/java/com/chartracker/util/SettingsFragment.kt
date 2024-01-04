@@ -37,6 +37,13 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        viewModel.settingsToUpdatePasswordNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToUpdatePasswordFragment())
+                viewModel.onSettingsToUpdatePasswordNavigateComplete()
+            }
+        }
+
         return binding.root
     }
 

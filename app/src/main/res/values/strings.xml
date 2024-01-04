@@ -70,4 +70,6 @@
     <string name="new_email">Input new email</string>
     <string name="email_update_instructions">A verification email will be sent to the new email. Verify that email to complete the update.</string>
     <string name="password_reset">Send password reset email</string>
+    <string name="update_password">Update Password</string>
+    <string name="new_password">New password</string>
 </resources>

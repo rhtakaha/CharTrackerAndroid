@@ -35,6 +35,18 @@ class SettingsViewModel : ViewModel() {
         _settingsToUpdateEmailNavigate.value = false
     }
 
+    private val _settingsToUpdatePasswordNavigate = MutableLiveData<Boolean>()
+    val settingsToUpdatePasswordNavigate: LiveData<Boolean>
+        get() = _settingsToUpdatePasswordNavigate
+
+    fun onSettingsToUpdatePasswordNavigate(){
+        _settingsToUpdatePasswordNavigate.value = true
+    }
+
+    fun onSettingsToUpdatePasswordNavigateComplete(){
+        _settingsToUpdatePasswordNavigate.value = false
+    }
+
     fun signOut(){
         if (auth.currentUser != null) {
             auth.signOut()

@@ -23,7 +23,7 @@ class UpdateEmailFragment : Fragment() {
 
         val args = UpdateEmailFragmentArgs.fromBundle(requireArguments())
 
-            viewModel = ViewModelProvider(this)[UpdateEmailViewModel::class.java]
+        viewModel = ViewModelProvider(this)[UpdateEmailViewModel::class.java]
         binding.viewModel = viewModel
 
         // display the current email
