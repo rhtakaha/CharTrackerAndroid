@@ -24,6 +24,18 @@ class UpdateEmailViewModel : ViewModel() {
         _updateEmailToSettingsNavigate.value = false
     }
 
+    private val _updateEmailToSignInNavigate = MutableLiveData<Boolean>()
+    val updateEmailToSignInNavigate: LiveData<Boolean>
+        get() = _updateEmailToSignInNavigate
+
+    fun onUpdateEmailToSignInNavigate(){
+        _updateEmailToSignInNavigate.value = true
+    }
+
+    fun onUpdateEmailToSignInNavigateComplete(){
+        _updateEmailToSignInNavigate.value = false
+    }
+
     //sends the user a verification email to the new email which completes the change
     fun updateUserEmail(newEmail: String){
         user!!.verifyBeforeUpdateEmail(newEmail)

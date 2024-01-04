@@ -54,7 +54,8 @@
             app:layout_constraintTop_toBottomOf="@+id/email_verify_resend"
             app:layout_constraintBottom_toTopOf="@+id/email_verify_check"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:onClick="@{() -> viewModel.onEmailVerificationToUpdateEmailNavigate()}"/>
 
         <Button
             android:id="@+id/email_verify_check"

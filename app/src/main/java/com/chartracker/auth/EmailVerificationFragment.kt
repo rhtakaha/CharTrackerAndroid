@@ -36,6 +36,13 @@ class EmailVerificationFragment : Fragment() {
             }
         }
 
+        viewModel.emailVerificationToUpdateEmailNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(EmailVerificationFragmentDirections.actionEmailVerificationFragmentToUpdateEmailFragment(false))
+                viewModel.onEmailVerificationToUpdateEmailNavigateComplete()
+            }
+        }
+
         binding.emailVerifyCheck.setOnClickListener {
             viewModel.backToSignIn()
             Toast.makeText(context, "Sign in to continue", Toast.LENGTH_LONG).show()

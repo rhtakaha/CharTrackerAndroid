@@ -32,7 +32,7 @@ class SettingsFragment : Fragment() {
 
         viewModel.settingsToUpdateEmailNavigate.observe(viewLifecycleOwner){
             if (it){
-                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToUpdateEmailFragment())
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToUpdateEmailFragment(true))
                 viewModel.onSettingsToUpdateEmailNavigateComplete()
             }
         }

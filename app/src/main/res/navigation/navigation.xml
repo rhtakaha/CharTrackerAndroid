@@ -204,6 +204,9 @@
             app:destination="@id/signInFragment"
             app:popUpTo="@id/signInFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_emailVerificationFragment_to_updateEmailFragment"
+            app:destination="@id/updateEmailFragment" />
     </fragment>
     <fragment
         android:id="@+id/updateEmailFragment"
@@ -213,6 +216,14 @@
             android:id="@+id/action_updateEmailFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"
             app:popUpTo="@id/settingsFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="fromSettings"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/action_updateEmailFragment_to_signInFragment"
+            app:destination="@id/signInFragment"
+            app:popUpTo="@id/signInFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

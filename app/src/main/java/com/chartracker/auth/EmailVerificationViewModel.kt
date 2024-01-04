@@ -24,6 +24,18 @@ class EmailVerificationViewModel : ViewModel() {
         _emailVerificationToSignInNavigate.value = false
     }
 
+    private val _emailVerificationToUpdateEmailNavigate = MutableLiveData<Boolean>()
+    val emailVerificationToUpdateEmailNavigate: LiveData<Boolean>
+        get() = _emailVerificationToUpdateEmailNavigate
+
+    fun onEmailVerificationToUpdateEmailNavigate(){
+        _emailVerificationToUpdateEmailNavigate.value = true
+    }
+
+    fun onEmailVerificationToUpdateEmailNavigateComplete(){
+        _emailVerificationToUpdateEmailNavigate.value = false
+    }
+
     fun backToSignIn(){
         // sign out and send user to sign in to get through if their email is verified
         Firebase.auth.signOut()
