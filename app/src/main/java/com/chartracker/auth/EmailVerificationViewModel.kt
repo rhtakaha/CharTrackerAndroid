@@ -12,16 +12,16 @@ class EmailVerificationViewModel : ViewModel() {
 
     val user = Firebase.auth.currentUser
 
-    private val _emailVerificationToSignInNavigate = MutableLiveData<Boolean>()
-    val emailVerificationToSignInNavigate: LiveData<Boolean>
-        get() = _emailVerificationToSignInNavigate
+    private val _emailVerificationToStoriesNavigate = MutableLiveData<Boolean>()
+    val emailVerificationToStoriesNavigate: LiveData<Boolean>
+        get() = _emailVerificationToStoriesNavigate
 
-    private fun onEmailVerificationToSignInNavigate(){
-        _emailVerificationToSignInNavigate.value = true
+    fun onEmailVerificationToStoriesNavigate(){
+        _emailVerificationToStoriesNavigate.value = true
     }
 
-    fun onEmailVerificationToSignInNavigateComplete(){
-        _emailVerificationToSignInNavigate.value = false
+    fun onEmailVerificationToStoriesNavigateComplete(){
+        _emailVerificationToStoriesNavigate.value = false
     }
 
     private val _emailVerificationToUpdateEmailNavigate = MutableLiveData<Boolean>()
@@ -36,12 +36,6 @@ class EmailVerificationViewModel : ViewModel() {
         _emailVerificationToUpdateEmailNavigate.value = false
     }
 
-    fun backToSignIn(){
-        // sign out and send user to sign in to get through if their email is verified
-        Firebase.auth.signOut()
-        onEmailVerificationToSignInNavigate()
-    }
-
 
     /* once on entry and then when the button it pressed*/
     fun sendVerificationEmail(){
@@ -51,5 +45,11 @@ class EmailVerificationViewModel : ViewModel() {
                     Log.d(tag, "Email sent.")
                 }
             }
+    }
+
+    fun isEmailVerified(): Boolean{
+        user!!.reload()
+        return user.isEmailVerified
+
     }
 }

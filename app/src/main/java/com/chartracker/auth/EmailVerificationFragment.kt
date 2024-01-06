@@ -11,8 +11,6 @@ import androidx.navigation.fragment.findNavController
 import com.chartracker.databinding.FragmentEmailVerificationBinding
 
 class EmailVerificationFragment : Fragment() {
-    //TODO need to figure out how to hide the "up button"
-
     private lateinit var viewModel: EmailVerificationViewModel
 
     override fun onCreateView(
@@ -29,10 +27,10 @@ class EmailVerificationFragment : Fragment() {
         // set the email to be shown to the user to make sure they used the correct one
         binding.emailVerifyEmail.text = viewModel.user?.email
 
-        viewModel.emailVerificationToSignInNavigate.observe(viewLifecycleOwner) {
+        viewModel.emailVerificationToStoriesNavigate.observe(viewLifecycleOwner) {
             if (it){
-                findNavController().navigate(EmailVerificationFragmentDirections.actionEmailVerificationFragmentToSignInFragment())
-                viewModel.onEmailVerificationToSignInNavigateComplete()
+                findNavController().navigate(EmailVerificationFragmentDirections.actionEmailVerificationFragmentToStoriesFragment())
+                viewModel.onEmailVerificationToStoriesNavigateComplete()
             }
         }
 
@@ -44,9 +42,15 @@ class EmailVerificationFragment : Fragment() {
         }
 
         binding.emailVerifyCheck.setOnClickListener {
-            viewModel.backToSignIn()
-            Toast.makeText(context, "Sign in to continue", Toast.LENGTH_LONG).show()
+            if (viewModel.isEmailVerified()){
+                //email is verified
+                viewModel.onEmailVerificationToStoriesNavigate()
+            }else{
+                Toast.makeText(context, "Email not verified. It may take a moment", Toast.LENGTH_LONG).show()
+            }
         }
+
+
 
         //send the verification email
         viewModel.sendVerificationEmail()
