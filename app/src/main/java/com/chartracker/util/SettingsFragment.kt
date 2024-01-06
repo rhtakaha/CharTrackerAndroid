@@ -44,6 +44,17 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        viewModel.settingsToSignInNavigate.observe(viewLifecycleOwner){
+            if (it){
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSignInFragment())
+                viewModel.onSettingsToSignInNavigateComplete()
+            }
+        }
+
+        binding.settingsReauthButton.setOnClickListener {
+            viewModel.reauthUser(binding.settingsPassword.text.toString())
+        }
+
         return binding.root
     }
 

@@ -211,6 +211,15 @@ class DatabaseAccess {
             .addOnFailureListener { e -> Log.w(tag, "Error deleting story", e) }
     }
 
+    //TODO figure out how best to handle the stories and characters subcollection
+    suspend fun deleteUserData(userUID: String){
+        db.collection("users")
+            .document(userUID)
+            .delete()
+            .addOnSuccessListener { Log.d(tag, "User Data successfully deleted!") }
+            .addOnFailureListener { e -> Log.w(tag, "Error deleting user Data", e) }
+    }
+
     suspend fun getStoryId(storyTitle: String): String{
         var story: String = ""
         db.collection("users")
