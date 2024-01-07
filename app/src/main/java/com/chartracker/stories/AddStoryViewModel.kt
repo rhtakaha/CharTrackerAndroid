@@ -55,7 +55,7 @@ class AddStoryViewModel : ViewModel() {
             db.createStory(story)
             if(imageURI != "" && imageType != ""){
                 val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType)
-                db.addImage("${story.title}.$extension", imageURI.toUri())
+                db.addImage("story_${story.title}.$extension", imageURI.toUri())
             }
             onAddStoryNavigate()
         }
