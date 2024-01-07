@@ -1,5 +1,6 @@
 package com.chartracker.database
 
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Filter
@@ -7,15 +8,36 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
-
-
 
 
 class DatabaseAccess {
     private val tag = "dbAccess"
     private val db = Firebase.firestore
     private val auth = Firebase.auth
+    private val storage = Firebase.storage
+
+    /* function for adding an image into cloud storage
+    * input: String filename WITHOUT EXTENSION*/
+    fun addImage(filename: String, imageURI: Uri){
+        // make a reference to where the file will be
+        val storageRef = storage.reference
+        val imageRef = storageRef.child("users/${auth.currentUser!!.uid}/images/$filename")
+
+//        val file = Uri.fromFile(File(imageURI))
+        val uploadTask = imageRef.putFile(imageURI)
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+            Log.d(tag, "image upload failed")
+        }.addOnSuccessListener { taskSnapshot ->
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+            // ...
+            Log.d(tag, "image upload succeeded!")
+        }
+    }
 
     /*creates a new user in Firebase*/
     suspend fun createUser(user: UserEntity){
