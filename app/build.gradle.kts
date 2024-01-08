@@ -73,6 +73,9 @@ dependencies {
     // Credential Manager
     implementation("androidx.credentials:credentials:1.3.0-alpha01")
 
+    //Glide for showing images
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
 
     //TODO need to add all dependencies for Firebase as we go
     // (cloud storage and auth for sure later)

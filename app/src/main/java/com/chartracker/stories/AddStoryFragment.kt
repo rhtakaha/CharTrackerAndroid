@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.chartracker.R
 import com.chartracker.database.StoriesEntity
 import com.chartracker.databinding.FragmentAddStoryBinding
@@ -77,6 +78,10 @@ class AddStoryFragment : Fragment(), MenuProvider {
                     imageType = type
                 }
                 imageURI = uri.toString()
+
+                Glide.with(requireContext())
+                    .load(uri)
+                    .into(binding.addStoryImage)
 
             } else {
                 Log.d("PhotoPicker", "No media selected")
