@@ -100,8 +100,14 @@ class AddStoryFragment : Fragment(), MenuProvider {
             }
         }
 
-        binding.addStoryChooseImageButton.setOnClickListener {
+        binding.addStorySelectImageButton.setOnClickListener {
             chooseImage(pickMedia)
+        }
+
+        binding.addStoryRemoveImageButton.setOnClickListener {
+            imageURI = ""
+            imageType = ""
+            binding.addStoryImage.setImageResource(0)
         }
 
         val menuHost: MenuHost = requireActivity()

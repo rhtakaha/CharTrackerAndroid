@@ -78,4 +78,5 @@
     <string name="selected_image">Selected image</string>
     <string name="current_story_image_desc">The current image representing the story</string>
     <string name="selected_story_image_desc">The image selected to replace the current story image</string>
+    <string name="remove_image">Remove image</string>
 </resources>
