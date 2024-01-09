@@ -21,8 +21,8 @@
 
         <ImageView
             android:id="@+id/story_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/list_image_width"
+            android:layout_height="@dimen/list_image_height"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
             android:layout_marginBottom="@dimen/default_margin"
@@ -30,7 +30,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:storyImage="@{story}"
+            app:setStoryImage="@{story}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView

@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.StoriesEntity
-import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
 
 open class CharactersViewModel(private val storyTitle: String): ViewModel() {
@@ -27,14 +26,6 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
             Log.i("CharVM", "doc ID is: $storyId")
             characters.value = db.getCharacters(storyId)
             story.value = db.getStoryFromId(storyId)
-        }
-    }
-
-    fun getImageRef(): StorageReference?{
-        return if(story.value!!.imageFilename != null){
-            db.getImageRef(story.value!!.imageFilename.toString())
-        }else{
-            null
         }
     }
 
