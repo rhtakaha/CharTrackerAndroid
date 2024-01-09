@@ -8,6 +8,7 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 
@@ -17,6 +18,10 @@ class DatabaseAccess {
     private val db = Firebase.firestore
     private val auth = Firebase.auth
     private val storage = Firebase.storage
+
+    fun getImageRef(filename: String): StorageReference{
+        return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
+    }
 
     /* function for adding an image into cloud storage
     * input: String filename WITHOUT EXTENSION*/

@@ -15,6 +15,7 @@ import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.chartracker.R
 import com.chartracker.databinding.FragmentCharactersBinding
 
@@ -86,8 +87,23 @@ class CharactersFragment : Fragment(), MenuProvider {
             }
         }
 
+        viewModel.story.observe(viewLifecycleOwner){
+            it?.let {
+                //get and display
+                // Reference to an image file in Cloud Storage
+                val imageRef = viewModel.getImageRef()
+
+                // Download directly from StorageReference using Glide
+                Glide.with(requireContext())
+                    .load(imageRef)
+                    .into(binding.charactersStoryImage)
+            }
+        }
+
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+
 
         return binding.root
     }

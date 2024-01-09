@@ -10,6 +10,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,11 +59,22 @@ class AddStoryFragment : Fragment(), MenuProvider {
         var imageURI = ""
         var imageType = ""
 
+
         binding.addStoriesSubmit.setOnClickListener {
-            viewModel.submitStory(StoriesEntity(binding.addStoryTitle.text.toString(),
-                binding.addStoryGenre.text.toString(),
-                binding.addStoryType.text.toString(),
-                binding.addStoryAuthor.text.toString()), imageURI, imageType)
+            // build the story with or without the filename if based on if it has an image
+            val story: StoriesEntity = if(imageURI != "" && imageType != ""){
+                val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType)
+                StoriesEntity(binding.addStoryTitle.text.toString(),
+                    binding.addStoryGenre.text.toString(),
+                    binding.addStoryType.text.toString(),
+                    binding.addStoryAuthor.text.toString(), "story_${binding.addStoryTitle.text}.$extension")
+            }else{
+                StoriesEntity(binding.addStoryTitle.text.toString(),
+                    binding.addStoryGenre.text.toString(),
+                    binding.addStoryType.text.toString(),
+                    binding.addStoryAuthor.text.toString())
+            }
+            viewModel.submitStory(story, imageURI)
         }
 
         val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->

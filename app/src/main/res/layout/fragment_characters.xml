@@ -41,11 +41,10 @@
 
         <ImageView
             android:id="@+id/characters_story_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/add_image_width"
+            android:layout_height="@dimen/add_image_height"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginBottom="@dimen/default_margin"
             android:contentDescription="@string/story_image_desc"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -87,7 +86,7 @@
             android:text="@string/characters"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/characters_story_type" />
+            app:layout_constraintTop_toBottomOf="@+id/characters_story_image" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/characters_list"

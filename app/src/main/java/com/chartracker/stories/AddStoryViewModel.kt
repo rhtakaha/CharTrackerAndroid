@@ -1,7 +1,6 @@
 package com.chartracker.stories
 
 import android.util.Log
-import android.webkit.MimeTypeMap
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -48,15 +47,12 @@ class AddStoryViewModel : ViewModel() {
 
     /*function that calls a database access method to create the story in Firebase
         also calls navigation*/
-    fun submitStory(story: StoriesEntity, imageURI: String, imageType: String){
+    fun submitStory(story: StoriesEntity, imageURI: String){
 
         viewModelScope.launch {
             Log.i(tag, "Creation of new story initiated")
             db.createStory(story)
-            if(imageURI != "" && imageType != ""){
-                val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType)
-                db.addImage("story_${story.title}.$extension", imageURI.toUri())
-            }
+            story.imageFilename?.let { db.addImage(it, imageURI.toUri()) }
             onAddStoryNavigate()
         }
     }
