@@ -36,17 +36,71 @@
             app:layout_constraintVertical_bias="0.0"
             tools:context=".stories.AddStoryFragment">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/edit_story_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/edit_story_current_image_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/current_image"
+                    app:layout_constraintEnd_toStartOf="@+id/edit_story_selected_image_prompt"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/edit_story_current_image"
+                    android:layout_width="@dimen/add_image_width"
+                    android:layout_height="@dimen/add_image_height"
+                    android:contentDescription="@string/current_story_image_desc"
+                    app:layout_constraintEnd_toStartOf="@+id/edit_story_selected_image"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_story_current_image_prompt"
+                    app:setStoryImage="@{viewModel.story}"
+                    tools:src="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/edit_story_selected_image_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/selected_image"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_story_selected_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/edit_story_current_image_prompt"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/edit_story_selected_image"
+                    android:layout_width="@dimen/add_image_width"
+                    android:layout_height="@dimen/add_image_height"
+                    android:contentDescription="@string/selected_story_image_desc"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_story_select_image_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/edit_story_current_image"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_story_selected_image_prompt"
+                    android:src="@drawable/baseline_settings_24"
+                    tools:src="@tools:sample/avatars" />
+
+                <Button
+                    android:id="@+id/edit_story_select_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_image"
+                    app:layout_constraintStart_toStartOf="@+id/edit_story_selected_image"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_story_title_prompt"
+                    app:layout_constraintEnd_toEndOf="@+id/edit_story_selected_image"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_story_selected_image" />
 
                 <TextView
                     android:id="@+id/edit_story_title_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/title" />
+                    android:text="@string/title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_story_select_image_button" />
 
                 <EditText
                     android:id="@+id/edit_story_title"
@@ -56,13 +110,19 @@
                     android:autofillHints=""
                     android:hint="@string/title_hint"
                     android:inputType="text"
-                    android:text="@{viewModel.story.title.toString()}" />
+                    android:text="@{viewModel.story.title.toString()}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_title_prompt" />
 
                 <TextView
                     android:id="@+id/edit_story_author_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/author" />
+                    android:text="@string/author"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_title" />
 
                 <EditText
                     android:id="@+id/edit_story_author"
@@ -72,13 +132,19 @@
                     android:autofillHints=""
                     android:hint="@string/author_hint"
                     android:inputType="text|textPersonName"
-                    android:text="@{viewModel.story.author.toString()}"/>
+                    android:text="@{viewModel.story.author.toString()}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_author_prompt" />
 
                 <TextView
                     android:id="@+id/edit_story_genre_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/genre" />
+                    android:text="@string/genre"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_author" />
 
                 <EditText
                     android:id="@+id/edit_story_genre"
@@ -88,27 +154,34 @@
                     android:autofillHints=""
                     android:hint="@string/genre_hint"
                     android:inputType="text"
-                    android:text="@{viewModel.story.genre.toString()}"/>
+                    android:text="@{viewModel.story.genre.toString()}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_genre_prompt" />
 
                 <TextView
                     android:id="@+id/edit_story_type_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/type" />
+                    android:text="@string/type"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_genre" />
 
                 <EditText
                     android:id="@+id/edit_story_type"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
-                    android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/type_hint"
                     android:inputType="text"
-                    android:text="@{viewModel.story.type.toString()}"/>
+                    android:text="@{viewModel.story.type.toString()}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_type_prompt" />
 
 
-
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </ScrollView>

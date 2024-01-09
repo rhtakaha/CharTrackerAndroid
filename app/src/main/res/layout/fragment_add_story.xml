@@ -53,10 +53,10 @@
                     tools:src="@tools:sample/avatars" />
 
                 <Button
-                    android:id="@+id/add_story_choose_image_button"
+                    android:id="@+id/add_story_select_image_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/choose_image" />
+                    android:text="@string/select_image" />
 
                 <TextView
                     android:id="@+id/add_story_title_prompt"

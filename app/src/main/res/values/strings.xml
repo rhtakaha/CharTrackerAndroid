@@ -73,5 +73,9 @@
     <string name="update_password">Update Password</string>
     <string name="new_password">New password</string>
     <string name="delete_account">DELETE ACCOUNT</string>
-    <string name="choose_image">Choose image</string>
+    <string name="select_image">Select image</string>
+    <string name="current_image">Current image</string>
+    <string name="selected_image">Selected image</string>
+    <string name="current_story_image_desc">The current image representing the story</string>
+    <string name="selected_story_image_desc">The image selected to replace the current story image</string>
 </resources>
