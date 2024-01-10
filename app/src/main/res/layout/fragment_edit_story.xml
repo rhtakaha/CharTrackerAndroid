@@ -61,6 +61,15 @@
                     app:setStoryImage="@{viewModel.story}"
                     tools:src="@tools:sample/avatars" />
 
+                <Button
+                    android:id="@+id/edit_story_remove_current_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove_currrent_image"
+                    app:layout_constraintEnd_toEndOf="@+id/edit_story_current_image"
+                    app:layout_constraintStart_toStartOf="@+id/edit_story_current_image"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_story_current_image" />
+
                 <TextView
                     android:id="@+id/edit_story_selected_image_prompt"
                     android:layout_width="wrap_content"
@@ -80,7 +89,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/edit_story_current_image"
                     app:layout_constraintTop_toBottomOf="@+id/edit_story_selected_image_prompt"
-                    android:src="@drawable/baseline_settings_24"
                     tools:src="@tools:sample/avatars" />
 
                 <Button
@@ -89,9 +97,19 @@
                     android:layout_height="wrap_content"
                     android:text="@string/select_image"
                     app:layout_constraintStart_toStartOf="@+id/edit_story_selected_image"
-                    app:layout_constraintBottom_toTopOf="@+id/edit_story_title_prompt"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_story_remove_selected_image_button"
                     app:layout_constraintEnd_toEndOf="@+id/edit_story_selected_image"
                     app:layout_constraintTop_toBottomOf="@+id/edit_story_selected_image" />
+
+                <Button
+                    android:id="@+id/edit_story_remove_selected_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove_selected_image"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_story_title_prompt"
+                    app:layout_constraintEnd_toEndOf="@id/edit_story_selected_image"
+                    app:layout_constraintStart_toStartOf="@+id/edit_story_selected_image"
+                    app:layout_constraintTop_toBottomOf="@id/edit_story_select_image_button" />
 
                 <TextView
                     android:id="@+id/edit_story_title_prompt"
@@ -100,7 +118,7 @@
                     android:text="@string/title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/edit_story_select_image_button" />
+                    app:layout_constraintTop_toBottomOf="@+id/edit_story_remove_selected_image_button" />
 
                 <EditText
                     android:id="@+id/edit_story_title"

@@ -16,11 +16,17 @@ class StoriesViewModel : ViewModel() {
     val stories = MutableLiveData<MutableList<StoriesEntity>>()
     val db = DatabaseAccess()
 
-    init {
-        //for testing purposes right now
-//        stories.value = mutableListOf()
-////        stories.value?.add(StoriesEntity("Lord of the Rings"))
-////        stories.value?.add(StoriesEntity("Ender's Game"))
+//    init {
+//        //for testing purposes right now
+////        stories.value = mutableListOf()
+//////        stories.value?.add(StoriesEntity("Lord of the Rings"))
+//////        stories.value?.add(StoriesEntity("Ender's Game"))
+//        viewModelScope.launch {
+//            stories.value = db.getStories()
+//        }
+//    }
+
+    fun getStories(){
         viewModelScope.launch {
             stories.value = db.getStories()
         }

@@ -39,6 +39,8 @@ class StoriesFragment : Fragment(), MenuProvider {
         })
         binding.storiesList.adapter = adapter
 
+        viewModel.getStories()
+
         viewModel.storyClickedNavigate.observe(viewLifecycleOwner) {
             if (it != null) {
                 findNavController().navigate(

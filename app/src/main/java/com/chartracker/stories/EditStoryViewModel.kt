@@ -1,6 +1,7 @@
 package com.chartracker.stories
 
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,11 +13,13 @@ import kotlinx.coroutines.launch
 class EditStoryViewModel(private val storyId: String): ViewModel() {
     var story = MutableLiveData<StoriesEntity>()
     val db = DatabaseAccess()
+    var filename = MutableLiveData<String?>()
 
     init {
         Log.i("EditStoryVM", " got story ID $storyId")
         viewModelScope.launch {
             story.value = db.getStoryFromId(storyId)
+            filename.value = story.value!!.imageFilename
         }
     }
 
@@ -44,10 +47,29 @@ class EditStoryViewModel(private val storyId: String): ViewModel() {
         _editStoryToCharactersNavigate.value = false
     }
 
-    fun submitStoryUpdate(story: StoriesEntity){
+    fun submitStoryUpdate(updatedStory: StoriesEntity, imageURI: String){
         viewModelScope.launch {
             Log.i("EditStoryVM", "starting to update story")
-            db.updateStory(storyId, story)
+            db.updateStory(storyId, updatedStory)
+
+            if (imageURI != ""){
+                // trying to add a new image
+                //if adding a new image be sure to delete the original too (if it had one)
+                updatedStory.imageFilename?.let {
+                    db.addImage(it, imageURI.toUri())
+                    story.value!!.imageFilename?.let { it1 -> db.deleteImage(it1) }
+                }
+            }else{
+                // could be either making no image change or trying to delete it
+                if(updatedStory.imageFilename == null && story.value!!.imageFilename != null){
+                    // if there is no filename listed in new version
+                    //                  AND
+                    // the old version had one then we are deleting the current
+                    db.deleteImage(story.value!!.imageFilename!!)
+                }
+                // if both were null it would be that there started with and ended with no image
+            }
+
             onEditStoryToCharactersNavigate()
         }
     }
@@ -56,6 +78,8 @@ class EditStoryViewModel(private val storyId: String): ViewModel() {
         viewModelScope.launch {
             Log.i("EditStoryVM", "starting to delete story")
             db.deleteStory(storyId)
+            // if it has an image delete that too
+            story.value!!.imageFilename?.let { db.deleteImage(it) }
             onEditStoryToStoriesNavigate()
         }
     }

@@ -19,6 +19,17 @@ class DatabaseAccess {
     private val auth = Firebase.auth
     private val storage = Firebase.storage
 
+    fun deleteImage(filename: String){
+        val imageRef = storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
+        imageRef.delete().addOnSuccessListener {
+            // File deleted successfully
+            Log.d(tag, "successfully deleted the image")
+        }.addOnFailureListener {
+            // Uh-oh, an error occurred!
+            Log.d(tag, "error deleting the image")
+        }
+    }
+
     fun getImageRef(filename: String): StorageReference{
         return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
     }
