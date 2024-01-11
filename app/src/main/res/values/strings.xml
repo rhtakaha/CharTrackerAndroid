@@ -81,4 +81,5 @@
     <string name="remove_image">Remove image</string>
     <string name="remove_currrent_image">Remove current image</string>
     <string name="remove_selected_image">Remove selected image</string>
+    <string name="character_image_desc">Image representing the character</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.chartracker.characters
 
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -72,10 +73,11 @@ class AddCharacterViewModel(private val storyId: String, val charsList: List<Str
 
     /*function that calls a database access method to create the character in Firebase
         also calls navigation*/
-    fun submitCharacter(character: CharacterEntity){
+    fun submitCharacter(character: CharacterEntity, imageURI: String){
         viewModelScope.launch {
             Log.i(tag, "Creation of new char initiated")
             db.createCharacter(storyId, character)
+            character.imageFilename?.let { db.addImage(it, imageURI.toUri()) }
             onAddCharacterNavigate()
         }
     }

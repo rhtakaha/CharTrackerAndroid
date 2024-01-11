@@ -16,5 +16,6 @@ data class CharacterEntity(
     val faction: String? = null, //might want to make faction objects down the line
     val allies: List<String>? = null,
     val enemies: List<String>? = null,
-    val neutral: List<String>? = null
+    val neutral: List<String>? = null,
+    val imageFilename: String? = null
 )

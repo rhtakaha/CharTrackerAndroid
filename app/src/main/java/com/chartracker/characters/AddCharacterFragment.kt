@@ -1,5 +1,6 @@
 package com.chartracker.characters
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -10,10 +11,15 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.databinding.FragmentAddCharacterBinding
@@ -48,8 +54,41 @@ class AddCharacterFragment : Fragment(), MenuProvider {
             }
         }
 
+
+
+        viewModel.settingsNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(AddCharacterFragmentDirections.actionAddCharacterFragmentToSettingsFragment())
+                viewModel.onSettingsNavigateComplete()
+            }
+        }
+
+        var imageURI = ""
+        var imageType = ""
+
         binding.addCharacterSubmit.setOnClickListener {
-            viewModel.submitCharacter(
+            val character: CharacterEntity = if(imageURI != "" && imageType != ""){
+                val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType)
+                CharacterEntity(
+                    binding.addCharacterName.text.toString(),
+                    binding.addCharacterAliases.text.toString(),
+                    binding.addCharacterTitles.text.toString(),
+                    if(binding.addCharacterAge.text.toString() != "") binding.addCharacterAge.text.toString().toInt() else null,
+                    binding.addCharacterHome.text.toString(),
+                    binding.addCharacterGender.text.toString(),
+                    binding.addCharacterRace.text.toString(),
+                    binding.addCharacterLivingOrDead.text.toString(),
+                    binding.addCharacterOccupation.text.toString(),
+                    binding.addCharacterWeapons.text.toString(),
+                    binding.addCharacterToolsEquipment.text.toString(),
+                    binding.addCharacterBio.text.toString(),
+                    binding.addCharacterFaction.text.toString(),
+                    viewModel.allies,
+                    viewModel.enemies,
+                    viewModel.neutral,
+                    "character_${args.storyTitle}_${binding.addCharacterName.text}.$extension"
+                )
+            }else{
                 CharacterEntity(
                     binding.addCharacterName.text.toString(),
                     binding.addCharacterAliases.text.toString(),
@@ -67,21 +106,54 @@ class AddCharacterFragment : Fragment(), MenuProvider {
                     viewModel.allies,
                     viewModel.enemies,
                     viewModel.neutral
-                    )
                 )
+            }
+            viewModel.submitCharacter(character, imageURI)
         }
 
-        viewModel.settingsNavigate.observe(viewLifecycleOwner) {
-            if (it){
-                findNavController().navigate(AddCharacterFragmentDirections.actionAddCharacterFragmentToSettingsFragment())
-                viewModel.onSettingsNavigateComplete()
+        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri != null) {
+                val type = requireContext().contentResolver.getType(uri)
+                Log.d("PhotoPicker", "Selected URI: $uri of type: $type")
+                val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                requireContext().contentResolver.takePersistableUriPermission(uri, flag)
+
+                if (type != null) {
+                    imageType = type
+                }
+                imageURI = uri.toString()
+
+                Glide.with(requireContext())
+                    .load(uri)
+                    .into(binding.addCharacterImage)
+
+            } else {
+                Log.d("PhotoPicker", "No media selected")
             }
+        }
+
+        binding.addCharacterSelectImageButton.setOnClickListener {
+            chooseImage(pickMedia)
+        }
+
+        binding.addCharacterRemoveImageButton.setOnClickListener {
+            imageURI = ""
+            imageType = ""
+            binding.addCharacterImage.setImageResource(0)
         }
 
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         return binding.root
+    }
+
+    private fun chooseImage(pickMedia: ActivityResultLauncher<PickVisualMediaRequest>){
+        // Launch the photo picker and let the user choose only images.
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

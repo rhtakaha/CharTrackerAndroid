@@ -21,16 +21,17 @@
 
         <ImageView
             android:id="@+id/character_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/list_image_width"
+            android:layout_height="@dimen/list_image_height"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
             android:layout_marginBottom="@dimen/default_margin"
+            android:contentDescription="@string/character_image_desc"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars"
-            app:characterImage="@{character}"/>
+            app:setCharacterImage="@{character}"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/character_name"

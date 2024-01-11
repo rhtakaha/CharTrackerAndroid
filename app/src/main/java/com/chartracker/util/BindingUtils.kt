@@ -18,13 +18,6 @@ fun TextView.setCharacterName(item: CharacterEntity?){
     }
 }
 
-@BindingAdapter("characterImage")
-fun ImageView.setCharacterImage(item: CharacterEntity?){
-    item?.let {
-        setImageResource(R.drawable.ic_launcher_foreground)
-    }
-}
-
 /* for story info*/
 
 @BindingAdapter("storyName")
@@ -64,6 +57,23 @@ fun setStoryImage(imageView: ImageView, story: StoriesEntity?){
             // Download directly from StorageReference using Glide
             Glide.with(imageView.context)
                 .load(db.getImageRef(story.imageFilename.toString()))
+                .apply(RequestOptions()
+                    .placeholder(R.drawable.baseline_downloading_24) //TODO replace with loading animation
+                    .error(R.drawable.baseline_broken_image_24))
+                .into(imageView)
+        }
+    }
+}
+
+@BindingAdapter("setCharacterImage")
+fun setCharacterImage(imageView: ImageView, character: CharacterEntity?){
+    character?.let {
+        if(character.imageFilename != null){
+            val db = DatabaseAccess()
+
+            // Download directly from StorageReference using Glide
+            Glide.with(imageView.context)
+                .load(db.getImageRef(character.imageFilename.toString()))
                 .apply(RequestOptions()
                     .placeholder(R.drawable.baseline_downloading_24) //TODO replace with loading animation
                     .error(R.drawable.baseline_broken_image_24))
