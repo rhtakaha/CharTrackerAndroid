@@ -36,7 +36,7 @@ class DatabaseAccess {
 
     /* function for adding an image into cloud storage
     * input: String filename WITHOUT EXTENSION*/
-    fun addImage(filename: String, imageURI: Uri){
+    suspend fun addImage(filename: String, imageURI: Uri){
         // make a reference to where the file will be
         val storageRef = storage.reference
         val imageRef = storageRef.child("users/${auth.currentUser!!.uid}/images/$filename")
@@ -52,7 +52,8 @@ class DatabaseAccess {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             Log.d(tag, "image upload succeeded!")
-        }
+        }.await()
+        //TODO probably add associated Toast or something to let users know they are waiting for the upload
     }
 
     /*creates a new user in Firebase*/

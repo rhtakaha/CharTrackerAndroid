@@ -42,6 +42,8 @@ class CharactersFragment : Fragment(), MenuProvider {
         })
         binding.charactersList.adapter = adapter
 
+        viewModel.setup()
+
         viewModel.characterClickedNavigate.observe(viewLifecycleOwner) {
             if (it != null) {
                 findNavController().navigate(

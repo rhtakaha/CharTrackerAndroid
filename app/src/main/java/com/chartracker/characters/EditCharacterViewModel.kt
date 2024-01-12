@@ -1,6 +1,7 @@
 package com.chartracker.characters
 
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,10 +16,12 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
     val tag = "EditCharVM"
     val character = MutableLiveData<CharacterEntity>()
     val db = DatabaseAccess()
+    var filename = MutableLiveData<String?>()
 
     init {
         viewModelScope.launch {
             character.value = db.getCharacterFromId(storyId, charId)
+            filename.value = character.value!!.imageFilename
         }
     }
 
@@ -59,10 +62,29 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
         }
     }
 
-    fun submitCharacterUpdate(character: CharacterEntity){
+    fun submitCharacterUpdate(updatedCharacter: CharacterEntity, imageURI: String){
         viewModelScope.launch {
             Log.i("EditCharVM", "starting to update character")
-            db.updateCharacter(storyId, charId, character)
+            db.updateCharacter(storyId, charId, updatedCharacter)
+
+            if (imageURI != ""){
+                // trying to add a new image
+                //if adding a new image be sure to delete the original too (if it had one)
+                updatedCharacter.imageFilename?.let {
+                    db.addImage(it, imageURI.toUri())
+                    character.value!!.imageFilename?.let { it1 -> db.deleteImage(it1) }
+                }
+            }else{
+                // could be either making no image change or trying to delete it
+                if(updatedCharacter.imageFilename == null && character.value!!.imageFilename != null){
+                    // if there is no filename listed in new version
+                    //                  AND
+                    // the old version had one then we are deleting the current
+                    db.deleteImage(character.value!!.imageFilename!!)
+                }
+                // if both were null it would be that there started with and ended with no image
+            }
+
             onEditCharacterToCharacterDetailsNavigate()
         }
     }
@@ -70,8 +92,8 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
     fun submitCharacterDelete(){
         CoroutineScope(Dispatchers.IO).launch {
             Log.i(tag, "starting to delete character")
-            character.value?.name?.let { db.deleteCharacter(storyId, charId, it) }
-
+            character.value!!.name?.let { db.deleteCharacter(storyId, charId, it) }
+            character.value!!.imageFilename?.let { db.deleteImage(it) }
         }
         onEditCharacterToCharactersNavigate()
     }

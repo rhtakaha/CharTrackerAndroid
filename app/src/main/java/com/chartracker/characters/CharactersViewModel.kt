@@ -18,9 +18,18 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
     var story = MutableLiveData<StoriesEntity>()
 
     val tag = "CharVM"
-    init {
-        //for testing purposes right now
-        Log.i("CharVM", "story title: $storyTitle")
+//    init {
+//        //for testing purposes right now
+//        Log.i("CharVM", "story title: $storyTitle")
+//        viewModelScope.launch {
+//            storyId = db.getStoryId(storyTitle)
+//            Log.i("CharVM", "doc ID is: $storyId")
+//            characters.value = db.getCharacters(storyId)
+//            story.value = db.getStoryFromId(storyId)
+//        }
+//    }
+
+    fun setup(){
         viewModelScope.launch {
             storyId = db.getStoryId(storyTitle)
             Log.i("CharVM", "doc ID is: $storyId")

@@ -36,30 +36,97 @@
             app:layout_constraintVertical_bias="0.0"
             tools:context=".stories.EditCharacterFragment">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/edit_characters_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/edit_character_current_image_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/current_image"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/edit_character_selected_image_prompt"/>
 
                 <ImageView
-                    android:id="@+id/character_details_image"
+                    android:id="@+id/edit_character_current_image"
                     android:layout_width="@dimen/add_image_width"
                     android:layout_height="@dimen/add_image_height"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_current_image_prompt"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/edit_character_selected_image"
                     android:contentDescription="@string/character_image_desc"
                     app:setCharacterImage="@{viewModel.character}"
                     tools:src="@tools:sample/avatars" />
+
+                <Button
+                    android:id="@+id/edit_character_remove_current_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove_currrent_image"
+                    app:layout_constraintEnd_toEndOf="@+id/edit_character_current_image"
+                    app:layout_constraintStart_toStartOf="@+id/edit_character_current_image"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_current_image" />
+
+                <TextView
+                    android:id="@+id/edit_character_selected_image_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/selected_image"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_character_selected_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/edit_character_current_image_prompt"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/edit_character_selected_image"
+                    android:layout_width="@dimen/add_image_width"
+                    android:layout_height="@dimen/add_image_height"
+                    android:contentDescription="@string/selected_story_image_desc"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_character_select_image_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/edit_character_current_image"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_selected_image_prompt"
+                    tools:src="@tools:sample/avatars" />
+
+                <Button
+                    android:id="@+id/edit_character_select_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_image"
+                    app:layout_constraintStart_toStartOf="@+id/edit_character_selected_image"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_character_remove_selected_image_button"
+                    app:layout_constraintEnd_toEndOf="@+id/edit_character_selected_image"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_selected_image" />
+
+                <Button
+                    android:id="@+id/edit_character_remove_selected_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove_selected_image"
+                    app:layout_constraintBottom_toTopOf="@+id/edit_character_name_prompt"
+                    app:layout_constraintEnd_toEndOf="@id/edit_character_selected_image"
+                    app:layout_constraintStart_toStartOf="@+id/edit_character_selected_image"
+                    app:layout_constraintTop_toBottomOf="@id/edit_character_select_image_button" />
 
                 <TextView
                     android:id="@+id/edit_character_name_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_remove_selected_image_button"
                     android:text="@string/name" />
 
                 <EditText
                     android:id="@+id/edit_character_name"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_name_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/name_hint"
@@ -70,12 +137,18 @@
                     android:id="@+id/edit_character_aliases_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_name"
                     android:text="@string/aliases" />
 
                 <EditText
                     android:id="@+id/edit_character_aliases"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_aliases_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/aliases_hint"
@@ -86,12 +159,18 @@
                     android:id="@+id/edit_character_titles_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_aliases"
                     android:text="@string/titles" />
 
                 <EditText
                     android:id="@+id/edit_character_titles"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_titles_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/titles_hint"
@@ -102,12 +181,18 @@
                     android:id="@+id/edit_character_age_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_titles"
                     android:text="@string/age" />
 
                 <EditText
                     android:id="@+id/edit_character_age"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_age_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/age_hint"
@@ -118,12 +203,18 @@
                     android:id="@+id/edit_character_home_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_age"
                     android:text="@string/home" />
 
                 <EditText
                     android:id="@+id/edit_character_home"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_home_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/home_hint"
@@ -134,12 +225,18 @@
                     android:id="@+id/edit_character_gender_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_home"
                     android:text="@string/gender" />
 
                 <EditText
                     android:id="@+id/edit_character_gender"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_gender_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/gender_hint"
@@ -150,12 +247,18 @@
                     android:id="@+id/edit_character_race_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_gender"
                     android:text="@string/race" />
 
                 <EditText
                     android:id="@+id/edit_character_race"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_race_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/race_hint"
@@ -166,12 +269,18 @@
                     android:id="@+id/edit_character_livingOrDead_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_race"
                     android:text="@string/living_dead" />
 
                 <EditText
                     android:id="@+id/edit_character_livingOrDead"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_livingOrDead_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/living_dead_hint"
@@ -182,12 +291,18 @@
                     android:id="@+id/edit_character_occupation_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_livingOrDead"
                     android:text="@string/occupation" />
 
                 <EditText
                     android:id="@+id/edit_character_occupation"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_occupation_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/occupation_hint"
@@ -198,12 +313,18 @@
                     android:id="@+id/edit_character_weapons_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_occupation"
                     android:text="@string/weapon" />
 
                 <EditText
                     android:id="@+id/edit_character_weapons"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_weapons_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/weapon_hint"
@@ -214,12 +335,18 @@
                     android:id="@+id/edit_character_toolsEquipment_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_weapons"
                     android:text="@string/tools_equipment" />
 
                 <EditText
                     android:id="@+id/edit_character_toolsEquipment"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_toolsEquipment_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/tools_equipment_hint"
@@ -230,12 +357,18 @@
                     android:id="@+id/edit_character_bio_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_toolsEquipment"
                     android:text="@string/bio" />
 
                 <EditText
                     android:id="@+id/edit_character_bio"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_bio_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/bio_hint"
@@ -246,12 +379,18 @@
                     android:id="@+id/edit_character_faction_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_bio"
                     android:text="@string/faction" />
 
                 <EditText
                     android:id="@+id/edit_character_faction"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/input_text_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_faction_prompt"
                     android:layout_marginBottom="@dimen/default_margin"
                     android:autofillHints=""
                     android:hint="@string/faction_hint"
@@ -262,40 +401,58 @@
                     android:id="@+id/edit_character_allies_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_faction"
                     android:text="@string/allies" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/edit_character_allies_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_allies_prompt"
                     android:padding="@dimen/default_margin"/>
 
                 <TextView
                     android:id="@+id/edit_character_enemies_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_allies_list"
                     android:text="@string/enemies" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/edit_character_enemies_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_enemies_prompt"
                     android:padding="@dimen/default_margin"/>
 
                 <TextView
                     android:id="@+id/edit_character_neutral_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_enemies_list"
                     android:text="@string/neutral" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/edit_character_neutral_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_character_neutral_prompt"
                     android:padding="@dimen/default_margin"/>
 
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </ScrollView>

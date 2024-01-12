@@ -122,7 +122,7 @@ class EditStoryFragment : Fragment(), MenuProvider{
             binding.editStorySelectedImage.setImageResource(0)
         }
 
-        binding.editStoryRemoveCurrentImage.setOnClickListener {
+        binding.editStoryRemoveCurrentImageButton.setOnClickListener {
             viewModel.filename.value = null
         }
 

@@ -1,7 +1,9 @@
 package com.chartracker.characters
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,10 +11,15 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.databinding.FragmentEditCharacterBinding
@@ -45,7 +52,17 @@ class EditCharacterFragment : Fragment(), MenuProvider {
 
         viewModel.editCharacterToCharacterDetailsNavigate.observe(viewLifecycleOwner) {
             if (it){
-                findNavController().navigate(EditCharacterFragmentDirections.actionEditCharacterFragmentToCharacterDetailsFragment(args.charName, args.storyId, args.storyTitle, args.storyChars))
+                var characters = args.storyChars
+                if (binding.editCharacterName.text.toString() !in args.storyChars){
+                    // if we changed the name we need to update this list before we send it
+                    // in case user goes directly back to edit character since list is refreshed in CharactersFrag
+                    characters =
+                        args.storyChars.filter { it2 -> it2 != viewModel.character.value!!.name }
+                            .toTypedArray()
+                            .plus(binding.editCharacterName.text.toString())
+                    Log.d(tag, "GETTING RID OF THE OLD NAME: ${viewModel.character.value!!.name} new list: ${characters.joinToString(", ")}")
+                }
+                findNavController().navigate(EditCharacterFragmentDirections.actionEditCharacterFragmentToCharacterDetailsFragment(binding.editCharacterName.text.toString(), args.storyId, args.storyTitle, characters))
                 viewModel.onEditCharacterToCharacterDetailsNavigateComplete()
             }
         }
@@ -57,10 +74,20 @@ class EditCharacterFragment : Fragment(), MenuProvider {
             }
         }
 
+        viewModel.settingsNavigate.observe(viewLifecycleOwner) {
+            if (it){
+                findNavController().navigate(EditCharacterFragmentDirections.actionEditCharacterFragmentToSettingsFragment())
+                viewModel.onSettingsNavigateComplete()
+            }
+        }
+
+        var imageURI = ""
+        var imageType = ""
+
         binding.editCharacterSubmit.setOnClickListener {
-            viewModel.submitCharacterUpdate(
-                CharacterEntity(
-                    binding.editCharacterName.text.toString(),
+            val character: CharacterEntity = if(imageURI != "" && imageType != ""){
+                val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType)
+                CharacterEntity(binding.editCharacterName.text.toString(),
                     binding.editCharacterAliases.text.toString(),
                     binding.editCharacterTitles.text.toString(),
                     if(binding.editCharacterAge.text.toString() != "") binding.editCharacterAge.text.toString().toInt() else null,
@@ -75,22 +102,77 @@ class EditCharacterFragment : Fragment(), MenuProvider {
                     binding.editCharacterFaction.text.toString(),
                     viewModel.allies,
                     viewModel.enemies,
-                    viewModel.neutral
-                )
-            )
+                    viewModel.neutral,
+                    "character_${args.storyTitle}_${binding.editCharacterName.text}.$extension")
+            }else{
+                CharacterEntity(binding.editCharacterName.text.toString(),
+                    binding.editCharacterAliases.text.toString(),
+                    binding.editCharacterTitles.text.toString(),
+                    if(binding.editCharacterAge.text.toString() != "") binding.editCharacterAge.text.toString().toInt() else null,
+                    binding.editCharacterHome.text.toString(),
+                    binding.editCharacterGender.text.toString(),
+                    binding.editCharacterRace.text.toString(),
+                    binding.editCharacterLivingOrDead.text.toString(),
+                    binding.editCharacterOccupation.text.toString(),
+                    binding.editCharacterWeapons.text.toString(),
+                    binding.editCharacterToolsEquipment.text.toString(),
+                    binding.editCharacterBio.text.toString(),
+                    binding.editCharacterFaction.text.toString(),
+                    viewModel.allies,
+                    viewModel.enemies,
+                    viewModel.neutral,
+                    viewModel.filename.value)
+            }
+            viewModel.submitCharacterUpdate(character, imageURI)
         }
 
-        viewModel.settingsNavigate.observe(viewLifecycleOwner) {
-            if (it){
-                findNavController().navigate(EditCharacterFragmentDirections.actionEditCharacterFragmentToSettingsFragment())
-                viewModel.onSettingsNavigateComplete()
+        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri != null) {
+                val type = requireContext().contentResolver.getType(uri)
+                Log.d("PhotoPicker", "Selected URI: $uri of type: $type")
+                val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                requireContext().contentResolver.takePersistableUriPermission(uri, flag)
+
+                if (type != null) {
+                    imageType = type
+                }
+                imageURI = uri.toString()
+
+                Glide.with(requireContext())
+                    .load(uri)
+                    .into(binding.editCharacterSelectedImage)
+
+            } else {
+                Log.d("PhotoPicker", "No media selected")
             }
+        }
+
+        binding.editCharacterSelectImageButton.setOnClickListener {
+            chooseImage(pickMedia)
+        }
+
+        binding.editCharacterRemoveSelectedImageButton.setOnClickListener {
+            imageURI = ""
+            imageType = ""
+            binding.editCharacterSelectedImage.setImageResource(0)
+        }
+
+        binding.editCharacterRemoveCurrentImageButton.setOnClickListener {
+            viewModel.filename.value = null
         }
 
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         return binding.root
+    }
+
+    private fun chooseImage(pickMedia: ActivityResultLauncher<PickVisualMediaRequest>){
+        // Launch the photo picker and let the user choose only images.
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
