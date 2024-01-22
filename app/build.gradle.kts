@@ -31,6 +31,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -39,9 +40,17 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.8"
+    }
+
 }
 
 dependencies {
+    val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
     val nav_version = "2.7.5"
 
 
@@ -55,6 +64,19 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    //Compose
+    implementation ("androidx.compose.runtime:runtime")
+    implementation ("androidx.compose.ui:ui")
+    implementation ("androidx.compose.foundation:foundation")
+    implementation ("androidx.compose.foundation:foundation-layout")
+    implementation ("androidx.compose.material:material")
+    implementation ("androidx.compose.runtime:runtime-livedata")
+    implementation ("androidx.compose.ui:ui-tooling")
+    implementation ("androidx.compose.material3:material3")
+    implementation ("androidx.compose.material:material-icons-extended")
+    implementation ("androidx.compose.animation:animation")
+    implementation ("androidx.compose.ui:ui-tooling-preview")
 
     // Kotlin Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
