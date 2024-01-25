@@ -2,8 +2,13 @@ package com.chartracker.ui.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,35 +28,74 @@ import com.chartracker.R
 import com.chartracker.ui.theme.CharTrackerTheme
 
 @Composable
+fun TextAndContentHolder(
+    @StringRes title: Int,
+    body: String,
+    modifier: Modifier= Modifier){
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier.padding(8.dp)) {
+        Text(
+            text = stringResource(id = title),
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = body,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
+@Preview(
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "Dark Mode")
+@Preview(
+    uiMode = UI_MODE_NIGHT_NO,
+    name = "Light Mode")
+@Composable
+fun PreviewTextAndContentHolder(){
+    val body = "Frodo Baggins"
+    CharTrackerTheme {
+        Surface {
+            TextAndContentHolder(R.string.name, body)
+        }
+    }
+}
+
+@Composable
 fun TextEntryHolder(
-    label: String,
+    @StringRes title: Int,
+    @StringRes label: Int,
     text: String,
     onTyping: (String) -> Unit,
     modifier: Modifier= Modifier,
     isEmail: Boolean = false,
     isPassword: Boolean = false
 ) {
-    TextField(
-        value = text,
-        onValueChange = onTyping,
-        label = { Text(label) },
-        singleLine = isPassword or isEmail,
-        textStyle = TextStyle(),
-        visualTransformation = if (isPassword) {
-            PasswordVisualTransformation()
-        } else {
-            VisualTransformation.None
-        },
-        keyboardOptions = if (isPassword) {
-            KeyboardOptions(keyboardType = KeyboardType.Password)
-        } else if (isEmail) {
-            KeyboardOptions(keyboardType = KeyboardType.Password)
-        } else {
-            KeyboardOptions()
-        },
-        modifier = Modifier
-            .padding(8.dp)
-    )
+    Column(modifier = Modifier
+        .padding(8.dp)) {
+        Text(text = stringResource(id = title), style = MaterialTheme.typography.labelLarge)
+        TextField(
+            value = text,
+            onValueChange = onTyping,
+            label = { Text(stringResource(id = label)) },
+            singleLine = isPassword or isEmail,
+            textStyle = TextStyle(),
+            shape = MaterialTheme.shapes.small,
+            visualTransformation = if (isPassword) {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
+            },
+            keyboardOptions = if (isPassword) {
+                KeyboardOptions(keyboardType = KeyboardType.Password)
+            } else if (isEmail) {
+                KeyboardOptions(keyboardType = KeyboardType.Password)
+            } else {
+                KeyboardOptions()
+            }
+        )
+    }
 }
 
 @Preview(
@@ -65,7 +109,8 @@ fun PreviewTextEntryHolder(){
     var text by remember { mutableStateOf("") }
     CharTrackerTheme {
         TextEntryHolder(
-            label = "Testing",
+            title = R.string.email,
+            label = R.string.emailHint,
             text = text,
             onTyping = { newInput -> text = newInput })
     }
@@ -82,7 +127,8 @@ fun PreviewTextEntryHolderPassword(){
     var password by remember { mutableStateOf("") }
     CharTrackerTheme {
         TextEntryHolder(
-            label = stringResource(id = R.string.passwordHint),
+            title = R.string.password,
+            label = R.string.passwordHint,
             text = password,
             onTyping = { newInput -> password = newInput },
             isPassword = true
@@ -101,7 +147,8 @@ fun PreviewTextEntryHolderEmail(){
     var text by remember { mutableStateOf("") }
     CharTrackerTheme {
         TextEntryHolder(
-            label = stringResource(id = R.string.emailHint),
+            title = R.string.email,
+            label = R.string.emailHint,
             text = text,
             onTyping = { newInput -> text = newInput },
             isEmail = true

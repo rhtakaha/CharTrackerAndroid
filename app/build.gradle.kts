@@ -72,11 +72,15 @@ dependencies {
     implementation ("androidx.compose.foundation:foundation-layout")
     implementation ("androidx.compose.material:material")
     implementation ("androidx.compose.runtime:runtime-livedata")
+    debugImplementation("androidx.compose.ui:ui-tooling")
     implementation ("androidx.compose.ui:ui-tooling")
     implementation ("androidx.compose.material3:material3")
     implementation ("androidx.compose.material:material-icons-extended")
     implementation ("androidx.compose.animation:animation")
     implementation ("androidx.compose.ui:ui-tooling-preview")
+    implementation ("androidx.activity:activity-compose")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     // Kotlin Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")

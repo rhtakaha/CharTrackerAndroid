@@ -22,7 +22,7 @@
     <string name="edit_story">Edit story</string>
     <string name="delete">Delete</string>
     <string name="add_character">Add Character</string>
-    <string name="name">Name</string>
+    <string name="name">Name:</string>
     <string name="name_hint">Enter name</string>
     <string name="aliases">Aliases</string>
     <string name="aliases_hint">Enter aliases</string>
@@ -82,4 +82,6 @@
     <string name="remove_currrent_image">Remove current image</string>
     <string name="remove_selected_image">Remove selected image</string>
     <string name="character_image_desc">Image representing the character</string>
+    <string name="email">Email:</string>
+    <string name="password">Password:</string>
 </resources>
