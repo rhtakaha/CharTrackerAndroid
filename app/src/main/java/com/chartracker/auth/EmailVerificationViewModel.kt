@@ -50,6 +50,5 @@ class EmailVerificationViewModel : ViewModel() {
     fun isEmailVerified(): Boolean{
         user!!.reload()
         return user.isEmailVerified
-
     }
 }

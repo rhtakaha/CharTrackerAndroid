@@ -21,6 +21,22 @@ import com.chartracker.R
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 
+@Composable
+fun SignInScreen(
+    navToSignUp: () -> Unit,
+    signInViewModel: SignInViewModel = viewModel()
+){
+    SignInScreen(
+        email = signInViewModel.email.value,
+        onEmailType = {newInput -> signInViewModel.updateInputEmail(newInput)},
+        password = signInViewModel.password.value,
+        onPasswordType = {newInput -> signInViewModel.updateInputPassword(newInput)},
+        onSignInClick = {email, password ->  signInViewModel.signInWithEmailPassword(email, password) },
+        onSignUpClick = { navToSignUp() },
+        onPasswordResetClick = {signInViewModel.sendPasswordResetEmail(signInViewModel.email.value)}
+    )
+}
+
 /* for previewing*/
 @Composable
 fun SignInScreen(
@@ -54,7 +70,7 @@ fun SignInScreen(
             Text(text = stringResource(id = R.string.SignIn))
         }
         Button(onClick = { onSignUpClick() }) {
-            Text(text = stringResource(id = R.string.SignUpButton))
+            Text(text = stringResource(id = R.string.SignUp))
         }
         Button(onClick = { onPasswordResetClick(email) }) {
             Text(text = stringResource(id = R.string.password_reset))
@@ -63,21 +79,6 @@ fun SignInScreen(
     }
 
 }
-@Composable
-fun SignInScreen(
-    signInViewModel: SignInViewModel = viewModel()
-){
-    SignInScreen(
-        email = signInViewModel.email.value,
-        onEmailType = {newInput -> signInViewModel.updateInputEmail(newInput)},
-        password = signInViewModel.password.value,
-        onPasswordType = {newInput -> signInViewModel.updateInputPassword(newInput)},
-        onSignInClick = {email, password ->  signInViewModel.signInWithEmailPassword(email, password) },
-        onSignUpClick = { /*TODO*/ },
-        onPasswordResetClick = {signInViewModel.sendPasswordResetEmail(signInViewModel.email.value)}
-    )
-}
-
 
 
 @Preview(
@@ -95,10 +96,10 @@ fun PreviewSignInScreen(){
             var password by remember { mutableStateOf("") }
             SignInScreen(
                 email = email,
-                onEmailType = {input -> email = input},
+                onEmailType = {newInput -> email = newInput},
                 password = password,
-                onPasswordType = {input -> password = input},
-                onSignInClick = {e, pass -> },
+                onPasswordType = {newInput -> password = newInput},
+                onSignInClick = { _, _ -> },
                 onSignUpClick = { /*TODO*/ },
                 onPasswordResetClick = {}
             )

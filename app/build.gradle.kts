@@ -79,15 +79,16 @@ dependencies {
     implementation ("androidx.compose.animation:animation")
     implementation ("androidx.compose.ui:ui-tooling-preview")
     implementation ("androidx.activity:activity-compose")
+    implementation("androidx.navigation:navigation-compose")
+
+    androidTestImplementation("androidx.navigation:navigation-testing")
+
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     // Kotlin Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
-
-    // Testing Navigation TODO should be useful later
-    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
 
     //Firebase
     // "When using the BoM, don't specify versions in Firebase dependencies"

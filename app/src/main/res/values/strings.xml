@@ -3,7 +3,7 @@
     <string name="SignIn">Sign In</string>
     <string name="emailHint">Enter email</string>
     <string name="passwordHint">Enter password</string>
-    <string name="SignUpButton">Sign Up</string>
+    <string name="SignUp">Sign Up</string>
     <string name="stories">Stories</string>
     <string name="add_story">Add Story</string>
     <string name="title">Title</string>
@@ -54,7 +54,7 @@
     <string name="character_details">Character Details</string>
     <string name="edit">Edit</string>
     <string name="edit_character">Edit Character</string>
-    <string name="password_confirm">Confirm password</string>
+    <string name="password_confirm">Confirm password:</string>
     <string name="sign_out">Sign out</string>
     <string name="settings">Settings</string>
     <string name="sign_in_credentials">Sign In With Saved Credentials</string>
@@ -84,4 +84,5 @@
     <string name="character_image_desc">Image representing the character</string>
     <string name="email">Email:</string>
     <string name="password">Password:</string>
+    <string name="password_mismatch">Passwords do not match</string>
 </resources>
