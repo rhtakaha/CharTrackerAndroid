@@ -23,11 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
+import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.TextEntryHolder
 
 @Composable
 fun SignUpScreen(
-    navToEmailVerify: () -> Unit,
+    navToEmailVerify: (String) -> Unit,
+    onBackNav: () -> Unit,
     signUpViewModel: SignUpViewModel = viewModel()
 ){
     SignUpScreen(
@@ -39,7 +41,8 @@ fun SignUpScreen(
         onPassword2Type = {newInput -> signUpViewModel.updateInputPassword2(newInput)},
         onSignUpClick = {email, password -> signUpViewModel.signUpUserWithEmailPassword(email, password)},
         signedIn = signUpViewModel.signedIn.value,
-        navToVerifyEmail= navToEmailVerify
+        navToVerifyEmail= navToEmailVerify,
+        onBackNav = onBackNav
     )
 }
 
@@ -53,13 +56,14 @@ fun SignUpScreen(
     onPassword2Type: (String) -> Unit,
     onSignUpClick: (String, String) -> Unit,
     signedIn: Boolean,
-    navToVerifyEmail: () -> Unit
+    navToVerifyEmail: (String) -> Unit,
+    onBackNav: () -> Unit
 ){
     if (signedIn){
         //event for navigation
-        navToVerifyEmail()
+        navToVerifyEmail(email)
     }
-    Scaffold {paddingValue ->
+    Scaffold(topBar = { CharTrackerTopBar(onBackNav) {} }) { paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -125,7 +129,8 @@ fun PreviewSignUpScreen(){
                 onPassword2Type = {newInput -> password2 = newInput} ,
                 onSignUpClick = { _, _ ->},
                 signedIn = false,
-                navToVerifyEmail = {}
+                navToVerifyEmail = {},
+                onBackNav = {}
             )
         }
     }

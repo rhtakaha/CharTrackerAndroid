@@ -17,18 +17,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ui.components.TextAndContentHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
+import com.chartracker.ui.components.CharTrackerTopBar
 
 @Composable
 fun EmailVerifyScreen(
     navToUpdateEmail: () -> Unit,
     navToStories: () -> Unit,
+    onBackNav: () -> Unit,
+    userEmail: String,
     emailVerifyViewModel: EmailVerifyViewModel = viewModel()
 ){
-    EmailVerifyScreen(email = emailVerifyViewModel.user!!.email!!,// might use argument instead?
+    EmailVerifyScreen(email = userEmail,// might use argument instead?
         sendEmail = { emailVerifyViewModel.sendVerificationEmail()},
         changeEmail = { navToUpdateEmail() },
         checkVerification = {emailVerifyViewModel.isEmailVerified()},
-        navToStories = navToStories)
+        navToStories = navToStories,
+        onBackNav= onBackNav)
 }
 
 @Composable
@@ -37,9 +41,10 @@ fun EmailVerifyScreen(
     sendEmail: () -> Unit,
     changeEmail: () -> Unit,
     checkVerification: () -> Boolean,
-    navToStories: () -> Unit
+    navToStories: () -> Unit,
+    onBackNav: () -> Unit
 ){
-    Scaffold {paddingValue ->
+    Scaffold(topBar = { CharTrackerTopBar(onBackNav) {} }) {paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,6 +88,7 @@ fun PreviewEmailVerifyScreen(){
             sendEmail = {},
             changeEmail = { /*TODO*/ },
             checkVerification = { -> false},
-            navToStories = {})
+            navToStories = {},
+            onBackNav = {})
     }
 }
