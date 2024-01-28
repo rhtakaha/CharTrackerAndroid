@@ -64,7 +64,7 @@
     <string name="resend">Resend</string>
     <string name="go_to_sign_in">Continue to Sign In</string>
     <string name="Im_verified">I\'m verified!</string>
-    <string name="change_email">Change Email</string>
+    <string name="change_email">Change email</string>
     <string name="update_email">Update Email</string>
     <string name="current_email_header">Current Email</string>
     <string name="new_email">Input new email</string>
@@ -85,4 +85,5 @@
     <string name="email">Email:</string>
     <string name="password">Password:</string>
     <string name="password_mismatch">Passwords do not match</string>
+    <string name="password_confirm_hint">Confirm password</string>
 </resources>

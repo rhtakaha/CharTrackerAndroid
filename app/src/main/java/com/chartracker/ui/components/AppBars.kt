@@ -13,22 +13,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import com.chartracker.ui.theme.CharTrackerTheme
 
+/* Action button ordering is First in First Left order*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharTrackerTopBar(
     onBackNav: ()-> Unit,
-    actionButtons: @Composable () -> Unit //First in First Left
+    actionButtons: @Composable () -> Unit
 ){
     TopAppBar(
         colors =  TopAppBarDefaults.topAppBarColors(
         containerColor =  MaterialTheme.colorScheme.primaryContainer,
         titleContentColor = MaterialTheme.colorScheme.primary,
-    ),
+        ),
         navigationIcon = {
-            IconButton(onClick = { onBackNav() }) {
+            IconButton(
+                onClick = { onBackNav() },
+                modifier = Modifier.semantics { contentDescription = "Up button" }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Localized description"
@@ -36,7 +42,8 @@ fun CharTrackerTopBar(
             }
         },
         actions = {actionButtons()},
-        title = {Text(text = "")}
+        title = {Text(text = "")},
+        modifier = Modifier.semantics { contentDescription = "Top bar" }
     )
 }
 

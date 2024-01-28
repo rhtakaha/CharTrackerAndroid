@@ -80,8 +80,9 @@ dependencies {
     implementation ("androidx.compose.ui:ui-tooling-preview")
     implementation ("androidx.activity:activity-compose")
     implementation("androidx.navigation:navigation-compose")
-
-    androidTestImplementation("androidx.navigation:navigation-testing")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
 
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")

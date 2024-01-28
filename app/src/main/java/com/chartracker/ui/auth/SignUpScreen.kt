@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ui.theme.CharTrackerTheme
@@ -69,7 +71,8 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValue)) {
+                .padding(paddingValue)
+                .semantics { contentDescription = "SignUp Screen" }){
             Text(text = stringResource(id = R.string.SignUp))
             TextEntryHolder(
                 title = R.string.email,
@@ -85,7 +88,7 @@ fun SignUpScreen(
                 isPassword = true)
             TextEntryHolder(
                 title = R.string.password_confirm,
-                label = R.string.passwordHint,
+                label = R.string.password_confirm_hint,
                 text = password2,
                 onTyping = { newInput -> onPassword2Type(newInput) },
                 isPassword = true)
