@@ -5,6 +5,21 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="confirmPasswordObscuredTest()">
+        <State />
+      </entry>
+      <entry key="defaultTopBarTest()">
+        <State />
+      </entry>
+      <entry key="screenContentsTest()">
+        <State />
+      </entry>
+      <entry key="screenContentsTest() (1)">
+        <State />
+      </entry>
+      <entry key="topBarWithTwoActionButtonsTest()">
+        <State />
+      </entry>
     </value>
   </component>
 </project>

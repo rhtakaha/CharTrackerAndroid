@@ -30,6 +30,10 @@ class DatabaseAccess {
         }
     }
 
+    fun getImageDownloadURI(filename: String): Uri{
+        return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.result
+    }
+
     fun getImageRef(filename: String): StorageReference{
         return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
     }

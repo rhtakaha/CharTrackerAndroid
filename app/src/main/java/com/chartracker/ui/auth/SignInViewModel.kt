@@ -27,6 +27,11 @@ class SignInViewModel() : ViewModel(){
         _password.value = newPassword
     }
 
+    /* event for navigating to stories*/
+    private val _signedIn = mutableStateOf(false)
+    val signedIn: MutableState<Boolean>
+        get() = _signedIn
+
     fun sendPasswordResetEmail(email: String){
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
@@ -52,6 +57,8 @@ class SignInViewModel() : ViewModel(){
                         // if their email is unverified
                         Log.d(tag, "email unverified")
                     }
+                    //event for navigating out
+                    _signedIn.value = true
 
                 } else {
                     // If sign in fails, display a message to the user.

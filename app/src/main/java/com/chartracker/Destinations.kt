@@ -23,5 +23,9 @@ object EmailVerify : Destination{
     val arguments = listOf(navArgument(userEmailArg) { type = NavType.StringType})
 }
 
+object Stories: Destination{
+    override val route = "stories"
+}
+
 // list of all screens for use to determine which screen currently at
 val charTrackerScreens = listOf(SignIn, SignUp, EmailVerify)

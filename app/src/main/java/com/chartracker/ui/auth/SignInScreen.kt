@@ -26,6 +26,7 @@ import com.chartracker.ui.theme.CharTrackerTheme
 @Composable
 fun SignInScreen(
     navToSignUp: () -> Unit,
+    navToStories: () -> Unit,
     signInViewModel: SignInViewModel = viewModel()
 ){
     SignInScreen(
@@ -35,6 +36,8 @@ fun SignInScreen(
         onPasswordType = {newInput -> signInViewModel.updateInputPassword(newInput)},
         onSignInClick = {email, password ->  signInViewModel.signInWithEmailPassword(email, password) },
         onSignUpClick = { navToSignUp() },
+        signedIn = signInViewModel.signedIn.value,
+        navToStories = navToStories,
         onPasswordResetClick = {signInViewModel.sendPasswordResetEmail(signInViewModel.email.value)}
     )
 }
@@ -48,8 +51,14 @@ fun SignInScreen(
     onPasswordType: (String) -> Unit,
     onSignInClick: (String, String) -> Unit,
     onSignUpClick: () -> Unit,
+    signedIn: Boolean,
+    navToStories: () -> Unit,
     onPasswordResetClick: (String) -> Unit,
 ){
+    if (signedIn){
+        //event for navigation
+        navToStories()
+    }
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -104,6 +113,8 @@ fun PreviewSignInScreen(){
                 onPasswordType = {newInput -> password = newInput},
                 onSignInClick = { _, _ -> },
                 onSignUpClick = { /*TODO*/ },
+                signedIn = false,
+                navToStories = {},
                 onPasswordResetClick = {}
             )
         }

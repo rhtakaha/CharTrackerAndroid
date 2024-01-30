@@ -84,6 +84,12 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
 
+    val lifecycleVersion = "2.7.0"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
+
+
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
@@ -107,6 +113,7 @@ dependencies {
 
     //Glide for showing images
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     kapt("com.github.bumptech.glide:compiler:4.14.2")
 
 
