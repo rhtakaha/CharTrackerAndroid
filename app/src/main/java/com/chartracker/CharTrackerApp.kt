@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chartracker.ui.auth.EmailVerifyScreen
+import com.chartracker.ui.story.AddEditStoryScreen
 import com.chartracker.ui.story.StoriesScreen
 
 @Composable
@@ -56,7 +57,12 @@ fun CharTrackerNavHost(
                 onBackNav = {navController.navigateUp()})
         }
         composable(route = Stories.route){
-            StoriesScreen(onBackNav = {navController.navigateUp()})
+            StoriesScreen(
+                onAddEditStoryNav = { navController.navigateSingleTopTo(AddEditStory.route) },
+                onBackNav = {navController.navigateUp()})
+        }
+        composable(route= AddEditStory.route){
+            AddEditStoryScreen(onBackNav = {navController.navigateUp()})
         }
     }
 }

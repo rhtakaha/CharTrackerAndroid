@@ -5,5 +5,5 @@ data class StoriesEntity (
     val genre: String? = null,
     val type: String? = null,
     val author: String? = null,
-    val imageFilename: String? = null
+    var imagePublicUrl: String? = null
 )

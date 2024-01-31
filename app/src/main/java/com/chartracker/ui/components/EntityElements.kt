@@ -26,22 +26,20 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
-import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.StoriesEntity
-import com.google.firebase.storage.StorageReference
 
 //TODO need to make so when adding story/character the public url is added instead of just filename
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun EntityHolder(imageUri: StorageReference?, entityName: String, modifier: Modifier = Modifier){
+fun EntityHolder(imageUrl: String?, entityName: String, modifier: Modifier = Modifier){
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
         modifier = modifier
             .fillMaxWidth()) {
-        if (imageUri != null){
+        if (imageUrl != null){
             GlideImage(
-                model = imageUri,
+                model = imageUrl,
                 contentDescription = null,
                 loading = placeholder(R.drawable.baseline_downloading_24),
                 failure = placeholder(R.drawable.baseline_broken_image_24),
@@ -71,20 +69,19 @@ fun EntityHolder(imageUri: StorageReference?, entityName: String, modifier: Modi
 fun PreviewEntityHolder(){
     CharTrackerTheme {
         Surface {
-//            EntityHolder("https://th.bing.com/th/id/OIP.xJ2gfgHVXWPRDgBclINipgHaEK?rs=1&pid=ImgDetMain", "Gollum")
+            EntityHolder("https://th.bing.com/th/id/OIP.xJ2gfgHVXWPRDgBclINipgHaEK?rs=1&pid=ImgDetMain", "Gollum")
         }
     }
 }
 
 @Composable
 fun EntityHolderList(stories: List<StoriesEntity>){
-    val db = DatabaseAccess()
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ){
         items(stories){story ->
              EntityHolder(
-                imageUri = story.imageFilename?.let {filename -> db.getImageRef(filename) },
+                 imageUrl = story.imagePublicUrl,
                 entityName = story.title!!)
         }
     }

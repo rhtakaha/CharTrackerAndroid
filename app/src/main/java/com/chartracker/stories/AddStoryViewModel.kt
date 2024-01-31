@@ -52,7 +52,7 @@ class AddStoryViewModel : ViewModel() {
         viewModelScope.launch {
             Log.i(tag, "Creation of new story initiated")
             db.createStory(story)
-            story.imageFilename?.let { db.addImage(it, imageURI.toUri()) }
+//            story.imageFilename?.let { db.addImage(it, imageURI.toUri()) }
             onAddStoryNavigate()
         }
     }

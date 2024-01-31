@@ -51,17 +51,17 @@ fun TextView.setStoryAuthor(item: StoriesEntity?){
 @BindingAdapter("setStoryImage")
 fun setStoryImage(imageView: ImageView, story: StoriesEntity?){
     story?.let {
-        if(story.imageFilename != null){
-            val db = DatabaseAccess()
-
-            // Download directly from StorageReference using Glide
-            Glide.with(imageView.context)
-                .load(db.getImageRef(story.imageFilename.toString()))
-                .apply(RequestOptions()
-                    .placeholder(R.drawable.baseline_downloading_24) //TODO replace with loading animation
-                    .error(R.drawable.baseline_broken_image_24))
-                .into(imageView)
-        }
+//        if(story.imageFilename != null){
+//            val db = DatabaseAccess()
+//
+//            // Download directly from StorageReference using Glide
+//            Glide.with(imageView.context)
+//                .load(db.getImageRef(story.imageFilename.toString()))
+//                .apply(RequestOptions()
+//                    .placeholder(R.drawable.baseline_downloading_24) //TODO replace with loading animation
+//                    .error(R.drawable.baseline_broken_image_24))
+//                .into(imageView)
+//        }
     }
 }
 

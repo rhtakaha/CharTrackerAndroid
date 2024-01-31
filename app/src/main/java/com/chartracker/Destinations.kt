@@ -27,5 +27,9 @@ object Stories: Destination{
     override val route = "stories"
 }
 
+object AddEditStory: Destination{
+    override val route = "addEditStory"
+}
+
 // list of all screens for use to determine which screen currently at
 val charTrackerScreens = listOf(SignIn, SignUp, EmailVerify)
