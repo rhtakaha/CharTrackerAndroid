@@ -1,5 +1,6 @@
 package com.chartracker.ui.story
 
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -14,10 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -34,6 +39,7 @@ import com.chartracker.R
 import com.chartracker.database.StoriesEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.TextEntryHolder
+import com.chartracker.ui.theme.CharTrackerTheme
 
 @Composable
 fun AddEditStoryScreen(
@@ -87,11 +93,6 @@ fun AddEditStoryScreen(
                 .fillMaxSize()
                 .padding(paddingValue)
                 .semantics { contentDescription = "AddEditStory Screen" }){
-            Button(onClick = {
-                val story = StoriesEntity(title, genre, type, author)
-                submitStory(story, localUri.value) }) {
-                Text(text = stringResource(id = R.string.submit))
-            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center) {
@@ -145,9 +146,45 @@ fun AddEditStoryScreen(
                 label = R.string.type_hint,
                 text = type,
                 onTyping = {newInput -> onTypeChange(newInput)})
-
+            Button(onClick = {
+                val story = StoriesEntity(title, genre, type, author)
+                submitStory(story, localUri.value) }) {
+                Text(text = stringResource(id = R.string.submit))
+            }
 
         }
     }
 
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Regular Dark Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "Regular Light Mode")
+@Composable
+fun PreviewAddStoryScreen(){
+    var title by remember { mutableStateOf("") }
+    var author by remember { mutableStateOf("") }
+    var genre by remember { mutableStateOf("") }
+    var type by remember { mutableStateOf("") }
+    CharTrackerTheme {
+        Surface {
+            AddEditStoryScreen(
+                title = title,
+                onTitleChange = { newInput -> title = newInput },
+                author = author,
+                onAuthorChange = { newInput -> author = newInput },
+                genre = genre,
+                onGenreChange = { newInput -> genre = newInput },
+                type = type,
+                onTypeChange = { newInput -> type = newInput },
+                submitStory = { _, _ ->},
+                navToStories = false,
+                resetNavToStories = { /*TODO*/ }) {
+                
+            }
+        }
+    }
 }

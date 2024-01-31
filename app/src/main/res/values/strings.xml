@@ -11,7 +11,7 @@
     <string name="genre">Genre</string>
     <string name="genre_hint">Enter genre</string>
     <string name="type">Type</string>
-    <string name="type_hint">Enter type of story (such as book or movie)</string>
+    <string name="type_hint">Enter type (e.g. book)</string>
     <string name="author">Author</string>
     <string name="author_hint">Enter author</string>
     <string name="submit">Submit</string>
