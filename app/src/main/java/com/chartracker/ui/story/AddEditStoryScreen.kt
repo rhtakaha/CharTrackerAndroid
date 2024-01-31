@@ -41,7 +41,6 @@ fun AddEditStoryScreen(
     addEditStoryViewModel: AddEditStoryViewModel = viewModel()
 ){
     AddEditStoryScreen(
-//        story = addEditStoryViewModel.story.value,
         title = addEditStoryViewModel.title.value,
         onTitleChange= {newInput: String -> addEditStoryViewModel.updateInputTitle(newInput)},
         author = addEditStoryViewModel.author.value,
@@ -59,7 +58,6 @@ fun AddEditStoryScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun AddEditStoryScreen(
-    //story: StoriesEntity, //TODO eventually pass just object but for now just want to make sure it works as is
     title: String,
     onTitleChange: (String) -> Unit,
     author: String,
@@ -111,16 +109,19 @@ fun AddEditStoryScreen(
                             modifier = Modifier
                                 .size(80.dp)
                                 .clip(CircleShape))
+                        Button(onClick = {localUri.value = null}) {
+                            Text(text = stringResource(id = R.string.remove_selected_image))
+                        }
                     }else{
                         Spacer(modifier = Modifier
                             .size(120.dp))
-                    }
-                    Button(onClick = {
-                        launcher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }) {
-                        Text(text = stringResource(id = R.string.select_image))
+                        Button(onClick = {
+                            launcher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }) {
+                            Text(text = stringResource(id = R.string.select_image))
+                        }
                     }
                 }
             }
