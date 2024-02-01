@@ -8,34 +8,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.database.StoriesEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.EntityHolderList
 
-@Composable
-fun Test(refreshStories: () -> Unit){
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    DisposableEffect(key1 = lifecycle){
-        // should make it so stories get refreshed whenever we come back here
-        val lifecycleObserver = getStoriesObserver { refreshStories() }
-        lifecycle.addObserver(lifecycleObserver)
-        onDispose {
-            lifecycle.removeObserver(lifecycleObserver)
-        }
-
-    }
-}
 @Composable
 fun StoriesScreen(
     navToAddStory: () -> Unit,
@@ -44,7 +27,6 @@ fun StoriesScreen(
     storiesViewModel: StoriesViewModel = viewModel()
 ){
     val stories by storiesViewModel.stories.collectAsStateWithLifecycle()
-//    Test { storiesViewModel.getStories() }
     StoriesScreen(
         stories = stories,
         navToAddStory= navToAddStory,
@@ -77,9 +59,3 @@ fun StoriesScreen(
 //        val db = DatabaseAccess()
 //        EntityHolder(imageUri = db.getImageRef("character_Lord of the Rings_Sauron.png"), entityName = "Ring")
 }
-private fun getStoriesObserver(refreshStories: () -> Unit): LifecycleEventObserver =
-    LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_CREATE ) {
-            refreshStories()
-        }
-    }

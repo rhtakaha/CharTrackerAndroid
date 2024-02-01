@@ -1,5 +1,6 @@
 package com.chartracker.ui.story
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
@@ -17,8 +18,8 @@ class StoriesViewModel : ViewModel(){
     init {
         getStories()
     }
-
     fun getStories(){
+        Log.i("StoriesVM", "getting stories")
         viewModelScope.launch {
             _stories.value = db.getStories()
         }

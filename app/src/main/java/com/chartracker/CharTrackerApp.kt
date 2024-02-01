@@ -52,7 +52,7 @@ fun CharTrackerNavHost(
             val userEmail = navBackStackEntry.arguments?.getString(EmailVerify.userEmailArg) ?: ""
             EmailVerifyScreen(
                 navToUpdateEmail = { /*TODO*/ },
-                navToStories = { /*TODO*/ },
+                navToStories = {navController.navigateSingleTopTo(Stories.route)},
                 userEmail = userEmail,
                 onBackNav = {navController.navigateUp()})
         }
@@ -68,7 +68,7 @@ fun CharTrackerNavHost(
         ){ navBackStackEntry ->
             val storyId = navBackStackEntry.arguments?.getString(AddEditStory.storyIdArg)
             AddEditStoryScreen(
-                onBackNav = {navController.navigateUp()},
+                onBackNav = {navController.navigateSingleTopTo(Stories.route)},
                 storyId = storyId
                 )
         }
