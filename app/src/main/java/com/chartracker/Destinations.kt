@@ -29,7 +29,14 @@ object Stories: Destination{
 
 object AddEditStory: Destination{
     override val route = "addEditStory"
+    const val storyIdArg = "story_id"
+    val routeWithArgs = "${route}?{${storyIdArg}}"
+    val arguments = listOf(navArgument(storyIdArg) {
+        defaultValue = null
+        nullable = true
+        type = NavType.StringType
+    })
 }
 
 // list of all screens for use to determine which screen currently at
-val charTrackerScreens = listOf(SignIn, SignUp, EmailVerify)
+val charTrackerScreens = listOf(SignIn, SignUp, EmailVerify, Stories, AddEditStory)

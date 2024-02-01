@@ -58,11 +58,19 @@ fun CharTrackerNavHost(
         }
         composable(route = Stories.route){
             StoriesScreen(
-                onAddEditStoryNav = { navController.navigateSingleTopTo(AddEditStory.route) },
+                navToAddStory = { navController.navigateSingleTopTo(AddEditStory.route) },
+                navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}/$storyId") },
                 onBackNav = {navController.navigateUp()})
         }
-        composable(route= AddEditStory.route){
-            AddEditStoryScreen(onBackNav = {navController.navigateUp()})
+        composable(
+            route= AddEditStory.routeWithArgs,
+            arguments = AddEditStory.arguments
+        ){ navBackStackEntry ->
+            val storyId = navBackStackEntry.arguments?.getString(AddEditStory.storyIdArg)
+            AddEditStoryScreen(
+                onBackNav = {navController.navigateUp()},
+                storyId = storyId
+                )
         }
     }
 }

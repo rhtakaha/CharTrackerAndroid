@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -44,7 +45,8 @@ import com.chartracker.ui.theme.CharTrackerTheme
 @Composable
 fun AddEditStoryScreen(
     onBackNav: () -> Unit,
-    addEditStoryViewModel: AddEditStoryViewModel = viewModel()
+    storyId: String?,
+    addEditStoryViewModel: AddEditStoryViewModel = viewModel(factory = AddEditStoryViewModelFactory(storyId))
 ){
     AddEditStoryScreen(
         title = addEditStoryViewModel.title.value,
@@ -58,6 +60,7 @@ fun AddEditStoryScreen(
         submitStory = {story, localImageURI -> addEditStoryViewModel.submitStory(story, localImageURI)},
         navToStories = addEditStoryViewModel.navToStories.value,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
+        startImage = addEditStoryViewModel.story.value?.imagePublicUrl?.toUri(),
         onBackNav = onBackNav)
 }
 
@@ -75,13 +78,14 @@ fun AddEditStoryScreen(
     submitStory: (StoriesEntity, Uri?) -> Unit,
     navToStories: Boolean,
     resetNavToStories: () -> Unit,
+    startImage: Uri?,
     onBackNav: () -> Unit
 ){
     if (navToStories){
         onBackNav()
         resetNavToStories()
     }
-    val localUri = remember { mutableStateOf<Uri?>(null) }
+    val localUri = remember { mutableStateOf(startImage) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
         localUri.value = it
     }
@@ -147,8 +151,11 @@ fun AddEditStoryScreen(
                 text = type,
                 onTyping = {newInput -> onTypeChange(newInput)})
             Button(onClick = {
-                val story = StoriesEntity(title, genre, type, author)
-                submitStory(story, localUri.value) }) {
+                if (title != "") {
+                    val story = StoriesEntity(title, genre, type, author)
+                    submitStory(story, localUri.value)
+                }
+            }) {
                 Text(text = stringResource(id = R.string.submit))
             }
 
@@ -182,6 +189,7 @@ fun PreviewAddStoryScreen(){
                 onTypeChange = { newInput -> type = newInput },
                 submitStory = { _, _ ->},
                 navToStories = false,
+                startImage = null,
                 resetNavToStories = { /*TODO*/ }) {
                 
             }

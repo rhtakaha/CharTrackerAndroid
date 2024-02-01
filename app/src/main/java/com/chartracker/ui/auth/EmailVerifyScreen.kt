@@ -29,7 +29,7 @@ fun EmailVerifyScreen(
     userEmail: String,
     emailVerifyViewModel: EmailVerifyViewModel = viewModel()
 ){
-    EmailVerifyScreen(email = userEmail,// might use argument instead?
+    EmailVerifyScreen(email = userEmail,
         sendEmail = { emailVerifyViewModel.sendVerificationEmail()},
         changeEmail = { navToUpdateEmail() },
         checkVerification = {emailVerifyViewModel.isEmailVerified()},
