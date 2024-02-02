@@ -59,7 +59,6 @@ fun CharTrackerNavHost(
         composable(route = Stories.route){
             StoriesScreen(
                 navToAddStory = { navController.navigateSingleTopTo(AddEditStory.route) },
-                navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}/$storyId") },
                 onBackNav = {navController.navigateUp()})
         }
         composable(
@@ -74,5 +73,7 @@ fun CharTrackerNavHost(
         }
     }
 }
+
+//navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}/$storyId") },
 
 fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) { launchSingleTop = true }

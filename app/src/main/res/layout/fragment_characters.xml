@@ -20,7 +20,7 @@
             android:layout_marginTop="@dimen/default_margin"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
-            android:text="@{charactersViewModel.story.title}"
+            android:text="@{charactersViewModel.story.name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/characters_story_image"
             app:layout_constraintTop_toTopOf="parent"

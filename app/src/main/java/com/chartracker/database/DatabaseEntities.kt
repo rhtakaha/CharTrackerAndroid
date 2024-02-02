@@ -1,5 +1,22 @@
 package com.chartracker.database
 
+/* File holding the entities in the database*/
+
+open class DatabaseEntity(
+    val name: String? = null,
+    var imageFilename: String? = null,
+    var imagePublicUrl: String? = null
+)
+
+class StoriesEntity (
+    name: String? = null,
+    val genre: String? = null,
+    val type: String? = null,
+    val author: String? = null,
+    imageFilename: String? = null,
+    imagePublicUrl: String? = null
+): DatabaseEntity(name = name, imageFilename = imageFilename, imagePublicUrl = imagePublicUrl)
+
 data class CharacterEntity(
     val name: String? = null,
     val aliases: String? = null,

@@ -11,10 +11,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import com.chartracker.ui.components.CharTrackerTopBar
 import org.junit.Rule
 import org.junit.Test
-
+import com.chartracker.R
 class AppBarTest {
     @get: Rule
     val composeTestRule = createComposeRule()
@@ -27,6 +28,23 @@ class AppBarTest {
 
         composeTestRule
             .onNodeWithContentDescription("Up button")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun topBarWithTitleTest(){
+        composeTestRule.setContent {
+            CharTrackerTopBar(
+                title = R.string.stories,
+                onBackNav = { /*TODO*/ }, actionButtons = {})
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Up button")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Stories")
             .assertIsDisplayed()
     }
 

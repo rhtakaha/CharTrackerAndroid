@@ -19,7 +19,9 @@ class SignInScreenTest {
     @Before
     fun setupSignInScreen(){
         composeTestRule.setContent {
-            SignInScreen(navToSignUp = { /*TODO*/ })
+            SignInScreen(
+                navToSignUp = { },
+                navToStories = {})
         }
     }
 

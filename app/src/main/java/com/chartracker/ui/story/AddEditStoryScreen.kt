@@ -89,7 +89,7 @@ fun AddEditStoryScreen(
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
         localUri.value = it
     }
-    Scaffold(topBar = { CharTrackerTopBar(onBackNav) {} }) { paddingValue ->
+    Scaffold(topBar = { CharTrackerTopBar(onBackNav=onBackNav) {} }) { paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

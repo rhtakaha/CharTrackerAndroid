@@ -46,7 +46,7 @@ class StoryAdapter(private val clickListener: StoryListener): ListAdapter<Storie
 // using Diff Util to manage when to remake an item because it changed
 class StoryDiffCallback: DiffUtil.ItemCallback<StoriesEntity>(){
     override fun areItemsTheSame(oldItem: StoriesEntity, newItem: StoriesEntity): Boolean {
-        return oldItem.title == newItem.title
+        return oldItem.name == newItem.name
     }
 
     override fun areContentsTheSame(oldItem: StoriesEntity, newItem: StoriesEntity): Boolean {
@@ -56,6 +56,6 @@ class StoryDiffCallback: DiffUtil.ItemCallback<StoriesEntity>(){
 }
 
 class StoryListener(val clickListener: (storyTitle: String) -> Unit){
-    fun onClick(story: StoriesEntity) = clickListener(story.title!!)
+    fun onClick(story: StoriesEntity) = clickListener(story.name!!)
 
 }

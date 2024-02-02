@@ -46,7 +46,7 @@ fun EmailVerifyScreen(
     navToStories: () -> Unit,
     onBackNav: () -> Unit
 ){
-    Scaffold(topBar = { CharTrackerTopBar(onBackNav) {} }) {paddingValue ->
+    Scaffold(topBar = { CharTrackerTopBar(onBackNav=onBackNav) {} }) {paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

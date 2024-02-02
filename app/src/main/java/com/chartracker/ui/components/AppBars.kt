@@ -1,6 +1,7 @@
 package com.chartracker.ui.components
 
 
+import androidx.annotation.StringRes
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -14,19 +15,30 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import com.chartracker.R
 import com.chartracker.ui.theme.CharTrackerTheme
 
 /* Action button ordering is First in First Left order*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharTrackerTopBar(
+    @StringRes title: Int? = null,
     onBackNav: ()-> Unit,
     actionButtons: @Composable () -> Unit
 ){
     TopAppBar(
+        title = {
+            if (title != null){
+                Text(
+                    text = stringResource(id = title),
+                    style = MaterialTheme.typography.headlineLarge
+                )
+            }
+        },
         colors =  TopAppBarDefaults.topAppBarColors(
         containerColor =  MaterialTheme.colorScheme.primaryContainer,
         titleContentColor = MaterialTheme.colorScheme.primary,
@@ -42,7 +54,6 @@ fun CharTrackerTopBar(
             }
         },
         actions = {actionButtons()},
-        title = {Text(text = "")},
         modifier = Modifier.semantics { contentDescription = "Top bar" }
     )
 }
@@ -52,6 +63,17 @@ fun CharTrackerTopBar(
 fun PreviewCharTrackerDefaultTopBar(){
     CharTrackerTheme {
         CharTrackerTopBar(
+            onBackNav = { /*TODO*/ },
+            actionButtons = {})
+    }
+}
+
+@Preview
+@Composable
+fun PreviewCharTrackerTopBarWithTitle(){
+    CharTrackerTheme {
+        CharTrackerTopBar(
+            title = R.string.stories,
             onBackNav = { /*TODO*/ },
             actionButtons = {})
     }

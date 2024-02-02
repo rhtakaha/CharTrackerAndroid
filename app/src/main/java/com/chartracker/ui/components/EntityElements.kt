@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,21 +29,27 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
+import com.chartracker.database.DatabaseEntity
 import com.chartracker.database.StoriesEntity
 
 //TODO need to make so when adding story/character the public url is added instead of just filename
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun EntityHolder(imageUrl: String?, entityName: String, modifier: Modifier = Modifier){
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
+fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Unit, modifier: Modifier = Modifier){
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
         shape = MaterialTheme.shapes.small,
-        modifier = Modifier.padding(bottom = 8.dp)) {
+        onClick = { onClick(entityName)},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 4.dp, top = 4.dp)
+
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = modifier
-                .fillMaxWidth()
+            horizontalArrangement = Arrangement.Start
         ) {
             if (imageUrl != null) {
                 GlideImage(
@@ -75,7 +84,9 @@ fun EntityHolder(imageUrl: String?, entityName: String, modifier: Modifier = Mod
 fun PreviewEntityHolderWithImage(){
     CharTrackerTheme {
         Surface {
-            EntityHolder("https://th.bing.com/th/id/OIP.xJ2gfgHVXWPRDgBclINipgHaEK?rs=1&pid=ImgDetMain", "Gollum")
+            EntityHolder("https://th.bing.com/th/id/OIP.xJ2gfgHVXWPRDgBclINipgHaEK?rs=1&pid=ImgDetMain",
+                "Gollum",
+                {})
         }
     }
 }
@@ -90,20 +101,21 @@ fun PreviewEntityHolderWithImage(){
 fun PreviewEntityHolderWithoutImage(){
     CharTrackerTheme {
         Surface {
-            EntityHolder(null, "Gollum")
+            EntityHolder(null, "Gollum", {})
         }
     }
 }
 
 @Composable
-fun EntityHolderList(stories: List<StoriesEntity>){
+fun EntityHolderList(entities: List<DatabaseEntity>){
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ){
-        items(stories){story ->
+        items(entities){entity ->
              EntityHolder(
-                 imageUrl = story.imagePublicUrl,
-                entityName = story.title!!)
+                 imageUrl = entity.imagePublicUrl,
+                entityName = entity.name!!,
+                 onClick = {})
         }
     }
 }
@@ -116,10 +128,10 @@ fun EntityHolderList(stories: List<StoriesEntity>){
     name = "Light Mode")
 @Composable
 fun PreviewEntityHolderList(){
-    val stories = listOf(StoriesEntity(title="Lord of the Rings", imagePublicUrl = ""), StoriesEntity(title = "Batman"))
+    val stories = listOf(StoriesEntity(name="Lord of the Rings", imagePublicUrl = ""), StoriesEntity(name = "Batman"))
     CharTrackerTheme {
         Surface {
-            EntityHolderList(stories = stories)
+            EntityHolderList(entities = stories)
         }
     }
 }

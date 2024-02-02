@@ -90,7 +90,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         if (localImageURI != null){
             // trying to add a new image
             // no matter what adding the new image
-            updatedStory.imageFilename = getFilename(updatedStory.title!!)
+            updatedStory.imageFilename = getFilename(updatedStory.name!!)
             db.addImage(updatedStory.imageFilename!!, localImageURI)
             db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename!!)
 
@@ -120,7 +120,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private suspend fun addStory(newStory: StoriesEntity, localImageURI: Uri?){
         if (localImageURI != null) {
             // if we are adding an image
-            newStory.imageFilename = getFilename(newStory.title!!)
+            newStory.imageFilename = getFilename(newStory.name!!)
             db.addImage(newStory.imageFilename!!, localImageURI)
             db.addImageDownloadUrlToStory(newStory, newStory.imageFilename!!)
         }
@@ -133,7 +133,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private fun getStory(storyId: String){
         viewModelScope.launch {
             updateStory(db.getStoryFromId(storyId))
-            story.value?.title?.let { updateInputTitle(it) }
+            story.value?.name?.let { updateInputTitle(it) }
             story.value?.author?.let { updateInputAuthor(it) }
             story.value?.genre?.let { updateInputGenre(it) }
             story.value?.type?.let { updateInputType(it) }

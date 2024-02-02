@@ -23,7 +23,7 @@ fun TextView.setCharacterName(item: CharacterEntity?){
 @BindingAdapter("storyName")
 fun TextView.setStoryName(item: StoriesEntity?){
     item?.let {
-        text = item.title
+        text = item.name
     }
 }
 
