@@ -1,13 +1,12 @@
 package com.chartracker.stories
 
 import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.launch
 
 
@@ -47,7 +46,7 @@ class AddStoryViewModel : ViewModel() {
 
     /*function that calls a database access method to create the story in Firebase
         also calls navigation*/
-    fun submitStory(story: StoriesEntity, imageURI: String){
+    fun submitStory(story: StoryEntity, imageURI: String){
 
         viewModelScope.launch {
             Log.i(tag, "Creation of new story initiated")

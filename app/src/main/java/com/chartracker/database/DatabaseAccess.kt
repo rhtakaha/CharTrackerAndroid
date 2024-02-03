@@ -30,7 +30,7 @@ class DatabaseAccess {
         }
     }
 
-    suspend fun addImageDownloadUrlToStory(story: StoriesEntity, filename: String){
+    suspend fun addImageDownloadUrlToStory(story: StoryEntity, filename: String){
         storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.addOnSuccessListener {url ->
             story.imagePublicUrl = url.toString()
             Log.i(tag, "got the public url for the image: $url")
@@ -274,7 +274,7 @@ class DatabaseAccess {
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
-            .whereEqualTo("title", storyTitle)
+            .whereEqualTo("name", storyTitle)
             .get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty){
@@ -291,8 +291,8 @@ class DatabaseAccess {
         return story
     }
 
-    /*update the document associated with the given Id with the given StoriesEntity*/
-    suspend fun updateStory(storyId: String, story: StoriesEntity){
+    /*update the document associated with the given Id with the given StoryEntity*/
+    suspend fun updateStory(storyId: String, story: StoryEntity){
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -303,8 +303,8 @@ class DatabaseAccess {
     }
 
     /*Document ID to story*/
-    suspend fun getStoryFromId(storyId: String): StoriesEntity{
-        var story: StoriesEntity = StoriesEntity()
+    suspend fun getStoryFromId(storyId: String): StoryEntity{
+        var story: StoryEntity = StoryEntity()
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -326,12 +326,12 @@ class DatabaseAccess {
     }
 
 
-    suspend fun getStory(storyTitle: String): StoriesEntity{
-        var story: StoriesEntity = StoriesEntity()
+    suspend fun getStory(storyTitle: String): StoryEntity{
+        var story: StoryEntity = StoryEntity()
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
-            .whereEqualTo("title", storyTitle)
+            .whereEqualTo("name", storyTitle)
             .get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty){
@@ -379,7 +379,7 @@ class DatabaseAccess {
     }
 
     /*creates a new story in Firebase*/
-    suspend fun createStory(story: StoriesEntity){
+    suspend fun createStory(story: StoryEntity){
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -396,8 +396,8 @@ class DatabaseAccess {
     //TODO Eventually going to probably have a function running in the background
     // which updates the offline cache and then when the user uses the app it pulls
     // from offline unless a change was made
-    suspend fun getStories(): MutableList<StoriesEntity> {
-        val stories = mutableListOf<StoriesEntity>()
+    suspend fun getStories(): MutableList<StoryEntity> {
+        val stories = mutableListOf<StoryEntity>()
         // Source can be CACHE, SERVER, or DEFAULT.
         val source = Source.DEFAULT
 
@@ -408,7 +408,7 @@ class DatabaseAccess {
             .get(source)
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    stories.add(document.toObject<StoriesEntity>())
+                    stories.add(document.toObject<StoryEntity>())
                     Log.i(tag, "${document.id} => ${document.data}")
                 }
                 Log.i(tag, "success")

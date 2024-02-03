@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.chartracker.R
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import com.chartracker.databinding.FragmentAddStoryBinding
 
 
@@ -62,14 +62,14 @@ class AddStoryFragment : Fragment(), MenuProvider {
 
         binding.addStoriesSubmit.setOnClickListener {
             // build the story with or without the filename if based on if it has an image
-            val story: StoriesEntity = if(imageURI != "" && imageType != ""){
+            val story: StoryEntity = if(imageURI != "" && imageType != ""){
                 val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType)
-                StoriesEntity(binding.addStoryTitle.text.toString(),
+                StoryEntity(binding.addStoryTitle.text.toString(),
                     binding.addStoryGenre.text.toString(),
                     binding.addStoryType.text.toString(),
                     binding.addStoryAuthor.text.toString(), "story_${binding.addStoryTitle.text}.$extension")
             }else{
-                StoriesEntity(binding.addStoryTitle.text.toString(),
+                StoryEntity(binding.addStoryTitle.text.toString(),
                     binding.addStoryGenre.text.toString(),
                     binding.addStoryType.text.toString(),
                     binding.addStoryAuthor.text.toString())

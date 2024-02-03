@@ -8,7 +8,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 
 /* for character list items*/
 @BindingAdapter("characterName")
@@ -21,35 +21,35 @@ fun TextView.setCharacterName(item: CharacterEntity?){
 /* for story info*/
 
 @BindingAdapter("storyName")
-fun TextView.setStoryName(item: StoriesEntity?){
+fun TextView.setStoryName(item: StoryEntity?){
     item?.let {
         text = item.name
     }
 }
 
 @BindingAdapter("storyGenre")
-fun TextView.setStoryGenre(item: StoriesEntity?){
+fun TextView.setStoryGenre(item: StoryEntity?){
     item?.let {
         text = item.genre
     }
 }
 
 @BindingAdapter("storyType")
-fun TextView.setStoryType(item: StoriesEntity?){
+fun TextView.setStoryType(item: StoryEntity?){
     item?.let {
         text = item.type
     }
 }
 
 @BindingAdapter("storyAuthor")
-fun TextView.setStoryAuthor(item: StoriesEntity?){
+fun TextView.setStoryAuthor(item: StoryEntity?){
     item?.let {
         text = item.author
     }
 }
 
 @BindingAdapter("setStoryImage")
-fun setStoryImage(imageView: ImageView, story: StoriesEntity?){
+fun setStoryImage(imageView: ImageView, story: StoryEntity?){
     story?.let {
 //        if(story.imageFilename != null){
 //            val db = DatabaseAccess()

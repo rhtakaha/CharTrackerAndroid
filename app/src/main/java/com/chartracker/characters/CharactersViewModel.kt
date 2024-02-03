@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.launch
 
 open class CharactersViewModel(private val storyTitle: String): ViewModel() {
@@ -15,7 +15,7 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
     val charactersStringList = mutableListOf<String>()
     val db = DatabaseAccess()
     lateinit var storyId: String
-    var story = MutableLiveData<StoriesEntity>()
+    var story = MutableLiveData<StoryEntity>()
 
     val tag = "CharVM"
 //    init {

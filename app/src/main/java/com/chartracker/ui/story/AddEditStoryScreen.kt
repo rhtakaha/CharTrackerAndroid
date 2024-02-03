@@ -37,7 +37,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.R
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
@@ -75,7 +75,7 @@ fun AddEditStoryScreen(
     onGenreChange: (String) -> Unit,
     type: String,
     onTypeChange: (String) -> Unit,
-    submitStory: (StoriesEntity, Uri?) -> Unit,
+    submitStory: (StoryEntity, Uri?) -> Unit,
     navToStories: Boolean,
     resetNavToStories: () -> Unit,
     startImage: Uri?,
@@ -152,7 +152,7 @@ fun AddEditStoryScreen(
                 onTyping = {newInput -> onTypeChange(newInput)})
             Button(onClick = {
                 if (title != "") {
-                    val story = StoriesEntity(title, genre, type, author)
+                    val story = StoryEntity(title, genre, type, author)
                     submitStory(story, localUri.value)
                 }
             }) {

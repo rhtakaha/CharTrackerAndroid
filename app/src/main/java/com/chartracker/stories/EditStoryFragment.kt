@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.chartracker.R
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import com.chartracker.databinding.FragmentEditStoryBinding
 
 class EditStoryFragment : Fragment(), MenuProvider{
@@ -69,9 +69,9 @@ class EditStoryFragment : Fragment(), MenuProvider{
         var imageType = ""
 
         binding.editStoriesSubmit.setOnClickListener {
-            val story: StoriesEntity = if(imageURI != "" && imageType != ""){
+            val story: StoryEntity = if(imageURI != "" && imageType != ""){
                 val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(imageType)
-                StoriesEntity(binding.editStoryTitle.text.toString(),
+                StoryEntity(binding.editStoryTitle.text.toString(),
                     binding.editStoryGenre.text.toString(),
                     binding.editStoryType.text.toString(),
                     binding.editStoryAuthor.text.toString(),
@@ -79,7 +79,7 @@ class EditStoryFragment : Fragment(), MenuProvider{
             }else{
                 // just updating the file and not the image could result in a differing filename and title
                 // but as long as it points correctly it should be fine
-                StoriesEntity(binding.editStoryTitle.text.toString(),
+                StoryEntity(binding.editStoryTitle.text.toString(),
                     binding.editStoryGenre.text.toString(),
                     binding.editStoryType.text.toString(),
                     binding.editStoryAuthor.text.toString(),

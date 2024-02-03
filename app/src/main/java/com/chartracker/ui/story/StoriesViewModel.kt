@@ -4,15 +4,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class StoriesViewModel : ViewModel(){
-    private val _stories = MutableStateFlow<List<StoriesEntity>>(emptyList())
-    val stories: StateFlow<List<StoriesEntity>> = _stories.asStateFlow()
+    private val _stories = MutableStateFlow<List<StoryEntity>>(emptyList())
+    val stories: StateFlow<List<StoryEntity>> = _stories.asStateFlow()
     val db = DatabaseAccess()
 
     init {

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -22,11 +22,11 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         }
     }
 
-    private val _story = mutableStateOf<StoriesEntity?>(null)
-    val story: MutableState<StoriesEntity?>
+    private val _story = mutableStateOf<StoryEntity?>(null)
+    val story: MutableState<StoryEntity?>
         get() = _story
 
-    private fun updateStory(newStory: StoriesEntity){
+    private fun updateStory(newStory: StoryEntity){
         _story.value = newStory
     }
 
@@ -73,7 +73,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
 
     /*function that calls a database access method to create the story in Firebase
         also calls navigation*/
-    fun submitStory(newStory: StoriesEntity, localImageURI: Uri?){
+    fun submitStory(newStory: StoryEntity, localImageURI: Uri?){
         viewModelScope.launch {
             if (storyId == null) {
                 addStory(newStory, localImageURI)
@@ -83,7 +83,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         }
     }
 
-    private suspend fun updateStory(storyId: String, updatedStory: StoriesEntity, localImageURI: Uri?){
+    private suspend fun updateStory(storyId: String, updatedStory: StoryEntity, localImageURI: Uri?){
         Log.i(tag, "starting to update story")
 
 
@@ -117,7 +117,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         _navToStories.value = true
     }
 
-    private suspend fun addStory(newStory: StoriesEntity, localImageURI: Uri?){
+    private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?){
         if (localImageURI != null) {
             // if we are adding an image
             newStory.imageFilename = getFilename(newStory.name!!)

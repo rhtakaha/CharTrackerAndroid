@@ -1,7 +1,6 @@
 package com.chartracker.ui.components
 
 
-import androidx.annotation.StringRes
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,7 +25,7 @@ import com.chartracker.ui.theme.CharTrackerTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharTrackerTopBar(
-    @StringRes title: Int? = null,
+    title: String? = null,
     onBackNav: ()-> Unit,
     actionButtons: @Composable () -> Unit
 ){
@@ -34,7 +33,7 @@ fun CharTrackerTopBar(
         title = {
             if (title != null){
                 Text(
-                    text = stringResource(id = title),
+                    text = title,
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -73,7 +72,7 @@ fun PreviewCharTrackerDefaultTopBar(){
 fun PreviewCharTrackerTopBarWithTitle(){
     CharTrackerTheme {
         CharTrackerTopBar(
-            title = R.string.stories,
+            title = stringResource(id = R.string.stories),
             onBackNav = { /*TODO*/ },
             actionButtons = {})
     }

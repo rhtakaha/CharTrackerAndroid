@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import com.chartracker.databinding.ListItemStoryBinding
 
 // implementing ListAdapter means it handles a lot for us
-class StoryAdapter(private val clickListener: StoryListener): ListAdapter<StoriesEntity, StoryAdapter.StoryViewHolder>(StoryDiffCallback()){
+class StoryAdapter(private val clickListener: StoryListener): ListAdapter<StoryEntity, StoryAdapter.StoryViewHolder>(StoryDiffCallback()){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
         return StoryViewHolder.from(parent)
     }
@@ -29,7 +29,7 @@ class StoryAdapter(private val clickListener: StoryListener): ListAdapter<Storie
             }
         }
 
-         fun bind(item: StoriesEntity, clickListener: StoryListener) {
+         fun bind(item: StoryEntity, clickListener: StoryListener) {
              binding.story = item
              binding.clickListener = clickListener
              binding.executePendingBindings()
@@ -44,18 +44,18 @@ class StoryAdapter(private val clickListener: StoryListener): ListAdapter<Storie
 }
 
 // using Diff Util to manage when to remake an item because it changed
-class StoryDiffCallback: DiffUtil.ItemCallback<StoriesEntity>(){
-    override fun areItemsTheSame(oldItem: StoriesEntity, newItem: StoriesEntity): Boolean {
+class StoryDiffCallback: DiffUtil.ItemCallback<StoryEntity>(){
+    override fun areItemsTheSame(oldItem: StoryEntity, newItem: StoryEntity): Boolean {
         return oldItem.name == newItem.name
     }
 
-    override fun areContentsTheSame(oldItem: StoriesEntity, newItem: StoriesEntity): Boolean {
+    override fun areContentsTheSame(oldItem: StoryEntity, newItem: StoryEntity): Boolean {
         return oldItem == newItem
     }
 
 }
 
 class StoryListener(val clickListener: (storyTitle: String) -> Unit){
-    fun onClick(story: StoriesEntity) = clickListener(story.name!!)
+    fun onClick(story: StoryEntity) = clickListener(story.name!!)
 
 }

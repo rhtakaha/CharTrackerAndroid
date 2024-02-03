@@ -8,7 +8,7 @@ open class DatabaseEntity(
     var imagePublicUrl: String? = null
 )
 
-class StoriesEntity (
+class StoryEntity (
     name: String? = null,
     val genre: String? = null,
     val type: String? = null,
@@ -17,8 +17,8 @@ class StoriesEntity (
     imagePublicUrl: String? = null
 ): DatabaseEntity(name = name, imageFilename = imageFilename, imagePublicUrl = imagePublicUrl)
 
-data class CharacterEntity(
-    val name: String? = null,
+class CharacterEntity(
+    name: String? = null,
     val aliases: String? = null,
     val titles: String? = null,
     val age: Int? = null,
@@ -34,5 +34,6 @@ data class CharacterEntity(
     val allies: List<String>? = null,
     val enemies: List<String>? = null,
     val neutral: List<String>? = null,
-    val imageFilename: String? = null
-)
+    imageFilename: String? = null,
+    imagePublicUrl: String? = null
+): DatabaseEntity(name = name, imageFilename = imageFilename, imagePublicUrl = imagePublicUrl)

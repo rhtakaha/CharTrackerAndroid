@@ -2,6 +2,7 @@ package com.chartracker.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,13 +30,103 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
+import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseEntity
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 
-//TODO need to make so when adding story/character the public url is added instead of just filename
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun StoryDetails(story: StoryEntity){
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+        shape = MaterialTheme.shapes.small,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 4.dp, top = 4.dp)
+
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            if (story.imagePublicUrl != null) {
+                GlideImage(
+                    model = story.imagePublicUrl,
+                    contentDescription = null,
+                    loading = placeholder(R.drawable.baseline_downloading_24),
+                    failure = placeholder(R.drawable.baseline_broken_image_24),
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+            } else {
+                Spacer(modifier = Modifier.size(120.dp))
+            }
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier
+                    .padding(start = 40.dp)
+            ) {
+                story.author?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.headlineLarge,
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                    )
+                }
+                story.genre?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.headlineLarge,
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                    )
+                }
+                story.type?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.headlineLarge,
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                    )
+                }
+            }
+
+        }
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Dark Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "Light Mode")
+@Composable
+fun PreviewStoryDetails() {
+    CharTrackerTheme {
+        Surface {
+            StoryDetails(
+                story =
+                StoryEntity(
+                    name = "Star Wars",
+                    author = "George Lucas",
+                    genre = "Sci-fi",
+                    type = "Movie",
+                    imagePublicUrl = ""
+                )
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Unit, modifier: Modifier = Modifier){
+fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Unit){
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -107,15 +198,46 @@ fun PreviewEntityHolderWithoutImage(){
 }
 
 @Composable
-fun EntityHolderList(entities: List<DatabaseEntity>){
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
+fun EntityHolderList(
+    entities: List<DatabaseEntity>,
+    modifier: Modifier=Modifier,
+    onClick: (String) -> Unit,
+    story: StoryEntity?=null,
     ){
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ){
+        if (story != null) {
+            item {
+                StoryDetails(story = story)
+            }
+        }
         items(entities){entity ->
+
              EntityHolder(
                  imageUrl = entity.imagePublicUrl,
                 entityName = entity.name!!,
-                 onClick = {})
+                 onClick = onClick)
+        }
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Dark Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "Light Mode")
+@Composable
+fun PreviewEntityHolderListWithStoryDetails(){
+    val characters = listOf(CharacterEntity(name="Gandalf", imagePublicUrl = ""), CharacterEntity(name = "Frodo Baggins"))
+    val story = StoryEntity(name = "Lord of the Rings",
+        author = "JRR Tolkien",
+        genre = "Epic Fantasy",
+        type = "Book/Film")
+    CharTrackerTheme {
+        Surface {
+            EntityHolderList(entities = characters, onClick = {}, story = story)
         }
     }
 }
@@ -128,10 +250,10 @@ fun EntityHolderList(entities: List<DatabaseEntity>){
     name = "Light Mode")
 @Composable
 fun PreviewEntityHolderList(){
-    val stories = listOf(StoriesEntity(name="Lord of the Rings", imagePublicUrl = ""), StoriesEntity(name = "Batman"))
+    val stories = listOf(StoryEntity(name="Lord of the Rings", imagePublicUrl = ""), StoryEntity(name = "Batman"))
     CharTrackerTheme {
         Surface {
-            EntityHolderList(entities = stories)
+            EntityHolderList(entities = stories, onClick = {})
         }
     }
 }

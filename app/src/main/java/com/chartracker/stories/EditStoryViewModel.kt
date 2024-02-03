@@ -1,17 +1,16 @@
 package com.chartracker.stories
 
 import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
-import com.chartracker.database.StoriesEntity
+import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.launch
 
 class EditStoryViewModel(private val storyId: String): ViewModel() {
-    var story = MutableLiveData<StoriesEntity>()
+    var story = MutableLiveData<StoryEntity>()
     val db = DatabaseAccess()
     var filename = MutableLiveData<String?>()
 
@@ -47,7 +46,7 @@ class EditStoryViewModel(private val storyId: String): ViewModel() {
         _editStoryToCharactersNavigate.value = false
     }
 
-    fun submitStoryUpdate(updatedStory: StoriesEntity, imageURI: String){
+    fun submitStoryUpdate(updatedStory: StoryEntity, imageURI: String){
         viewModelScope.launch {
             Log.i("EditStoryVM", "starting to update story")
             db.updateStory(storyId, updatedStory)
