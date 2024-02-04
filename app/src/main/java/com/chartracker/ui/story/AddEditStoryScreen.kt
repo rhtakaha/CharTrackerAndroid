@@ -60,7 +60,7 @@ fun AddEditStoryScreen(
         type = addEditStoryViewModel.type.value,
         onTypeChange = {newInput: String -> addEditStoryViewModel.updateInputType(newInput)},
         submitStory = {story, localImageURI -> addEditStoryViewModel.submitStory(story, localImageURI)},
-        navToStories = addEditStoryViewModel.navToStories.value,
+        readyToNavToCharacters = addEditStoryViewModel.navToStories.value,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
         startImage = addEditStoryViewModel.story.value?.imagePublicUrl?.toUri(),
         onBackNav = onBackNav)
@@ -78,14 +78,14 @@ fun AddEditStoryScreen(
     type: String,
     onTypeChange: (String) -> Unit,
     submitStory: (StoryEntity, Uri?) -> Unit,
-    navToStories: Boolean,
+    readyToNavToCharacters: Boolean,
     resetNavToStories: () -> Unit,
     startImage: Uri?,
     onBackNav: () -> Unit
 ){
-    if (navToStories){
-        onBackNav()
+    if (readyToNavToCharacters){
         resetNavToStories()
+        onBackNav()
     }
     val localUri = remember { mutableStateOf(startImage) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
@@ -190,7 +190,7 @@ fun PreviewAddStoryScreen(){
                 type = type,
                 onTypeChange = { newInput -> type = newInput },
                 submitStory = { _, _ ->},
-                navToStories = false,
+                readyToNavToCharacters = false,
                 startImage = null,
                 resetNavToStories = { /*TODO*/ }) {
                 
