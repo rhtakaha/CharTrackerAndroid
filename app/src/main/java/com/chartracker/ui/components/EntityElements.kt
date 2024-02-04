@@ -2,7 +2,9 @@ package com.chartracker.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,17 +14,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -33,6 +45,7 @@ import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseEntity
 import com.chartracker.database.StoryEntity
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -44,7 +57,6 @@ fun StoryDetails(story: StoryEntity){
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 4.dp, top = 4.dp)
 
     ) {
         Row(
@@ -100,30 +112,6 @@ fun StoryDetails(story: StoryEntity){
     }
 }
 
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    name = "Dark Mode")
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    name = "Light Mode")
-@Composable
-fun PreviewStoryDetails() {
-    CharTrackerTheme {
-        Surface {
-            StoryDetails(
-                story =
-                StoryEntity(
-                    name = "Star Wars",
-                    author = "George Lucas",
-                    genre = "Sci-fi",
-                    type = "Movie",
-                    imagePublicUrl = ""
-                )
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Unit){
@@ -135,7 +123,6 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
         onClick = { onClick(entityName)},
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 4.dp, top = 4.dp)
 
     ) {
         Row(
@@ -160,6 +147,83 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
             Text(
                 text = entityName,
                 style = MaterialTheme.typography.headlineLarge
+            )
+        }
+    }
+}
+
+@Composable
+fun EntityHolderList(
+    entities: List<DatabaseEntity>,
+    modifier: Modifier=Modifier,
+    onClick: (String) -> Unit,
+    story: StoryEntity?=null,
+    ){
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val showScrollToTopButton by remember{
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex > 0
+        }
+    }
+    Box(modifier= modifier.fillMaxSize()) {
+        LazyColumn(
+            contentPadding = PaddingValues(4.dp),
+            state = lazyListState,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            if (story != null) {
+                item {
+                    StoryDetails(story = story)
+                }
+            }
+            items(entities) { entity ->
+                EntityHolder(
+                    imageUrl = entity.imagePublicUrl,
+                    entityName = entity.name!!,
+                    onClick = onClick
+                )
+            }
+        }
+        if (showScrollToTopButton) {
+            FloatingActionButton(
+                onClick = {
+                    coroutineScope.launch {
+                        lazyListState.animateScrollToItem(0)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowUpward,
+                    contentDescription = stringResource(id = R.string.scroll_to_top)
+                )
+            }
+        }
+    }
+}
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Dark Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "Light Mode")
+@Composable
+fun PreviewStoryDetails() {
+    CharTrackerTheme {
+        Surface {
+            StoryDetails(
+                story =
+                StoryEntity(
+                    name = "Star Wars",
+                    author = "George Lucas",
+                    genre = "Sci-fi",
+                    type = "Movie",
+                    imagePublicUrl = ""
+                )
             )
         }
     }
@@ -197,31 +261,6 @@ fun PreviewEntityHolderWithoutImage(){
     }
 }
 
-@Composable
-fun EntityHolderList(
-    entities: List<DatabaseEntity>,
-    modifier: Modifier=Modifier,
-    onClick: (String) -> Unit,
-    story: StoryEntity?=null,
-    ){
-    LazyColumn(
-        modifier = modifier.fillMaxSize()
-    ){
-        if (story != null) {
-            item {
-                StoryDetails(story = story)
-            }
-        }
-        items(entities){entity ->
-
-             EntityHolder(
-                 imageUrl = entity.imagePublicUrl,
-                entityName = entity.name!!,
-                 onClick = onClick)
-        }
-    }
-}
-
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     name = "Dark Mode")
@@ -230,7 +269,18 @@ fun EntityHolderList(
     name = "Light Mode")
 @Composable
 fun PreviewEntityHolderListWithStoryDetails(){
-    val characters = listOf(CharacterEntity(name="Gandalf", imagePublicUrl = ""), CharacterEntity(name = "Frodo Baggins"))
+    val characters = listOf(
+        CharacterEntity(name="Gandalf", imagePublicUrl = ""),
+        CharacterEntity(name = "Frodo Baggins"),
+        CharacterEntity(name = "Bilbo Baggins"),
+        CharacterEntity(name = "Aragorn"),
+        CharacterEntity(name = "Borimir"),
+        CharacterEntity(name = "Gimli"),
+        CharacterEntity(name = "Legolas"),
+        CharacterEntity(name = "Merry"),
+        CharacterEntity(name = "Pippin"),
+        CharacterEntity(name = "Sam")
+        )
     val story = StoryEntity(name = "Lord of the Rings",
         author = "JRR Tolkien",
         genre = "Epic Fantasy",
