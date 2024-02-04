@@ -21,9 +21,9 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -187,7 +187,7 @@ fun EntityHolderList(
             }
         }
         if (showScrollToTopButton) {
-            FloatingActionButton(
+            SmallFloatingActionButton(
                 onClick = {
                     coroutineScope.launch {
                         lazyListState.animateScrollToItem(0)
@@ -195,7 +195,7 @@ fun EntityHolderList(
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 8.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowUpward,
