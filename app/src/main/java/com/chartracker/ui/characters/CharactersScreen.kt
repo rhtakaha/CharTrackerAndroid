@@ -33,6 +33,7 @@ import com.chartracker.viewmodels.characters.CharactersViewModelFactory
 fun CharactersScreen(
     navToAddCharacter: () -> Unit,
     navToCharacterDetails: (String, String) -> Unit,
+    navToEditStory: (String) -> Unit,
     onBackNav: () -> Unit,
     storyTitle: String,
     charactersViewModel: CharactersViewModel = viewModel(factory = CharactersViewModelFactory(storyTitle = storyTitle))
@@ -47,6 +48,7 @@ fun CharactersScreen(
         navToAddCharacter = navToAddCharacter,
         /* convert 2 input lambda into 1 input by adding the storyId here*/
         navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, charName)},
+        navToEditStory = { navToEditStory(charactersViewModel.storyId) },
         onBackNav = onBackNav)
 }
 
@@ -57,6 +59,7 @@ fun CharactersScreen(
     charactersStringList: MutableList<String>,
     navToAddCharacter: () -> Unit,// might need params
     navToCharacterDetails: (String) -> Unit,
+    navToEditStory: () -> Unit,
     onBackNav: () -> Unit,
 ){
     Scaffold(
@@ -65,7 +68,7 @@ fun CharactersScreen(
                 title =  story.name,
                 onBackNav = onBackNav,
                 actionButtons = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navToEditStory() }) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
                             contentDescription = stringResource(id =R.string.edit_story)
@@ -121,6 +124,7 @@ fun PreviewCharactersScreen(){
                 charactersStringList= charactersStringList,
                 navToAddCharacter = {},
                 navToCharacterDetails = {},
+                navToEditStory = {},
                 onBackNav = { /*TODO*/ })
         }
     }

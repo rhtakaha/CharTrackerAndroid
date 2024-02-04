@@ -81,6 +81,7 @@ fun CharTrackerNavHost(
                 CharactersScreen(
                     navToAddCharacter = { /*TODO*/ },
                     navToCharacterDetails = { storyId, charName -> navController.navigateSingleTopTo("${CharacterDetails.route}/$storyId/$charName")},
+                    navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}?$storyId")},
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle
                 )
