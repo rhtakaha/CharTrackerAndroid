@@ -40,10 +40,22 @@ object AddEditStory: Destination{
 
 object Characters: Destination{
     override val route = "characters"
-    const val charactersIdArg = "story_title"
-    val routeWithArgs = "${route}/{${charactersIdArg}}"
-    val arguments = listOf(navArgument(charactersIdArg) { type = NavType.StringType })
+    const val storyTitleArg = "story_title"
+    val routeWithArgs = "${route}/{${storyTitleArg}}"
+    val arguments = listOf(navArgument(storyTitleArg) { type = NavType.StringType })
+}
+
+object CharacterDetails: Destination{
+    override val route = "characterDetails"
+    const val storyIdArg = "story_id"
+    const val charNameArg = "char_name"
+    val routeWithArgs = "${route}/{${storyIdArg}}/{${charNameArg}}"
+    val arguments = listOf(
+        navArgument(storyIdArg, builder = {type = NavType.StringType}),
+        navArgument(charNameArg, builder = {type = NavType.StringType})
+    )
+
 }
 
 // list of all screens for use to determine which screen currently at
-val charTrackerScreens = listOf(SignIn, SignUp, EmailVerify, Stories, AddEditStory, Characters)
+val charTrackerScreens = listOf(SignIn, SignUp, EmailVerify, Stories, AddEditStory, Characters, CharacterDetails)

@@ -8,10 +8,10 @@ import androidx.navigation.compose.rememberNavController
 import com.chartracker.ui.auth.SignInScreen
 import com.chartracker.ui.auth.SignUpScreen
 import com.chartracker.ui.theme.CharTrackerTheme
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chartracker.ui.auth.EmailVerifyScreen
+import com.chartracker.ui.characters.CharacterDetailsScreen
 import com.chartracker.ui.characters.CharactersScreen
 import com.chartracker.ui.story.AddEditStoryScreen
 import com.chartracker.ui.story.StoriesScreen
@@ -76,14 +76,27 @@ fun CharTrackerNavHost(
             route= Characters.routeWithArgs,
             arguments = Characters.arguments
         ){navBackStackEntry ->
-            val storyTitle = navBackStackEntry.arguments?.getString(Characters.charactersIdArg)
+            val storyTitle = navBackStackEntry.arguments?.getString(Characters.storyTitleArg)
             if (storyTitle != null) {
                 CharactersScreen(
                     navToAddCharacter = { /*TODO*/ },
+                    navToCharacterDetails = { storyId, charName -> navController.navigateSingleTopTo("${CharacterDetails.route}/$storyId/$charName")},
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle
                 )
             }
+        }
+        composable(route= CharacterDetails.routeWithArgs,
+            arguments = CharacterDetails.arguments){navBackStackEntry ->
+            val storyId = navBackStackEntry.arguments?.getString(CharacterDetails.storyIdArg)
+            val charName = navBackStackEntry.arguments?.getString(CharacterDetails.charNameArg)
+            if (storyId != null && charName != null) {
+                CharacterDetailsScreen(
+                    onBackNav = { navController.navigateUp() },
+                    storyId = storyId,
+                    charName = charName)
+            }
+
         }
     }
 }

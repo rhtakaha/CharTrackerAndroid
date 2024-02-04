@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ import com.chartracker.viewmodels.characters.CharactersViewModelFactory
 @Composable
 fun CharactersScreen(
     navToAddCharacter: () -> Unit,
+    navToCharacterDetails: (String, String) -> Unit,
     onBackNav: () -> Unit,
     storyTitle: String,
     charactersViewModel: CharactersViewModel = viewModel(factory = CharactersViewModelFactory(storyTitle = storyTitle))
@@ -43,6 +45,8 @@ fun CharactersScreen(
         story = story,
         charactersStringList= charactersStringList,
         navToAddCharacter = navToAddCharacter,
+        /* convert 2 input lambda into 1 input by adding the storyId here*/
+        navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, charName)},
         onBackNav = onBackNav)
 }
 
@@ -52,6 +56,7 @@ fun CharactersScreen(
     story: StoryEntity,
     charactersStringList: MutableList<String>,
     navToAddCharacter: () -> Unit,// might need params
+    navToCharacterDetails: (String) -> Unit,
     onBackNav: () -> Unit,
 ){
     Scaffold(
@@ -60,6 +65,12 @@ fun CharactersScreen(
                 title =  story.name,
                 onBackNav = onBackNav,
                 actionButtons = {
+                    IconButton(onClick = { /* do something */ }) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = stringResource(id =R.string.edit_story)
+                        )
+                    }
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
@@ -77,7 +88,7 @@ fun CharactersScreen(
         EntityHolderList(
             entities = characters,
             story = story,
-            onClick = {/* add navToCharacterDetails*/},
+            onClick = navToCharacterDetails,
             modifier = Modifier
                 .padding(paddingValue)
                 .semantics { contentDescription = "Characters Screen" }
@@ -109,6 +120,7 @@ fun PreviewCharactersScreen(){
                 story = story,
                 charactersStringList= charactersStringList,
                 navToAddCharacter = {},
+                navToCharacterDetails = {},
                 onBackNav = { /*TODO*/ })
         }
     }
