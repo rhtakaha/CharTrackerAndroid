@@ -20,6 +20,7 @@ import com.chartracker.ui.components.TextAndContentHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.viewmodels.auth.EmailVerifyViewModel
 
 @Composable
 fun EmailVerifyScreen(

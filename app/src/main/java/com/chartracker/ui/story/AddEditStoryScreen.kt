@@ -41,6 +41,8 @@ import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
+import com.chartracker.viewmodels.story.AddEditStoryViewModel
+import com.chartracker.viewmodels.story.AddEditStoryViewModelFactory
 
 @Composable
 fun AddEditStoryScreen(

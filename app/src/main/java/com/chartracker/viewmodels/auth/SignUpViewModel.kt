@@ -1,4 +1,4 @@
-package com.chartracker.ui.auth
+package com.chartracker.viewmodels.auth
 
 import android.util.Log
 import androidx.compose.runtime.MutableState

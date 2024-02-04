@@ -1,4 +1,4 @@
-package com.chartracker.ui.story
+package com.chartracker.viewmodels.story
 
 import android.net.Uri
 import android.util.Log

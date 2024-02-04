@@ -1,4 +1,4 @@
-package com.chartracker.ui.story
+package com.chartracker.viewmodels.story
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

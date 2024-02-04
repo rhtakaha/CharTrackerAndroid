@@ -1,4 +1,4 @@
-package com.chartracker.viewmodels
+package com.chartracker.viewmodels.characters
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

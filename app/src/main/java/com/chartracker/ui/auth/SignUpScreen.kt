@@ -27,6 +27,7 @@ import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.TextEntryHolder
+import com.chartracker.viewmodels.auth.SignUpViewModel
 
 @Composable
 fun SignUpScreen(

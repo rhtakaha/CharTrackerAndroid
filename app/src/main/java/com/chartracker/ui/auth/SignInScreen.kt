@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.R
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
+import com.chartracker.viewmodels.auth.SignInViewModel
 
 @Composable
 fun SignInScreen(

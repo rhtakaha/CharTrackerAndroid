@@ -25,8 +25,8 @@ import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.EntityHolderList
 import com.chartracker.ui.theme.CharTrackerTheme
-import com.chartracker.viewmodels.CharactersViewModel
-import com.chartracker.viewmodels.CharactersViewModelFactory
+import com.chartracker.viewmodels.characters.CharactersViewModel
+import com.chartracker.viewmodels.characters.CharactersViewModelFactory
 
 @Composable
 fun CharactersScreen(
