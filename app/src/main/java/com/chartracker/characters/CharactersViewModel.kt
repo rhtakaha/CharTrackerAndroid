@@ -43,7 +43,7 @@ open class CharactersViewModel(private val storyTitle: String): ViewModel() {
     fun updateCharsStringList(){
         charactersStringList.clear()
         for (character in characters.value!!){
-            character.name?.let { charactersStringList.add(it) }
+            character.name.value?.let { charactersStringList.add(it) }
         }
     }
 

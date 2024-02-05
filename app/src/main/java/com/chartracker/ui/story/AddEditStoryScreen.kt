@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,32 +50,34 @@ fun AddEditStoryScreen(
     addEditStoryViewModel: AddEditStoryViewModel = viewModel(factory = AddEditStoryViewModelFactory(storyId))
 ){
     AddEditStoryScreen(
-        title = addEditStoryViewModel.title.value,
-        onTitleChange= {newInput: String -> addEditStoryViewModel.updateInputTitle(newInput)},
-        author = addEditStoryViewModel.author.value,
-        onAuthorChange = {newInput: String -> addEditStoryViewModel.updateInputAuthor(newInput)},
-        genre = addEditStoryViewModel.genre.value,
-        onGenreChange = {newInput: String -> addEditStoryViewModel.updateInputGenre(newInput)},
-        type = addEditStoryViewModel.type.value,
-        onTypeChange = {newInput: String -> addEditStoryViewModel.updateInputType(newInput)},
+        story = addEditStoryViewModel.story.value,
+//        title = addEditStoryViewModel.title.value,
+//        onTitleChange= {newInput: String -> addEditStoryViewModel.updateInputTitle(newInput)},
+//        author = addEditStoryViewModel.author.value,
+//        onAuthorChange = {newInput: String -> addEditStoryViewModel.updateInputAuthor(newInput)},
+//        genre = addEditStoryViewModel.genre.value,
+//        onGenreChange = {newInput: String -> addEditStoryViewModel.updateInputGenre(newInput)},
+//        type = addEditStoryViewModel.type.value,
+//        onTypeChange = {newInput: String -> addEditStoryViewModel.updateInputType(newInput)},
         submitStory = {story, localImageURI -> addEditStoryViewModel.submitStory(story, localImageURI)},
         readyToNavToCharacters = addEditStoryViewModel.navToStories.value,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
-        startImage = addEditStoryViewModel.story.value?.imagePublicUrl?.toUri(),
+        startImage = addEditStoryViewModel.story.value.imagePublicUrl.value?.toUri(),
         onBackNav = onBackNav)
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun AddEditStoryScreen(
-    title: String,
-    onTitleChange: (String) -> Unit,
-    author: String,
-    onAuthorChange: (String) -> Unit,
-    genre: String,
-    onGenreChange: (String) -> Unit,
-    type: String,
-    onTypeChange: (String) -> Unit,
+    story: StoryEntity,
+//    title: String,
+//    onTitleChange: (String) -> Unit,
+//    author: String,
+//    onAuthorChange: (String) -> Unit,
+//    genre: String,
+//    onGenreChange: (String) -> Unit,
+//    type: String,
+//    onTypeChange: (String) -> Unit,
     submitStory: (StoryEntity, Uri?) -> Unit,
     readyToNavToCharacters: Boolean,
     resetNavToStories: () -> Unit,
@@ -135,26 +136,26 @@ fun AddEditStoryScreen(
             TextEntryHolder(
                 title = R.string.title,
                 label = R.string.title_hint,
-                text = title,
-                onTyping = {newInput -> onTitleChange(newInput)})
+                text = story.name.value,
+                onTyping = {newInput -> story.name.value = newInput})
             TextEntryHolder(
                 title = R.string.author,
                 label = R.string.author_hint,
-                text = author,
-                onTyping = {newInput -> onAuthorChange(newInput)})
+                text = story.author.value,
+                onTyping = {newInput -> story.author.value = newInput})
             TextEntryHolder(
                 title = R.string.genre,
                 label = R.string.genre_hint,
-                text = genre,
-                onTyping = {newInput -> onGenreChange(newInput)})
+                text = story.genre.value,
+                onTyping = {newInput -> story.genre.value = newInput})
             TextEntryHolder(
                 title = R.string.type,
                 label = R.string.type_hint,
-                text = type,
-                onTyping = {newInput -> onTypeChange(newInput)})
+                text = story.type.value,
+                onTyping = {newInput -> story.type.value = newInput})
             Button(onClick = {
-                if (title != "") {
-                    val story = StoryEntity(title, genre, type, author)
+                if (story.name.value != "") {
+//                    val story = StoryEntity(title, genre, type, author)
                     submitStory(story, localUri.value)
                 }
             }) {
@@ -174,21 +175,21 @@ fun AddEditStoryScreen(
     name = "Regular Light Mode")
 @Composable
 fun PreviewAddStoryScreen(){
-    var title by remember { mutableStateOf("") }
-    var author by remember { mutableStateOf("") }
-    var genre by remember { mutableStateOf("") }
-    var type by remember { mutableStateOf("") }
+    val story by remember {
+        mutableStateOf(StoryEntity())
+    }
     CharTrackerTheme {
         Surface {
             AddEditStoryScreen(
-                title = title,
-                onTitleChange = { newInput -> title = newInput },
-                author = author,
-                onAuthorChange = { newInput -> author = newInput },
-                genre = genre,
-                onGenreChange = { newInput -> genre = newInput },
-                type = type,
-                onTypeChange = { newInput -> type = newInput },
+                story = story,
+//                title = title,
+//                onTitleChange = { newInput -> title = newInput },
+//                author = author,
+//                onAuthorChange = { newInput -> author = newInput },
+//                genre = genre,
+//                onGenreChange = { newInput -> genre = newInput },
+//                type = type,
+//                onTypeChange = { newInput -> type = newInput },
                 submitStory = { _, _ ->},
                 readyToNavToCharacters = false,
                 startImage = null,

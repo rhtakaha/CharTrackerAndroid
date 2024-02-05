@@ -77,7 +77,7 @@ class AddCharacterViewModel(private val storyId: String, val charsList: List<Str
         viewModelScope.launch {
             Log.i(tag, "Creation of new char initiated")
             db.createCharacter(storyId, character)
-            character.imageFilename?.let { db.addImage(it, imageURI.toUri()) }
+            character.imageFilename.value?.let { db.addImage(it, imageURI.toUri()) }
             onAddCharacterNavigate()
         }
     }

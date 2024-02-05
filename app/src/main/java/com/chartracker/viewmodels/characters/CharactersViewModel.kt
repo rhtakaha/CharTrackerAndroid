@@ -26,9 +26,8 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     init {
         viewModelScope.launch {
             getStoryId()
-            getCharacters()
             getStory()
-
+            getCharacters()
         }
     }
 
@@ -50,7 +49,7 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     private fun updateCharsStringList(){
         charactersStringList.value.clear()
         for (character in characters.value){
-            character.name?.let { charactersStringList.value.add(it) }
+            character.name.value.let { charactersStringList.value.add(it) }
         }
     }
 }

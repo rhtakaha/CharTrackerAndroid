@@ -21,7 +21,7 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
     init {
         viewModelScope.launch {
             character.value = db.getCharacterFromId(storyId, charId)
-            filename.value = character.value!!.imageFilename
+            filename.value = character.value!!.imageFilename.value
         }
     }
 
@@ -70,17 +70,17 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
             if (imageURI != ""){
                 // trying to add a new image
                 //if adding a new image be sure to delete the original too (if it had one)
-                updatedCharacter.imageFilename?.let {
+                updatedCharacter.imageFilename.value?.let {
                     db.addImage(it, imageURI.toUri())
-                    character.value!!.imageFilename?.let { it1 -> db.deleteImage(it1) }
+                    character.value!!.imageFilename.value?.let { it1 -> db.deleteImage(it1) }
                 }
             }else{
                 // could be either making no image change or trying to delete it
-                if(updatedCharacter.imageFilename == null && character.value!!.imageFilename != null){
+                if(updatedCharacter.imageFilename.value == null && character.value!!.imageFilename.value != null){
                     // if there is no filename listed in new version
                     //                  AND
                     // the old version had one then we are deleting the current
-                    db.deleteImage(character.value!!.imageFilename!!)
+                    db.deleteImage(character.value!!.imageFilename.value!!)
                 }
                 // if both were null it would be that there started with and ended with no image
             }
@@ -92,8 +92,8 @@ class EditCharacterViewModel(val storyId: String, val charId: String, val charsL
     fun submitCharacterDelete(){
         CoroutineScope(Dispatchers.IO).launch {
             Log.i(tag, "starting to delete character")
-            character.value!!.name?.let { db.deleteCharacter(storyId, charId, it) }
-            character.value!!.imageFilename?.let { db.deleteImage(it) }
+            character.value!!.name.value?.let { db.deleteCharacter(storyId, charId, it) }
+            character.value!!.imageFilename.value?.let { db.deleteImage(it) }
         }
         onEditCharacterToCharactersNavigate()
     }

@@ -54,7 +54,7 @@ fun CharacterDetailsScreen(
     Scaffold(
         topBar = {
             CharTrackerTopBar(
-                title =  character.name,
+                title =  character.name.value,
                 onBackNav = onBackNav,
                 actionButtons = {
                     IconButton(onClick = { /* do something */ }) {
@@ -77,9 +77,9 @@ fun CharacterDetailsScreen(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier.padding(paddingValue)
         ) {
-            character.imagePublicUrl?.let {
+            character.imagePublicUrl.value.let {
                 GlideImage(
-                    model = character.imagePublicUrl,
+                    model = character.imagePublicUrl.value,
                     contentDescription = null,
                     loading = placeholder(R.drawable.baseline_downloading_24),
                     failure = placeholder(R.drawable.baseline_broken_image_24),
@@ -88,7 +88,7 @@ fun CharacterDetailsScreen(
                         .clip(RoundedCornerShape(16.dp))
                 )
             }
-            character.name?.let {
+            character.name.value.let {
                 TextAndContentHolder(
                     title = R.string.name,
                     body = it

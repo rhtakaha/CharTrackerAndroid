@@ -63,9 +63,9 @@ fun StoryDetails(story: StoryEntity){
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            if (story.imagePublicUrl != null) {
+            if (story.imagePublicUrl.value != null) {
                 GlideImage(
-                    model = story.imagePublicUrl,
+                    model = story.imagePublicUrl.value,
                     contentDescription = null,
                     loading = placeholder(R.drawable.baseline_downloading_24),
                     failure = placeholder(R.drawable.baseline_broken_image_24),
@@ -82,7 +82,7 @@ fun StoryDetails(story: StoryEntity){
                 modifier = Modifier
                     .padding(start = 40.dp)
             ) {
-                story.author?.let {
+                story.author.value.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.headlineLarge,
@@ -90,7 +90,7 @@ fun StoryDetails(story: StoryEntity){
                             .padding(bottom = 8.dp)
                     )
                 }
-                story.genre?.let {
+                story.genre.value.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.headlineLarge,
@@ -98,7 +98,7 @@ fun StoryDetails(story: StoryEntity){
                             .padding(bottom = 8.dp)
                     )
                 }
-                story.type?.let {
+                story.type.value.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.headlineLarge,
@@ -180,8 +180,8 @@ fun EntityHolderList(
             }
             items(entities) { entity ->
                 EntityHolder(
-                    imageUrl = entity.imagePublicUrl,
-                    entityName = entity.name!!,
+                    imageUrl = entity.imagePublicUrl.value,
+                    entityName = entity.name.value,
                     onClick = onClick
                 )
             }

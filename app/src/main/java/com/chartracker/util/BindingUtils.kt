@@ -14,7 +14,7 @@ import com.chartracker.database.StoryEntity
 @BindingAdapter("characterName")
 fun TextView.setCharacterName(item: CharacterEntity?){
     item?.let {
-        text = item.name
+        text = item.name.value
     }
 }
 
@@ -23,28 +23,28 @@ fun TextView.setCharacterName(item: CharacterEntity?){
 @BindingAdapter("storyName")
 fun TextView.setStoryName(item: StoryEntity?){
     item?.let {
-        text = item.name
+        text = item.name.value
     }
 }
 
 @BindingAdapter("storyGenre")
 fun TextView.setStoryGenre(item: StoryEntity?){
     item?.let {
-        text = item.genre
+        text = item.genre.value
     }
 }
 
 @BindingAdapter("storyType")
 fun TextView.setStoryType(item: StoryEntity?){
     item?.let {
-        text = item.type
+        text = item.type.value
     }
 }
 
 @BindingAdapter("storyAuthor")
 fun TextView.setStoryAuthor(item: StoryEntity?){
     item?.let {
-        text = item.author
+        text = item.author.value
     }
 }
 

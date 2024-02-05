@@ -32,7 +32,7 @@ class DatabaseAccess {
 
     suspend fun addImageDownloadUrlToStory(story: StoryEntity, filename: String){
         storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.addOnSuccessListener {url ->
-            story.imagePublicUrl = url.toString()
+            story.imagePublicUrl.value = url.toString()
             Log.i(tag, "got the public url for the image: $url")
         }.addOnFailureListener {
             // Handle any errors
@@ -297,13 +297,14 @@ class DatabaseAccess {
             .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
-            .set(story)
+            .set(story.toHashMap())
             .addOnSuccessListener { Log.d(tag, "Story successfully updated!") }
             .addOnFailureListener { e -> Log.w(tag, "Error updating story", e) }
     }
 
     /*Document ID to story*/
     suspend fun getStoryFromId(storyId: String): StoryEntity{
+        Log.i(tag, "Start getting story from Id")
         var story: StoryEntity = StoryEntity()
         db.collection("users")
             .document(auth.currentUser!!.uid)
@@ -312,7 +313,19 @@ class DatabaseAccess {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null){
-                    story = document.toObject()!!
+                    document.data?.let {
+                        story =
+                            StoryEntity(
+                                name = document.data!!["name"].toString(),
+                                genre = document.data!!["genre"].toString(),
+                                type = document.data!!["type"].toString(),
+                                author= document.data!!["author"].toString(),
+                                imageFilename = document.data!!["imageFilename"]?.toString(),
+                                imagePublicUrl = document.data!!["imagePublicUrl"]?.toString()
+                            )
+                    }
+
+//                    story = document.toObject()!!
                     Log.w(tag, "Successfully retrieved the story from the given ID ")
                 }else{
                     Log.w(tag, "Error: could not find the story from the given ID ")
@@ -350,6 +363,7 @@ class DatabaseAccess {
 
     /*given the document ID of the story return the list of characters*/
     suspend fun getCharacters(storyId: String): MutableList<CharacterEntity>{
+        Log.i(tag, "Start get characters")
         val characters = mutableListOf<CharacterEntity>()
         // Source can be CACHE, SERVER, or DEFAULT.
         val source = Source.DEFAULT
@@ -383,7 +397,7 @@ class DatabaseAccess {
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
-            .add(story)
+            .add(story.toHashMap())
             .addOnSuccessListener { documentReference ->
                 Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
             }
@@ -408,7 +422,18 @@ class DatabaseAccess {
             .get(source)
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    stories.add(document.toObject<StoryEntity>())
+                    Log.i(tag, "document: ${document.data}")
+                    stories.add(
+                        StoryEntity(
+                            name = document.data["name"].toString(),
+                            genre = document.data["genre"].toString(),
+                            type = document.data["type"].toString(),
+                            author= document.data["author"].toString(),
+                            imageFilename = document.data["imageFilename"]?.toString(),
+                            imagePublicUrl = document.data["imagePublicUrl"]?.toString()
+                        )
+                    )
+//                    stories.add(document.toObject<StoryEntity>())
                     Log.i(tag, "${document.id} => ${document.data}")
                 }
                 Log.i(tag, "success")

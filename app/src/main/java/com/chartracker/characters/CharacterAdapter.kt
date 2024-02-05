@@ -55,6 +55,6 @@ class CharacterDiffCallback: DiffUtil.ItemCallback<CharacterEntity>(){
 }
 
 class CharacterListener(val clickListener: (charName: String) -> Unit){
-    fun onClick(character: CharacterEntity) = clickListener(character.name!!)
+    fun onClick(character: CharacterEntity) = clickListener(character.name.value!!)
 
 }

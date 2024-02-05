@@ -65,7 +65,7 @@ fun CharactersScreen(
     Scaffold(
         topBar = {
             CharTrackerTopBar(
-                title =  story.name,
+                title =  story.name.value,
                 onBackNav = onBackNav,
                 actionButtons = {
                     IconButton(onClick = { navToEditStory() }) {

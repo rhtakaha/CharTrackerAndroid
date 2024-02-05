@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
-    private val tag = "AddStoryVM"
+    private val tag = "AddEditStoryVM"
     private val db = DatabaseAccess()
 
     init {
@@ -22,45 +22,47 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         }
     }
 
-    private val _story = mutableStateOf<StoryEntity?>(null)
-    val story: MutableState<StoryEntity?>
+//    val story: MutableState<StoryEntity?> = mutableStateOf<StoryEntity?>(null)
+
+    private val _story = mutableStateOf<StoryEntity>(StoryEntity())
+    val story: MutableState<StoryEntity>
         get() = _story
 
     private fun updateStory(newStory: StoryEntity){
         _story.value = newStory
     }
 
-    private val _title = mutableStateOf("")
-    val title: MutableState<String>
-        get() = _title
-
-    fun updateInputTitle(newTitle: String){
-        _title.value = newTitle
-    }
-
-    private val _author = mutableStateOf("")
-    val author: MutableState<String>
-        get() = _author
-
-    fun updateInputAuthor(newAuthor: String){
-        _author.value = newAuthor
-    }
-
-    private val _genre = mutableStateOf("")
-    val genre: MutableState<String>
-        get() = _genre
-
-    fun updateInputGenre(newGenre: String){
-        _genre.value = newGenre
-    }
-
-    private val _type = mutableStateOf("")
-    val type: MutableState<String>
-        get() = _type
-
-    fun updateInputType(newType: String){
-        _type.value = newType
-    }
+//    private val _title = mutableStateOf("")
+//    val title: MutableState<String>
+//        get() = _title
+//
+//    fun updateInputTitle(newTitle: String){
+//        _title.value = newTitle
+//    }
+//
+//    private val _author = mutableStateOf("")
+//    val author: MutableState<String>
+//        get() = _author
+//
+//    fun updateInputAuthor(newAuthor: String){
+//        _author.value = newAuthor
+//    }
+//
+//    private val _genre = mutableStateOf("")
+//    val genre: MutableState<String>
+//        get() = _genre
+//
+//    fun updateInputGenre(newGenre: String){
+//        _genre.value = newGenre
+//    }
+//
+//    private val _type = mutableStateOf("")
+//    val type: MutableState<String>
+//        get() = _type
+//
+//    fun updateInputType(newType: String){
+//        _type.value = newType
+//    }
 
     /*navigate back to stories event*/
     private val _navToStories = mutableStateOf(false)
@@ -90,13 +92,13 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         if (localImageURI != null){
             // trying to add a new image
             // no matter what adding the new image
-            updatedStory.imageFilename = getFilename(updatedStory.name!!)
-            db.addImage(updatedStory.imageFilename!!, localImageURI)
-            db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename!!)
+            updatedStory.imageFilename.value = getFilename(updatedStory.name.value)
+            db.addImage(updatedStory.imageFilename.value!!, localImageURI)
+            db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)
 
             //if adding a new image be sure to delete the original too (if it had one)
-            story.value!!.imagePublicUrl?.let {
-                db.deleteImage(story.value!!.imageFilename!!)
+            story.value.imagePublicUrl.let {
+                db.deleteImage(story.value.imageFilename.value!!)
 
             }
 //                updatedStory.imageFilename?.let {
@@ -105,11 +107,11 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
 //                }
         }else{
             // could be either making no image change or trying to delete it
-            if (updatedStory.imageFilename == null && story.value!!.imageFilename != null) {
+            if (updatedStory.imageFilename.value == null && story.value.imageFilename.value != null) {
                 // if there is no filename listed in new version
                 //                  AND
                 // the old version had one then we are deleting the current
-                db.deleteImage(story.value!!.imageFilename!!)
+                db.deleteImage(story.value.imageFilename.value!!)
             }
             // if both were null it would be that there started with and ended with no image
         }
@@ -120,9 +122,9 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?){
         if (localImageURI != null) {
             // if we are adding an image
-            newStory.imageFilename = getFilename(newStory.name!!)
-            db.addImage(newStory.imageFilename!!, localImageURI)
-            db.addImageDownloadUrlToStory(newStory, newStory.imageFilename!!)
+            newStory.imageFilename.value = getFilename(newStory.name.value)
+            db.addImage(newStory.imageFilename.value!!, localImageURI)
+            db.addImageDownloadUrlToStory(newStory, newStory.imageFilename.value!!)
         }
         Log.i(tag, "Creation of new story initiated")
         db.createStory(newStory)
@@ -133,10 +135,10 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private fun getStory(storyId: String){
         viewModelScope.launch {
             updateStory(db.getStoryFromId(storyId))
-            story.value?.name?.let { updateInputTitle(it) }
-            story.value?.author?.let { updateInputAuthor(it) }
-            story.value?.genre?.let { updateInputGenre(it) }
-            story.value?.type?.let { updateInputType(it) }
+//            story.value?.name?.let { updateInputTitle(it) }
+//            story.value?.author?.let { updateInputAuthor(it) }
+//            story.value?.genre?.let { updateInputGenre(it) }
+//            story.value?.type?.let { updateInputType(it) }
 
             //TODO ADD IMAGE
             // add factory so can call in init{} block
@@ -151,7 +153,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                 change that story's name, (image keeps old name),
                 and then try to add a story with the original story name
                     (which would have created two images with the same name)*/
-fun getFilename(title: String) = "story_${title}_{${Calendar.getInstance().time}}"
+fun getFilename(title: String) = "story_${title}_${Calendar.getInstance().time}"
 
 class AddEditStoryViewModelFactory(private val storyId: String?) :
     ViewModelProvider.NewInstanceFactory() {

@@ -1,24 +1,46 @@
 package com.chartracker.database
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+
 /* File holding the entities in the database*/
 
 open class DatabaseEntity(
-    val name: String? = null,
-    var imageFilename: String? = null,
-    var imagePublicUrl: String? = null
-)
-
-class StoryEntity (
-    name: String? = null,
-    val genre: String? = null,
-    val type: String? = null,
-    val author: String? = null,
+    name: String = "",
     imageFilename: String? = null,
     imagePublicUrl: String? = null
-): DatabaseEntity(name = name, imageFilename = imageFilename, imagePublicUrl = imagePublicUrl)
+){
+    val name: MutableState<String> = mutableStateOf(name)
+    val imageFilename: MutableState<String?> = mutableStateOf(imageFilename)
+    val imagePublicUrl: MutableState<String?> = mutableStateOf(imagePublicUrl)
+}
+
+class StoryEntity(
+    name: String = "",
+    genre: String = "",
+    type: String = "",
+    author: String = "",
+    imageFilename: String? = null,
+    imagePublicUrl: String? = null
+): DatabaseEntity(name = name, imageFilename = imageFilename, imagePublicUrl = imagePublicUrl){
+    val genre: MutableState<String> = mutableStateOf(genre)
+    val type: MutableState<String> = mutableStateOf(type)
+    val author: MutableState<String> = mutableStateOf(author)
+
+    fun toHashMap(): HashMap<String, String?>{
+        return hashMapOf(
+            "name" to name.value,
+            "genre" to genre.value,
+            "type" to type.value,
+            "author" to author.value,
+            "imageFilename" to imageFilename.value,
+            "imagePublicUrl" to imagePublicUrl.value
+        )
+    }
+}
 
 class CharacterEntity(
-    name: String? = null,
+    name: String = "",
     val aliases: String? = null,
     val titles: String? = null,
     val age: Int? = null,
