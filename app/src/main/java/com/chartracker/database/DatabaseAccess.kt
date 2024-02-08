@@ -3,10 +3,10 @@ package com.chartracker.database
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
@@ -67,7 +67,7 @@ class DatabaseAccess {
     }
 
     /*creates a new user in Firebase*/
-    suspend fun createUser(user: UserEntity){
+    fun createUser(user: UserEntity){
         auth.currentUser?.let {
             db.collection("users")
                 .document(it.uid)
@@ -145,14 +145,14 @@ class DatabaseAccess {
             .await()
     }
 
-    suspend fun updateCharacter(storyId: String, charId: String, character: CharacterEntity){
+    fun updateCharacter(storyId: String, charId: String, character: CharacterEntity){
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
             .document(charId)
-            .set(character)
+            .set(character.toHashMap())
             .addOnSuccessListener { Log.d(tag, "Character successfully updated!") }
             .addOnFailureListener { e -> Log.w(tag, "Error updating character", e) }
     }
@@ -181,6 +181,41 @@ class DatabaseAccess {
         return character
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun buildCharacterFromDocumentSnapshot(document: DocumentSnapshot): CharacterEntity{
+        return CharacterEntity(
+            name = document.data!!["name"].toString(),
+            aliases = document.data!!["aliases"].toString(),
+            titles = document.data!!["titles"].toString(),
+            age = document.data!!["age"].toString(),
+            home = document.data!!["home"].toString(),
+            gender = document.data!!["gender"].toString(),
+            race = document.data!!["race"].toString(),
+            livingOrDead = document.data!!["livingOrDead"].toString(),
+            occupation = document.data!!["occupation"].toString(),
+            weapons = document.data!!["weapons"].toString(),
+            toolsEquipment = document.data!!["toolsEquipment"].toString(),
+            bio = document.data!!["bio"].toString(),
+            faction = document.data!!["faction"].toString(),
+            allies = document.data!!["allies"] as List<String>? ,
+            enemies = document.data!!["enemies"] as List<String>?,
+            neutral = document.data!!["neutral"] as List<String>?,
+            imageFilename = document.data!!["imageFilename"]?.toString(),
+            imagePublicUrl = document.data!!["imagePublicUrl"]?.toString()
+        )
+    }
+
+    fun buildStoryFromDocumentSnapshot(document: DocumentSnapshot): StoryEntity{
+        return StoryEntity(
+                name = document.data!!["name"].toString(),
+                genre = document.data!!["genre"].toString(),
+                type = document.data!!["type"].toString(),
+                author= document.data!!["author"].toString(),
+                imageFilename = document.data!!["imageFilename"]?.toString(),
+                imagePublicUrl = document.data!!["imagePublicUrl"]?.toString()
+            )
+    }
+
     suspend fun getCharacterFromId(storyId: String, charId: String): CharacterEntity{
         var character = CharacterEntity()
         db.collection("users")
@@ -192,7 +227,8 @@ class DatabaseAccess {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null){
-                    character = document.toObject<CharacterEntity>()!!
+                    character = buildCharacterFromDocumentSnapshot(document)
+//                    character = document.toObject<CharacterEntity>()!!
                     Log.w(tag, "Successfully retrieved the character ")
                 }else{
                     Log.w(tag, "Error: could not find the character ")
@@ -216,7 +252,8 @@ class DatabaseAccess {
             .get()
             .addOnSuccessListener { documents ->
                 if (documents.documents[0] != null){
-                    character = documents.documents[0].toObject<CharacterEntity>()!!
+                    character = buildCharacterFromDocumentSnapshot(documents.documents[0])
+//                    character = documents.documents[0].toObject<CharacterEntity>()!!
                     Log.w(tag, "Successfully retrieved the character ")
                 }else{
                     Log.w(tag, "Error: could not find the character ")
@@ -230,13 +267,13 @@ class DatabaseAccess {
     }
 
     /* creates a character document in the given story*/
-    suspend fun createCharacter(storyId: String, character: CharacterEntity){
+    fun createCharacter(storyId: String, character: CharacterEntity){
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
-            .add(character)
+            .add(character.toHashMap())
             .addOnSuccessListener { documentReference ->
                 Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
             }
@@ -250,7 +287,7 @@ class DatabaseAccess {
     //  2) can try the cloud function as in the documentation (no part of the spark plan)
     /*more complex because Story can (will) have a subcollection and cannot easily delete them together
     * it isn't recommended to do the deletion on mobile clients either so just going to delete the story doc which should work for now*/
-    suspend fun deleteStory(storyId: String){
+    fun deleteStory(storyId: String){
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -261,7 +298,7 @@ class DatabaseAccess {
     }
 
     //TODO figure out how best to handle the stories and characters subcollection
-    suspend fun deleteUserData(userUID: String){
+    fun deleteUserData(userUID: String){
         db.collection("users")
             .document(userUID)
             .delete()
@@ -270,7 +307,7 @@ class DatabaseAccess {
     }
 
     suspend fun getStoryId(storyTitle: String): String{
-        var story: String = ""
+        var story = ""
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -292,7 +329,7 @@ class DatabaseAccess {
     }
 
     /*update the document associated with the given Id with the given StoryEntity*/
-    suspend fun updateStory(storyId: String, story: StoryEntity){
+    fun updateStory(storyId: String, story: StoryEntity){
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -305,7 +342,7 @@ class DatabaseAccess {
     /*Document ID to story*/
     suspend fun getStoryFromId(storyId: String): StoryEntity{
         Log.i(tag, "Start getting story from Id")
-        var story: StoryEntity = StoryEntity()
+        var story = StoryEntity()
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -314,15 +351,7 @@ class DatabaseAccess {
             .addOnSuccessListener { document ->
                 if (document != null){
                     document.data?.let {
-                        story =
-                            StoryEntity(
-                                name = document.data!!["name"].toString(),
-                                genre = document.data!!["genre"].toString(),
-                                type = document.data!!["type"].toString(),
-                                author= document.data!!["author"].toString(),
-                                imageFilename = document.data!!["imageFilename"]?.toString(),
-                                imagePublicUrl = document.data!!["imagePublicUrl"]?.toString()
-                            )
+                        story = buildStoryFromDocumentSnapshot(document)
                     }
 
 //                    story = document.toObject()!!
@@ -340,7 +369,7 @@ class DatabaseAccess {
 
 
     suspend fun getStory(storyTitle: String): StoryEntity{
-        var story: StoryEntity = StoryEntity()
+        var story = StoryEntity()
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -348,7 +377,8 @@ class DatabaseAccess {
             .get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty){
-                    story = document.documents[0].toObject()!!
+                    story = buildStoryFromDocumentSnapshot(document.documents[0])
+//                    story = document.documents[0].toObject()!!
                     Log.w(tag, "Successfully retrieved the document ")
                 }else{
                     Log.w(tag, "Error: could not find the document ")
@@ -377,7 +407,8 @@ class DatabaseAccess {
             .get(source)
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    characters.add(document.toObject<CharacterEntity>())
+                    characters.add(buildCharacterFromDocumentSnapshot(document))
+//                    characters.add(document.toObject<CharacterEntity>())
                     Log.i(tag, "${document.id} => ${document.data}")
                 }
                 Log.i(tag, "success")
@@ -393,7 +424,7 @@ class DatabaseAccess {
     }
 
     /*creates a new story in Firebase*/
-    suspend fun createStory(story: StoryEntity){
+    fun createStory(story: StoryEntity){
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -423,16 +454,7 @@ class DatabaseAccess {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.i(tag, "document: ${document.data}")
-                    stories.add(
-                        StoryEntity(
-                            name = document.data["name"].toString(),
-                            genre = document.data["genre"].toString(),
-                            type = document.data["type"].toString(),
-                            author= document.data["author"].toString(),
-                            imageFilename = document.data["imageFilename"]?.toString(),
-                            imagePublicUrl = document.data["imagePublicUrl"]?.toString()
-                        )
-                    )
+                    stories.add(buildStoryFromDocumentSnapshot(document))
 //                    stories.add(document.toObject<StoryEntity>())
                     Log.i(tag, "${document.id} => ${document.data}")
                 }

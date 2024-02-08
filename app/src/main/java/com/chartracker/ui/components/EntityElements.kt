@@ -270,7 +270,7 @@ fun PreviewEntityHolderWithoutImage(){
 @Composable
 fun PreviewEntityHolderListWithStoryDetails(){
     val characters = listOf(
-        CharacterEntity(name="Gandalf", imagePublicUrl = ""),
+        CharacterEntity(name ="Gandalf", imagePublicUrl = ""),
         CharacterEntity(name = "Frodo Baggins"),
         CharacterEntity(name = "Bilbo Baggins"),
         CharacterEntity(name = "Aragorn"),

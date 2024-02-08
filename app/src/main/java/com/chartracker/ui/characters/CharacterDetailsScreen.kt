@@ -94,91 +94,91 @@ fun CharacterDetailsScreen(
                     body = it
                 )
             }
-            character.aliases?.let {
+            character.aliases.value.let {
                 TextAndContentHolder(
                     title = R.string.aliases,
                     body = it
                 )
             }
-            character.titles?.let {
+            character.titles.value.let {
                 TextAndContentHolder(
                     title = R.string.titles,
                     body = it
                 )
             }
-            character.age?.let {
+            character.age.value.let {
                 TextAndContentHolder(
                     title = R.string.age,
-                    body = it.toString()
+                    body = it
                 )
             }
-            character.home?.let {
+            character.home.value.let {
                 TextAndContentHolder(
                     title = R.string.home,
                     body = it
                 )
             }
-            character.gender?.let {
+            character.gender.value.let {
                 TextAndContentHolder(
                     title = R.string.gender,
                     body = it
                 )
             }
-            character.race?.let {
+            character.race.value.let {
                 TextAndContentHolder(
                     title = R.string.race,
                     body = it
                 )
             }
-            character.livingOrDead?.let {
+            character.livingOrDead.value.let {
                 TextAndContentHolder(
                     title = R.string.living_dead,
                     body = it
                 )
             }
-            character.occupation?.let {
+            character.occupation.value.let {
                 TextAndContentHolder(
                     title = R.string.occupation,
                     body = it
                 )
             }
-            character.weapons?.let {
+            character.weapons.value.let {
                 TextAndContentHolder(
                     title = R.string.weapon,
                     body = it
                 )
             }
-            character.toolsEquipment?.let {
+            character.toolsEquipment.value.let {
                 TextAndContentHolder(
                     title = R.string.tools_equipment,
                     body = it
                 )
             }
-            character.bio?.let {
+            character.bio.value.let {
                 TextAndContentHolder(
                     title = R.string.bio,
                     body = it
                 )
             }
-            character.faction?.let {
+            character.faction.value.let {
                 TextAndContentHolder(
                     title = R.string.faction,
                     body = it
                 )
             }
-            character.allies?.let {
+            character.allies.value.let {
                 TextAndContentHolder(
                     title = R.string.name,
                     body = it.toString()
                 )
             }
-            character.enemies?.let {
+            character.enemies.value.let {
                 TextAndContentHolder(
                     title = R.string.name,
                     body = it.toString()
                 )
             }
-            character.neutral?.let {
+            character.neutral.value.let {
                 TextAndContentHolder(
                     title = R.string.name,
                     body = it.toString()
@@ -202,14 +202,14 @@ fun PreviewCharacterDetailsScreen(){
                 name = "Aragorn",
                 aliases = "Strider",
                 titles = "King of Gondor and Arnor",
-                age = 80,
+                age = "80",
                 home = "Rivendell (Imladris)",
                 gender = "male",
                 race = "man/Númenórean",
                 livingOrDead = "living",
                 occupation = "Ranger then King",
                 weapons = "Andúril",
-                toolsEquipment = null,
+                toolsEquipment = "",
                 bio = "The ranger from the North who would be king and unite the kingdoms",
                 faction = "Men of the West",
                 allies = listOf("Frodo Baggins, Gandalf, Gimli, Legolass", "Farimir"),
