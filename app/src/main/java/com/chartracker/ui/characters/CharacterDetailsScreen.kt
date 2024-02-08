@@ -3,6 +3,7 @@ package com.chartracker.ui.characters
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,7 +76,9 @@ fun CharacterDetailsScreen(
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
-            modifier = Modifier.padding(paddingValue)
+            modifier = Modifier
+                .navigationBarsPadding()
+                .padding(paddingValue)
         ) {
             character.imagePublicUrl.value.let {
                 GlideImage(

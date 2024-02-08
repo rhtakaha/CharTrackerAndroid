@@ -48,6 +48,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             }else{
                 updateStory(storyId, newStory, localImageURI)
             }
+            _navToStories.value = true
         }
     }
 
@@ -58,7 +59,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         if (localImageURI != null){
             // trying to add a new image
             // no matter what adding the new image
-            updatedStory.imageFilename.value = getFilename(updatedStory.name.value)
+            updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
             db.addImage(updatedStory.imageFilename.value!!, localImageURI)
             db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)
 
@@ -78,19 +79,17 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             // if both were null it would be that there started with and ended with no image
         }
         db.updateStory(storyId, updatedStory)
-        _navToStories.value = true
     }
 
     private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?){
         if (localImageURI != null) {
             // if we are adding an image
-            newStory.imageFilename.value = getFilename(newStory.name.value)
+            newStory.imageFilename.value = getStoryFilename(newStory.name.value)
             db.addImage(newStory.imageFilename.value!!, localImageURI)
             db.addImageDownloadUrlToStory(newStory, newStory.imageFilename.value!!)
         }
         Log.i(tag, "Creation of new story initiated")
         db.createStory(newStory)
-        _navToStories.value = true
     }
 
     /* function which gets the story given the id*/
@@ -106,7 +105,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                 change that story's name, (image keeps old name),
                 and then try to add a story with the original story name
                     (which would have created two images with the same name)*/
-fun getFilename(title: String) = "story_${title}_${Calendar.getInstance().time}"
+fun getStoryFilename(title: String) = "story_${title}_${Calendar.getInstance().time}"
 
 class AddEditStoryViewModelFactory(private val storyId: String?) :
     ViewModelProvider.NewInstanceFactory() {

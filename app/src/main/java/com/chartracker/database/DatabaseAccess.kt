@@ -30,6 +30,16 @@ class DatabaseAccess {
         }
     }
 
+    suspend fun addImageDownloadUrlToCharacter(character: CharacterEntity, filename: String){
+        storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.addOnSuccessListener {url ->
+            character.imagePublicUrl.value = url.toString()
+            Log.i(tag, "got the public url for the image: $url")
+        }.addOnFailureListener {
+            // Handle any errors
+            Log.i(tag, "failed to get public url for image: $it")
+        }.await()
+    }
+
     suspend fun addImageDownloadUrlToStory(story: StoryEntity, filename: String){
         storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.addOnSuccessListener {url ->
             story.imagePublicUrl.value = url.toString()
