@@ -51,14 +51,6 @@ fun AddEditStoryScreen(
 ){
     AddEditStoryScreen(
         story = addEditStoryViewModel.story.value,
-//        title = addEditStoryViewModel.title.value,
-//        onTitleChange= {newInput: String -> addEditStoryViewModel.updateInputTitle(newInput)},
-//        author = addEditStoryViewModel.author.value,
-//        onAuthorChange = {newInput: String -> addEditStoryViewModel.updateInputAuthor(newInput)},
-//        genre = addEditStoryViewModel.genre.value,
-//        onGenreChange = {newInput: String -> addEditStoryViewModel.updateInputGenre(newInput)},
-//        type = addEditStoryViewModel.type.value,
-//        onTypeChange = {newInput: String -> addEditStoryViewModel.updateInputType(newInput)},
         submitStory = {story, localImageURI -> addEditStoryViewModel.submitStory(story, localImageURI)},
         readyToNavToCharacters = addEditStoryViewModel.navToStories.value,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
@@ -70,14 +62,6 @@ fun AddEditStoryScreen(
 @Composable
 fun AddEditStoryScreen(
     story: StoryEntity,
-//    title: String,
-//    onTitleChange: (String) -> Unit,
-//    author: String,
-//    onAuthorChange: (String) -> Unit,
-//    genre: String,
-//    onGenreChange: (String) -> Unit,
-//    type: String,
-//    onTypeChange: (String) -> Unit,
     submitStory: (StoryEntity, Uri?) -> Unit,
     readyToNavToCharacters: Boolean,
     resetNavToStories: () -> Unit,
@@ -182,14 +166,6 @@ fun PreviewAddStoryScreen(){
         Surface {
             AddEditStoryScreen(
                 story = story,
-//                title = title,
-//                onTitleChange = { newInput -> title = newInput },
-//                author = author,
-//                onAuthorChange = { newInput -> author = newInput },
-//                genre = genre,
-//                onGenreChange = { newInput -> genre = newInput },
-//                type = type,
-//                onTypeChange = { newInput -> type = newInput },
                 submitStory = { _, _ ->},
                 readyToNavToCharacters = false,
                 startImage = null,

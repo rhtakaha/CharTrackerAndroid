@@ -22,47 +22,13 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         }
     }
 
-//    val story: MutableState<StoryEntity?> = mutableStateOf<StoryEntity?>(null)
-
-    private val _story = mutableStateOf<StoryEntity>(StoryEntity())
+    private val _story = mutableStateOf(StoryEntity())
     val story: MutableState<StoryEntity>
         get() = _story
 
     private fun updateStory(newStory: StoryEntity){
         _story.value = newStory
     }
-
-//    private val _title = mutableStateOf("")
-//    val title: MutableState<String>
-//        get() = _title
-//
-//    fun updateInputTitle(newTitle: String){
-//        _title.value = newTitle
-//    }
-//
-//    private val _author = mutableStateOf("")
-//    val author: MutableState<String>
-//        get() = _author
-//
-//    fun updateInputAuthor(newAuthor: String){
-//        _author.value = newAuthor
-//    }
-//
-//    private val _genre = mutableStateOf("")
-//    val genre: MutableState<String>
-//        get() = _genre
-//
-//    fun updateInputGenre(newGenre: String){
-//        _genre.value = newGenre
-//    }
-//
-//    private val _type = mutableStateOf("")
-//    val type: MutableState<String>
-//        get() = _type
-//
-//    fun updateInputType(newType: String){
-//        _type.value = newType
-//    }
 
     /*navigate back to stories event*/
     private val _navToStories = mutableStateOf(false)
@@ -101,10 +67,6 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                 db.deleteImage(story.value.imageFilename.value!!)
 
             }
-//                updatedStory.imageFilename?.let {
-//                    db.addImage(it, imageURI.toUri())
-//                    story.value!!.imageFilename?.let { it1 -> db.deleteImage(it1) }
-//                }
         }else{
             // could be either making no image change or trying to delete it
             if (updatedStory.imageFilename.value == null && story.value.imageFilename.value != null) {
@@ -135,15 +97,6 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private fun getStory(storyId: String){
         viewModelScope.launch {
             updateStory(db.getStoryFromId(storyId))
-//            story.value?.name?.let { updateInputTitle(it) }
-//            story.value?.author?.let { updateInputAuthor(it) }
-//            story.value?.genre?.let { updateInputGenre(it) }
-//            story.value?.type?.let { updateInputType(it) }
-
-            //TODO ADD IMAGE
-            // add factory so can call in init{} block
-            // add navigation arg
-//            filename.value = story.value!!.imageFilename
         }
     }
 }
