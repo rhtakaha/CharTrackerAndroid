@@ -11,7 +11,7 @@ class SignInViewModel() : ViewModel(){
     private val tag = "SignInVM"
     val auth = Firebase.auth
 
-    private val _email = mutableStateOf("")
+    private val _email = mutableStateOf("rytakahashi97@gmail.com")
     val email: MutableState<String>
         get() = _email
 
@@ -19,7 +19,7 @@ class SignInViewModel() : ViewModel(){
         _email.value = newEmail
     }
 
-    private val _password = mutableStateOf("")
+    private val _password = mutableStateOf("pass1234")
     val password: MutableState<String>
         get() = _password
 

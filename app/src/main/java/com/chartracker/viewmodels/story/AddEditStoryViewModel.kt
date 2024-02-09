@@ -15,7 +15,7 @@ import java.util.Calendar
 class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private val tag = "AddEditStoryVM"
     private val db = DatabaseAccess()
-
+    private var originalFilename: String? = null
     init {
         if (storyId != null) {
             getStory(storyId= storyId)
@@ -57,24 +57,30 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
 
 
         if (localImageURI != null){
+
             // trying to add a new image
             // no matter what adding the new image
             updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
+            Log.i(tag, "adding new image to story with new filename: ${updatedStory.imageFilename.value}")
             db.addImage(updatedStory.imageFilename.value!!, localImageURI)
             db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)
 
             //if adding a new image be sure to delete the original too (if it had one)
-            story.value.imagePublicUrl.let {
-                db.deleteImage(story.value.imageFilename.value!!)
-
+            originalFilename?.let {
+                it1 ->
+                Log.i(tag, "deleting original story image with original filename: $it1")
+                db.deleteImage(it1)
             }
         }else{
             // could be either making no image change or trying to delete it
-            if (updatedStory.imageFilename.value == null && story.value.imageFilename.value != null) {
-                // if there is no filename listed in new version
+            if (originalFilename != null) {
+                // if there is no file in new version (due to localImageURI == null)
                 //                  AND
                 // the old version had one then we are deleting the current
-                db.deleteImage(story.value.imageFilename.value!!)
+                Log.i(tag, "deleting original story image with original filename: $originalFilename")
+                db.deleteImage(originalFilename!!)
+                updatedStory.imageFilename.value = null
+                updatedStory.imagePublicUrl.value = null
             }
             // if both were null it would be that there started with and ended with no image
         }
@@ -96,6 +102,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private fun getStory(storyId: String){
         viewModelScope.launch {
             updateStory(db.getStoryFromId(storyId))
+            originalFilename = story.value.imageFilename.value
         }
     }
 }

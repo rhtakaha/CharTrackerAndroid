@@ -73,7 +73,10 @@ fun AddEditStoryScreen(
         resetNavToStories()
         onBackNav()
     }
-    val localUri = remember { mutableStateOf(startImage) }
+    val localUri = remember(key1 = startImage) {
+        mutableStateOf(startImage)
+    }
+//    val localUri = remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
         localUri.value = it
     }
