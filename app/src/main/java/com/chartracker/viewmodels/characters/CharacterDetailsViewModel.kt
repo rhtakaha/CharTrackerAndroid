@@ -12,15 +12,15 @@ import kotlinx.coroutines.launch
 class CharacterDetailsViewModel(private val storyId: String, private val charName: String): ViewModel() {
     private val db = DatabaseAccess()
 
+    private val _character = mutableStateOf(CharacterEntity())
+    val character: MutableState<CharacterEntity>
+        get() = _character
+
     init {
         viewModelScope.launch {
             getCharacter()
         }
     }
-
-    private val _character = mutableStateOf<CharacterEntity>(CharacterEntity())
-    val character: MutableState<CharacterEntity>
-        get() = _character
 
     private suspend fun getCharacter() {
         _character.value =
