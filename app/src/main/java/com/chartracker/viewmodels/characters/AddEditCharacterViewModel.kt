@@ -12,16 +12,17 @@ import com.chartracker.database.DatabaseAccess
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class AddEditCharacterViewModel(private val storyId: String, private val storyTitle: String, private val charId: String?): ViewModel() {
+class AddEditCharacterViewModel(private val storyId: String, private val storyTitle: String, charName: String?): ViewModel() {
     private val tag = "AddEditCharVM"
     private val db = DatabaseAccess()
     private var originalFilename: String? = null
+    private var charId: String? = null
 
     private val _character = mutableStateOf(CharacterEntity())
     val character: MutableState<CharacterEntity>
         get() = _character
 
-    fun updateLocalCharacter(new: CharacterEntity){
+    private fun updateLocalCharacter(new: CharacterEntity){
         _character.value = new
     }
 
@@ -35,14 +36,15 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     }
 
     init {
-        if (charId != null){
-            getCharacter(charId)
+        if (charName != null){
+            getCharacter(charName)
         }
     }
 
-    private fun getCharacter(charId: String){
+    private fun getCharacter(charName: String){
         viewModelScope.launch {
-            updateLocalCharacter(db.getCharacter(storyId, charId))
+            charId = db.getCharacterId(storyId, charName)
+            updateLocalCharacter(db.getCharacter(storyId, charName))
             originalFilename = character.value.imageFilename.value
         }
     }
@@ -54,7 +56,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             if (charId == null){
                 addCharacter(storyId, newCharacter, localImageURI)
             }else{
-                updateCharacter(newCharacter, localImageURI, charId)
+                updateCharacter(newCharacter, localImageURI, charId!!)
             }
             _readyToNavToCharacters.value = true
         }
@@ -76,14 +78,19 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     private suspend fun updateCharacter(updatedCharacter: CharacterEntity, localImageURI: Uri?, charId: String){
         Log.i("EditCharVM", "starting to update character")
         if (localImageURI != null){
-            // trying to add a new image
-            //if adding a new image be sure to delete the original too (if it had one)
-            updatedCharacter.imageFilename.value = getCharacterFilename(updatedCharacter.name.value, storyTitle)
-            db.addImage(updatedCharacter.imageFilename.value!!, localImageURI)
-            db.addImageDownloadUrlToCharacter(updatedCharacter, updatedCharacter.imageFilename.value!!)
+            if (!localImageURI.toString().startsWith("https://firebasestorage.googleapis.com")){
+                // if this was NOT the original image
+                // trying to add a new image
+                //if adding a new image be sure to delete the original too (if it had one)
+                updatedCharacter.imageFilename.value = getCharacterFilename(updatedCharacter.name.value, storyTitle)
+                db.addImage(updatedCharacter.imageFilename.value!!, localImageURI)
+                db.addImageDownloadUrlToCharacter(updatedCharacter, updatedCharacter.imageFilename.value!!)
 
-            //if adding a new image be sure to delete the original too (if it had one)
-            originalFilename?.let { it1 -> db.deleteImage(it1) }
+                //if adding a new image be sure to delete the original too (if it had one)
+                originalFilename?.let { it1 -> db.deleteImage(it1) }
+            }
+            // if this was just the existing image don't do anything
+
         }else{
             // could be either making no image change or trying to delete it
             if(originalFilename != null){
@@ -109,9 +116,9 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
                     (which would have created two images with the same name)*/
 fun getCharacterFilename(name: String, title: String) = "char_${name}_story_${title}_${Calendar.getInstance().time}"
 
-class AddEditCharacterViewModelFactory(private val storyId: String, private val storyTitle: String, private val charId: String?) :
+class AddEditCharacterViewModelFactory(private val storyId: String, private val storyTitle: String, private val charName: String?) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        AddEditCharacterViewModel(storyId, storyTitle, charId) as T
+        AddEditCharacterViewModel(storyId, storyTitle, charName) as T
 }

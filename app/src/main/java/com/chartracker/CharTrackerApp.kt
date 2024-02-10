@@ -83,8 +83,8 @@ fun CharTrackerNavHost(
             val storyTitle = navBackStackEntry.arguments?.getString(Characters.storyTitleArg)
             if (storyTitle != null) {
                 CharactersScreen(
-                    navToAddCharacter = { storyId, title, charId -> navController.navigateSingleTopTo("${AddEditCharacter.route}/${storyId}/${title}?${charId}") },
-                    navToCharacterDetails = { storyId, charName -> navController.navigateSingleTopTo("${CharacterDetails.route}/$storyId/$charName")},
+                    navToAddCharacter = { storyId, title, charName -> navController.navigateSingleTopTo("${AddEditCharacter.route}/${storyId}/${title}?${charName}") },
+                    navToCharacterDetails = { storyId, title, charName -> navController.navigateSingleTopTo("${CharacterDetails.route}/$storyId/$title/$charName")},
                     navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}?$storyId")},
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle
@@ -95,11 +95,14 @@ fun CharTrackerNavHost(
             arguments = CharacterDetails.arguments){
             navBackStackEntry ->
             val storyId = navBackStackEntry.arguments?.getString(CharacterDetails.storyIdArg)
+            val storyTitle = navBackStackEntry.arguments?.getString(CharacterDetails.storyTitleArg)
             val charName = navBackStackEntry.arguments?.getString(CharacterDetails.charNameArg)
-            if (storyId != null && charName != null) {
+            if (storyId != null && storyTitle != null && charName != null) {
                 CharacterDetailsScreen(
+                    navToEditCharacter = { id, title, name -> navController.navigateSingleTopTo("${AddEditCharacter.route}/${id}/${title}?${name}")},
                     onBackNav = { navController.navigateUp() },
                     storyId = storyId,
+                    storyTitle = storyTitle,
                     charName = charName)
             }
 
@@ -109,12 +112,12 @@ fun CharTrackerNavHost(
             navBackStackEntry ->
             val storyId = navBackStackEntry.arguments?.getString(AddEditCharacter.storyIdArg)
             val storyTitle = navBackStackEntry.arguments?.getString(AddEditCharacter.storyTitleArg)
-            val charId = navBackStackEntry.arguments?.getString(AddEditCharacter.charIdArg)
+            val charName = navBackStackEntry.arguments?.getString(AddEditCharacter.charNameArg)
             if (storyId != null && storyTitle != null){
                 AddEditCharacterScreen(
                     storyId = storyId,
                     storyTitle = storyTitle,
-                    charId = charId,
+                    charName = charName,
                     onBackNav = { navController.navigateUp() })
             }
 

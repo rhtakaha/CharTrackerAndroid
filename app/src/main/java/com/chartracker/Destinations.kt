@@ -48,10 +48,12 @@ object Characters: Destination{
 object CharacterDetails: Destination{
     override val route = "characterDetails"
     const val storyIdArg = "story_id"
+    const val storyTitleArg = "story_title"
     const val charNameArg = "char_name"
-    val routeWithArgs = "${route}/{${storyIdArg}}/{${charNameArg}}"
+    val routeWithArgs = "${route}/{${storyIdArg}}/{${storyTitleArg}}/{${charNameArg}}"
     val arguments = listOf(
         navArgument(storyIdArg, builder = {type = NavType.StringType}),
+        navArgument(storyTitleArg, builder = {type = NavType.StringType}),
         navArgument(charNameArg, builder = {type = NavType.StringType})
     )
 }
@@ -60,12 +62,12 @@ object AddEditCharacter: Destination{
     override val route = "addEditCharacter"
     const val storyIdArg = "story_id"
     const val storyTitleArg = "story_title"
-    const val charIdArg = "character_id"
-    val routeWithArgs = "$route/{$storyIdArg}/{$storyTitleArg}?{$charIdArg}"
+    const val charNameArg = "character_name"
+    val routeWithArgs = "$route/{$storyIdArg}/{$storyTitleArg}?{$charNameArg}"
     val arguments = listOf(
         navArgument(storyIdArg, builder = {type = NavType.StringType}),
         navArgument(storyTitleArg, builder = {type = NavType.StringType}),
-        navArgument(charIdArg, builder = {
+        navArgument(charNameArg, builder = {
             defaultValue = null
             nullable = true
             type = NavType.StringType

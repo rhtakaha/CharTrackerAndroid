@@ -32,7 +32,7 @@ import com.chartracker.viewmodels.characters.CharactersViewModelFactory
 @Composable
 fun CharactersScreen(
     navToAddCharacter: (String, String, String?) -> Unit,
-    navToCharacterDetails: (String, String) -> Unit,
+    navToCharacterDetails: (String, String, String) -> Unit,
     navToEditStory: (String) -> Unit,
     onBackNav: () -> Unit,
     storyTitle: String,
@@ -47,7 +47,7 @@ fun CharactersScreen(
         charactersStringList= charactersStringList,
         navToAddCharacter = {navToAddCharacter(charactersViewModel.storyId, storyTitle, null)},
         /* convert 2 input lambda into 1 input by adding the storyId here*/
-        navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, charName)},
+        navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, storyTitle, charName)},
         navToEditStory = { navToEditStory(charactersViewModel.storyId) },
         onBackNav = onBackNav)
 }

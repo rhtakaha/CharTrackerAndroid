@@ -57,20 +57,24 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
 
 
         if (localImageURI != null){
+            if (!localImageURI.toString().startsWith("https://firebasestorage.googleapis.com")){
+                // if this was NOT the original image
+                // trying to add a new image
+                // no matter what adding the new image
+                updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
+                Log.i(tag, "adding new image to story with new filename: ${updatedStory.imageFilename.value}")
+                db.addImage(updatedStory.imageFilename.value!!, localImageURI)
+                db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)
 
-            // trying to add a new image
-            // no matter what adding the new image
-            updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
-            Log.i(tag, "adding new image to story with new filename: ${updatedStory.imageFilename.value}")
-            db.addImage(updatedStory.imageFilename.value!!, localImageURI)
-            db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)
-
-            //if adding a new image be sure to delete the original too (if it had one)
-            originalFilename?.let {
-                it1 ->
-                Log.i(tag, "deleting original story image with original filename: $it1")
-                db.deleteImage(it1)
+                //if adding a new image be sure to delete the original too (if it had one)
+                originalFilename?.let {
+                        it1 ->
+                    Log.i(tag, "deleting original story image with original filename: $it1")
+                    db.deleteImage(it1)
+                }
             }
+            // if this was just the existing image don't do anything
+
         }else{
             // could be either making no image change or trying to delete it
             if (originalFilename != null) {

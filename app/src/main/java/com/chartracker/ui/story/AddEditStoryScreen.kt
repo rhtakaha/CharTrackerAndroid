@@ -14,7 +14,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -76,11 +81,29 @@ fun AddEditStoryScreen(
     val localUri = remember(key1 = startImage) {
         mutableStateOf(startImage)
     }
-//    val localUri = remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
         localUri.value = it
     }
-    Scaffold(topBar = { CharTrackerTopBar(onBackNav=onBackNav) {} }) { paddingValue ->
+    Scaffold(topBar = {
+        CharTrackerTopBar(onBackNav=onBackNav, actionButtons = {
+            IconButton(onClick = {
+                if (story.name.value != "") {
+                    submitStory(story, localUri.value)
+                }
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = stringResource(id = R.string.submit_story)
+                )
+            }
+            IconButton(onClick = { /* do something */ }) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = stringResource(id = R.string.settings)
+                )
+            }
+        })
+    }) { paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -142,14 +165,6 @@ fun AddEditStoryScreen(
                 label = R.string.type_hint,
                 text = story.type.value,
                 onTyping = {newInput -> story.type.value = newInput})
-            Button(onClick = {
-                if (story.name.value != "") {
-//                    val story = StoryEntity(title, genre, type, author)
-                    submitStory(story, localUri.value)
-                }
-            }) {
-                Text(text = stringResource(id = R.string.submit))
-            }
 
         }
     }

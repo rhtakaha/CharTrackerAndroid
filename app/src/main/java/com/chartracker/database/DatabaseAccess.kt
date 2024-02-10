@@ -252,6 +252,7 @@ class DatabaseAccess {
     }
 
     suspend fun getCharacter(storyId: String, charName: String): CharacterEntity{
+        Log.i(tag, "getting character with charName: $charName")
         var character = CharacterEntity()
         db.collection("users")
             .document(auth.currentUser!!.uid)

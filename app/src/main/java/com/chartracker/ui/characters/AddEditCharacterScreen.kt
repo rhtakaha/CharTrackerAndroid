@@ -55,14 +55,14 @@ import com.chartracker.viewmodels.characters.AddEditCharacterViewModelFactory
 fun AddEditCharacterScreen(
     storyId: String,
     storyTitle: String,
-    charId: String?,
+    charName: String?,
     onBackNav: () -> Unit,
     addEditCharacterViewModel: AddEditCharacterViewModel =
         viewModel(
             factory = AddEditCharacterViewModelFactory(
                 storyId = storyId,
                 storyTitle = storyTitle,
-                charId = charId
+                charName = charName
             )
         )
 ){
@@ -90,7 +90,9 @@ fun AddEditCharacterScreen(
         resetNavToCharacters()
         onBackNav()
     }
-    val localUri = remember { mutableStateOf(startImage) }
+    val localUri = remember(key1 = startImage) {
+        mutableStateOf(startImage)
+    }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
         localUri.value = it
     }
@@ -223,13 +225,6 @@ fun AddEditCharacterScreen(
                 text = character.faction.value,
                 onTyping = {newInput -> character.faction.value = newInput})
             //TODO figure out chips
-//            Button(onClick = {
-//                if (character.name.value != "") {
-//                    submitCharacter(character, localUri.value)
-//                }
-//            }) {
-//                Text(text = stringResource(id = R.string.submit))
-//            }
 
         }
     }

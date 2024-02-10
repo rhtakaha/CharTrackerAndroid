@@ -35,14 +35,17 @@ import com.chartracker.viewmodels.characters.CharacterDetailsViewModelFactory
 
 @Composable
 fun CharacterDetailsScreen(
+    navToEditCharacter: (String, String, String) -> Unit,
     onBackNav: () -> Unit,
     storyId: String,
+    storyTitle: String,
     charName: String,
     characterDetailsViewModel: CharacterDetailsViewModel = viewModel(
         factory = CharacterDetailsViewModelFactory(storyId, charName))
 ){
     CharacterDetailsScreen(
         character = characterDetailsViewModel.character.value,
+        navToEditCharacter={navToEditCharacter(storyId, storyTitle, charName)},
         onBackNav = onBackNav)
 }
 
@@ -50,6 +53,7 @@ fun CharacterDetailsScreen(
 @Composable
 fun CharacterDetailsScreen(
     character: CharacterEntity,
+    navToEditCharacter: () -> Unit,
     onBackNav: () -> Unit
 ){
     Scaffold(
@@ -58,7 +62,7 @@ fun CharacterDetailsScreen(
                 title =  character.name.value,
                 onBackNav = onBackNav,
                 actionButtons = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navToEditCharacter() }) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
                             contentDescription = stringResource(id = R.string.edit_character)
@@ -91,100 +95,98 @@ fun CharacterDetailsScreen(
                         .clip(RoundedCornerShape(16.dp))
                 )
             }
-            character.name.value.let {
-                TextAndContentHolder(
-                    title = R.string.name,
-                    body = it
-                )
-            }
-            character.aliases.value.let {
+            TextAndContentHolder(
+                title = R.string.name,
+                body = character.name.value
+            )
+            if (character.aliases.value != ""){
                 TextAndContentHolder(
                     title = R.string.aliases,
-                    body = it
+                    body = character.aliases.value
                 )
             }
-            character.titles.value.let {
+            if (character.titles.value != ""){
                 TextAndContentHolder(
                     title = R.string.titles,
-                    body = it
+                    body = character.titles.value
                 )
             }
-            character.age.value.let {
+            if (character.age.value != ""){
                 TextAndContentHolder(
                     title = R.string.age,
-                    body = it
+                    body = character.age.value
                 )
             }
-            character.home.value.let {
+            if (character.home.value != ""){
                 TextAndContentHolder(
                     title = R.string.home,
-                    body = it
+                    body = character.home.value
                 )
             }
-            character.gender.value.let {
+            if (character.gender.value != ""){
                 TextAndContentHolder(
                     title = R.string.gender,
-                    body = it
+                    body = character.gender.value
                 )
             }
-            character.race.value.let {
+            if (character.race.value != ""){
                 TextAndContentHolder(
                     title = R.string.race,
-                    body = it
+                    body = character.race.value
                 )
             }
-            character.livingOrDead.value.let {
+            if (character.livingOrDead.value != ""){
                 TextAndContentHolder(
                     title = R.string.living_dead,
-                    body = it
+                    body = character.livingOrDead.value
                 )
             }
-            character.occupation.value.let {
+            if (character.occupation.value != ""){
                 TextAndContentHolder(
                     title = R.string.occupation,
-                    body = it
+                    body = character.occupation.value
                 )
             }
-            character.weapons.value.let {
+            if (character.weapons.value != ""){
                 TextAndContentHolder(
                     title = R.string.weapon,
-                    body = it
+                    body = character.weapons.value
                 )
             }
-            character.toolsEquipment.value.let {
+            if (character.toolsEquipment.value != ""){
                 TextAndContentHolder(
                     title = R.string.tools_equipment,
-                    body = it
+                    body = character.toolsEquipment.value
                 )
             }
-            character.bio.value.let {
+            if (character.bio.value != ""){
                 TextAndContentHolder(
                     title = R.string.bio,
-                    body = it
+                    body = character.bio.value
                 )
             }
-            character.faction.value.let {
+            if (character.bio.value != ""){
                 TextAndContentHolder(
                     title = R.string.faction,
-                    body = it
+                    body = character.faction.value
                 )
             }
-            character.allies.value.let {
+            if (character.allies.value != null){
                 TextAndContentHolder(
-                    title = R.string.name,
-                    body = it.toString()
+                    title = R.string.allies,
+                    body = character.allies.value.toString()
                 )
             }
-            character.enemies.value.let {
+            if (character.enemies.value != null){
                 TextAndContentHolder(
-                    title = R.string.name,
-                    body = it.toString()
+                    title = R.string.enemies,
+                    body = character.enemies.value.toString()
                 )
             }
-            character.neutral.value.let {
+            if (character.neutral.value != null){
                 TextAndContentHolder(
-                    title = R.string.name,
-                    body = it.toString()
+                    title = R.string.neutral,
+                    body = character.neutral.value.toString()
                 )
             }
         }
@@ -223,6 +225,7 @@ fun PreviewCharacterDetailsScreen(){
                 )
             CharacterDetailsScreen(
                 character = character,
+                navToEditCharacter = {},
                 onBackNav = {}
                 )
         }
