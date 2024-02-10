@@ -16,9 +16,16 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
     val character: MutableState<CharacterEntity>
         get() = _character
 
+    var alliesList: String? = null
+    var enemiesList: String? = null
+    var neutralList: String? = null
+
     init {
         viewModelScope.launch {
             getCharacter()
+            alliesList = character.value.allies.value?.let { formatAssociatesList(it) }
+            enemiesList = character.value.enemies.value?.let { formatAssociatesList(it) }
+            neutralList = character.value.neutral.value?.let { formatAssociatesList(it) }
         }
     }
 
@@ -28,6 +35,18 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
                 storyId = storyId,
                 charName = charName
             )
+    }
+
+    private fun formatAssociatesList(associates: List<String>): String{
+        var associatesString = ""
+        for ((index, ally) in associates.withIndex()){
+            associatesString = if (index == associates.lastIndex){
+                associatesString.plus(ally)
+            }else{
+                associatesString.plus("$ally, ")
+            }
+        }
+        return associatesString
     }
 }
 

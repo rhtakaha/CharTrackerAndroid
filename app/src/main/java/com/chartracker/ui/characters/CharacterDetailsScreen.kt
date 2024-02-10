@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -19,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,6 +49,9 @@ fun CharacterDetailsScreen(
 ){
     CharacterDetailsScreen(
         character = characterDetailsViewModel.character.value,
+        alliesList = characterDetailsViewModel.alliesList,
+        enemiesList = characterDetailsViewModel.enemiesList,
+        neutralList = characterDetailsViewModel.neutralList,
         navToEditCharacter={navToEditCharacter(storyId, storyTitle, charName)},
         onBackNav = onBackNav)
 }
@@ -53,6 +60,9 @@ fun CharacterDetailsScreen(
 @Composable
 fun CharacterDetailsScreen(
     character: CharacterEntity,
+    alliesList: String?,
+    enemiesList: String?,
+    neutralList: String?,
     navToEditCharacter: () -> Unit,
     onBackNav: () -> Unit
 ){
@@ -83,11 +93,13 @@ fun CharacterDetailsScreen(
             modifier = Modifier
                 .navigationBarsPadding()
                 .padding(paddingValue)
+                .verticalScroll(rememberScrollState())
+                .semantics { contentDescription = "CharacterDetails Screen" }
         ) {
-            character.imagePublicUrl.value.let {
+            if (character.imagePublicUrl.value != null){
                 GlideImage(
                     model = character.imagePublicUrl.value,
-                    contentDescription = null,
+                    contentDescription = stringResource(id = R.string.character_image_desc),
                     loading = placeholder(R.drawable.baseline_downloading_24),
                     failure = placeholder(R.drawable.baseline_broken_image_24),
                     modifier = Modifier
@@ -171,27 +183,29 @@ fun CharacterDetailsScreen(
                     body = character.faction.value
                 )
             }
-            if (character.allies.value != null){
+            if (alliesList != null){
                 TextAndContentHolder(
                     title = R.string.allies,
-                    body = character.allies.value.toString()
+                    body = alliesList
                 )
             }
-            if (character.enemies.value != null){
+            if (enemiesList != null){
                 TextAndContentHolder(
                     title = R.string.enemies,
-                    body = character.enemies.value.toString()
+                    body = enemiesList
                 )
             }
-            if (character.neutral.value != null){
+            if (neutralList != null){
                 TextAndContentHolder(
                     title = R.string.neutral,
-                    body = character.neutral.value.toString()
+                    body = neutralList
                 )
             }
         }
     }
 }
+
+
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -217,14 +231,17 @@ fun PreviewCharacterDetailsScreen(){
                 toolsEquipment = "",
                 bio = "The ranger from the North who would be king and unite the kingdoms",
                 faction = "Men of the West",
-                allies = listOf("Frodo Baggins, Gandalf, Gimli, Legolass", "Farimir"),
-                enemies = listOf("Sauron, Sauruman, Corsairs of Umbar"),
+                allies = listOf("Frodo Baggins", "Gandalf", "Gimli", "Legolas", "Farimir"),
+                enemies = listOf("Sauron", "Sauruman", "Corsairs of Umbar"),
                 neutral = listOf("Someone"),
-                imageFilename = "",
-                imagePublicUrl = ""
+                imageFilename = null,
+                imagePublicUrl = null
                 )
             CharacterDetailsScreen(
                 character = character,
+                alliesList = "Frodo Baggins, Gandalf, Gimli, Legolas, Farimir",
+                enemiesList = "Sauron, Sauruman, Corsairs of Umbar",
+                neutralList = null,
                 navToEditCharacter = {},
                 onBackNav = {}
                 )
