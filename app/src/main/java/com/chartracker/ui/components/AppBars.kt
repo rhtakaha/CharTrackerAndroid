@@ -1,7 +1,7 @@
 package com.chartracker.ui.components
 
 
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.chartracker.R
 import com.chartracker.ui.theme.CharTrackerTheme
@@ -34,6 +35,7 @@ fun CharTrackerTopBar(
             if (title != null){
                 Text(
                     text = title,
+                    overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -62,7 +64,7 @@ fun CharTrackerTopBar(
 fun PreviewCharTrackerDefaultTopBar(){
     CharTrackerTheme {
         CharTrackerTopBar(
-            onBackNav = { /*TODO*/ },
+            onBackNav = { /**/ },
             actionButtons = {})
     }
 }
@@ -73,8 +75,33 @@ fun PreviewCharTrackerTopBarWithTitle(){
     CharTrackerTheme {
         CharTrackerTopBar(
             title = stringResource(id = R.string.stories),
-            onBackNav = { /*TODO*/ },
+            onBackNav = { /**/ },
             actionButtons = {})
+    }
+}
+
+@Preview
+@Composable
+fun PreviewCharTrackerTopBarWithLongTitleAndTwoActions(){
+    CharTrackerTheme {
+        CharTrackerTopBar(
+            title = "Lord of the Rings",
+            onBackNav = { /**/ },
+            actionButtons = {
+                IconButton(onClick = { /* do something */ }) {
+                    Icon(
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "Localized description"
+                    )
+                }
+                IconButton(onClick = { /* do something */ }) {
+                    Icon(
+                        imageVector = Icons.Filled.Spa,
+                        contentDescription = "Localized description"
+                    )
+                }
+
+            })
     }
 }
 
