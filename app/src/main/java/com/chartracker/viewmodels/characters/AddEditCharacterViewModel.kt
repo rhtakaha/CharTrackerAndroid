@@ -26,6 +26,27 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         _character.value = new
     }
 
+    //probably just here for passing along later? check on that
+//    private val _charactersStringList = MutableStateFlow<MutableList<String>>(mutableListOf())
+//    val charactersStringList: StateFlow<MutableList<String>> = _charactersStringList.asStateFlow()
+    private var _charactersStringList: MutableList<String> = mutableListOf()
+    val charactersStringList: List<String>
+        get() = _charactersStringList
+
+    /* function to update the list of all the character names (as Strings)
+        which we will pass to edit/add Character*/
+    private suspend fun updateCharsStringList(){
+        val characters = db.getCharacters(storyId)
+        _charactersStringList.clear()
+        for (character in characters){
+            character.name.value.let { _charactersStringList.add(it) }
+        }
+    }
+
+    private val alliesList = mutableListOf<String>()
+    private val enemiesList = mutableListOf<String>()
+    private val neutralList = mutableListOf<String>()
+
     /*navigate back to characters event*/
     private val _readyToNavToCharacters = mutableStateOf(false)
     val readyToNavToCharacters: MutableState<Boolean>
@@ -36,22 +57,34 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     }
 
     init {
-        if (charName != null){
-            getCharacter(charName)
+        viewModelScope.launch {
+            updateCharsStringList()
+            if (charName != null){
+                getCharacter(charName)
+            }
         }
     }
 
-    private fun getCharacter(charName: String){
-        viewModelScope.launch {
-            charId = db.getCharacterId(storyId, charName)
-            updateLocalCharacter(db.getCharacter(storyId, charName))
-            originalFilename = character.value.imageFilename.value
-        }
+    private suspend fun getCharacter(charName: String){
+        charId = db.getCharacterId(storyId, charName)
+        updateLocalCharacter(db.getCharacter(storyId, charName))
+        originalFilename = character.value.imageFilename.value
+        _charactersStringList = _charactersStringList.filter { name -> name != charName }.toMutableList()
+
     }
 
     /*function that calls a database access method to create the character in Firebase
         also calls navigation*/
     fun submitCharacter(newCharacter: CharacterEntity, localImageURI: Uri?){
+        if (alliesList.size > 0){
+            newCharacter.allies.value = alliesList
+        }
+        if(enemiesList.size > 0){
+            newCharacter.enemies.value = enemiesList
+        }
+        if (neutralList.size > 0){
+            newCharacter.neutral.value = neutralList
+        }
         viewModelScope.launch {
             if (charId == null){
                 addCharacter(storyId, newCharacter, localImageURI)
@@ -104,6 +137,36 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             // if both were null it would be that there started with and ended with no image
         }
         db.updateCharacter(storyId, charId, updatedCharacter)
+    }
+
+    fun alliesUpdated(charName: String, selected: Boolean){
+        if (selected){
+            //if selected add
+            alliesList.add(charName)
+        }else{
+            // if unselected then remove
+            alliesList.remove(charName)
+        }
+    }
+
+    fun enemiesUpdated(charName: String, selected: Boolean){
+        if (selected){
+            //if selected add
+            enemiesList.add(charName)
+        }else{
+            // if unselected then remove
+            enemiesList.remove(charName)
+        }
+    }
+
+    fun neutralsUpdated(charName: String, selected: Boolean){
+        if (selected){
+            //if selected add
+            neutralList.add(charName)
+        }else{
+            // if unselected then remove
+            neutralList.remove(charName)
+        }
     }
 
 

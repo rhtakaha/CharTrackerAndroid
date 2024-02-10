@@ -46,6 +46,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.ChipGroupRow
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.characters.AddEditCharacterViewModel
@@ -68,6 +69,10 @@ fun AddEditCharacterScreen(
 ){
     AddEditCharacterScreen(
         character = addEditCharacterViewModel.character.value,
+        charactersStringList = addEditCharacterViewModel.charactersStringList,
+        updateAllies = { name, selected -> addEditCharacterViewModel.alliesUpdated(name, selected) },
+        updateEnemies = { name, selected -> addEditCharacterViewModel.enemiesUpdated(name, selected) },
+        updateNeutrals = { name, selected -> addEditCharacterViewModel.neutralsUpdated(name, selected) },
         submitCharacter = {character: CharacterEntity, localUri: Uri? -> addEditCharacterViewModel.submitCharacter(character, localUri)},
         readyToNavToCharacters = addEditCharacterViewModel.readyToNavToCharacters.value,
         resetNavToCharacters = { addEditCharacterViewModel.resetReadyToNavToCharacters() },
@@ -80,6 +85,10 @@ fun AddEditCharacterScreen(
 @Composable
 fun AddEditCharacterScreen(
     character: CharacterEntity,
+    charactersStringList: List<String>,
+    updateAllies: (String, Boolean) -> Unit,
+    updateEnemies: (String, Boolean) -> Unit,
+    updateNeutrals: (String, Boolean) -> Unit,
     submitCharacter: (CharacterEntity, Uri?) -> Unit,
     readyToNavToCharacters: Boolean,
     resetNavToCharacters: () -> Unit,
@@ -225,6 +234,21 @@ fun AddEditCharacterScreen(
                 text = character.faction.value,
                 onTyping = {newInput -> character.faction.value = newInput})
             //TODO figure out chips
+            ChipGroupRow(
+                header = stringResource(id = R.string.allies),
+                contentsList = charactersStringList,
+                onClick = updateAllies
+            )
+            ChipGroupRow(
+                header = stringResource(id = R.string.enemies),
+                contentsList = charactersStringList,
+                onClick = updateEnemies
+            )
+            ChipGroupRow(
+                header = stringResource(id = R.string.neutral),
+                contentsList = charactersStringList,
+                onClick = updateNeutrals
+            )
 
         }
     }
@@ -241,10 +265,16 @@ fun PreviewAddCharacterScreen(){
     val character by remember {
         mutableStateOf(CharacterEntity())
     }
+
+    val charactersList = listOf("Gandalf", "Aragorn", "Frodo Baggins")
     CharTrackerTheme {
         Surface {
             AddEditCharacterScreen(
                 character = character,
+                charactersStringList = charactersList,
+                updateAllies = {_, _ ->},
+                updateEnemies = {_, _ ->},
+                updateNeutrals = {_, _ ->},
                 submitCharacter = {_, _ ->},
                 readyToNavToCharacters = false,
                 resetNavToCharacters = { /*TODO*/ },

@@ -19,9 +19,7 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     private val _story = MutableStateFlow(StoryEntity())
     val story: StateFlow<StoryEntity> = _story.asStateFlow()
 
-    //probably just here for passing along later? check on that
-    private val _charactersStringList = MutableStateFlow<MutableList<String>>(mutableListOf())
-    val charactersStringList: StateFlow<MutableList<String>> = _charactersStringList.asStateFlow()
+
 
     init {
         viewModelScope.launch {
@@ -33,7 +31,6 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
 
     private suspend fun getCharacters(){
         _characters.value = db.getCharacters(storyId)
-        updateCharsStringList()
     }
 
     private suspend fun getStoryId(){
@@ -42,15 +39,6 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
 
     private suspend fun getStory(){
         _story.value = db.getStoryFromId(storyId)
-    }
-
-    /* function to update the list of all the character names (as Strings)
-        which we will pass to edit/add Character*/
-    private fun updateCharsStringList(){
-        charactersStringList.value.clear()
-        for (character in characters.value){
-            character.name.value.let { charactersStringList.value.add(it) }
-        }
     }
 }
 

@@ -118,7 +118,8 @@ fun CharTrackerNavHost(
                     storyId = storyId,
                     storyTitle = storyTitle,
                     charName = charName,
-                    onBackNav = { navController.navigateUp() })
+                    onBackNav = { navController.navigateUp() }
+                )
             }
 
         }

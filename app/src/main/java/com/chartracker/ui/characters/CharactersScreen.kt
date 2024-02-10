@@ -40,11 +40,9 @@ fun CharactersScreen(
 ){
     val characters by charactersViewModel.characters.collectAsStateWithLifecycle()
     val story by charactersViewModel.story.collectAsStateWithLifecycle()
-    val charactersStringList by charactersViewModel.charactersStringList.collectAsStateWithLifecycle()
     CharactersScreen(
         characters = characters,
         story = story,
-        charactersStringList= charactersStringList,
         navToAddCharacter = {navToAddCharacter(charactersViewModel.storyId, storyTitle, null)},
         /* convert 2 input lambda into 1 input by adding the storyId here*/
         navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, storyTitle, charName)},
@@ -56,7 +54,6 @@ fun CharactersScreen(
 fun CharactersScreen(
     characters: List<CharacterEntity>,
     story: StoryEntity,
-    charactersStringList: MutableList<String>,
     navToAddCharacter: () -> Unit,
     navToCharacterDetails: (String) -> Unit,
     navToEditStory: () -> Unit,
@@ -111,7 +108,6 @@ fun PreviewCharactersScreen(){
     val characters = listOf(
         CharacterEntity(name = "Frodo Baggins")
     )
-    val charactersStringList = mutableListOf("Frodo Baggins, Gandalf, Aragorn")
     val story = StoryEntity(name = "Lord of the Rings",
         author = "JRR Tolkien",
         genre = "Epic Fantasy",
@@ -121,7 +117,6 @@ fun PreviewCharactersScreen(){
             CharactersScreen(
                 characters = characters,
                 story = story,
-                charactersStringList= charactersStringList,
                 navToAddCharacter = {},
                 navToCharacterDetails = {},
                 navToEditStory = {},
