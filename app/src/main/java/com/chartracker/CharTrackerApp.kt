@@ -71,7 +71,8 @@ fun CharTrackerNavHost(
             navBackStackEntry ->
             val storyId = navBackStackEntry.arguments?.getString(AddEditStory.storyIdArg)
             AddEditStoryScreen(
-                onBackNav = {navController.navigateSingleTopTo(Stories.route)},
+                navToStories = {navController.navigateSingleTopTo(Stories.route)},
+                onBackNav = {navController.navigateUp()},
                 storyId = storyId
                 )
         }
@@ -118,6 +119,7 @@ fun CharTrackerNavHost(
                     storyId = storyId,
                     storyTitle = storyTitle,
                     charName = charName,
+                    navToCharacters = { navController.navigateSingleTopTo("${Characters.route}/$storyTitle") },
                     onBackNav = { navController.navigateUp() }
                 )
             }

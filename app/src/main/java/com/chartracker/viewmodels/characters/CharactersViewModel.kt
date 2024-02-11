@@ -29,16 +29,16 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
         }
     }
 
-    private suspend fun getCharacters(){
-        _characters.value = db.getCharacters(storyId)
-    }
-
     private suspend fun getStoryId(){
         storyId = db.getStoryId(storyTitle)
     }
 
     private suspend fun getStory(){
         _story.value = db.getStoryFromId(storyId)
+    }
+
+    private suspend fun getCharacters(){
+        _characters.value = db.getCharacters(storyId)
     }
 }
 

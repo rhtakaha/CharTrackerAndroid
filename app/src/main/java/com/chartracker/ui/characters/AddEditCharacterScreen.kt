@@ -57,6 +57,7 @@ fun AddEditCharacterScreen(
     storyId: String,
     storyTitle: String,
     charName: String?,
+    navToCharacters: () -> Unit,
     onBackNav: () -> Unit,
     addEditCharacterViewModel: AddEditCharacterViewModel =
         viewModel(
@@ -75,6 +76,7 @@ fun AddEditCharacterScreen(
         updateNeutrals = { name, selected -> addEditCharacterViewModel.neutralsUpdated(name, selected) },
         submitCharacter = {character: CharacterEntity, localUri: Uri? -> addEditCharacterViewModel.submitCharacter(character, localUri)},
         readyToNavToCharacters = addEditCharacterViewModel.readyToNavToCharacters.value,
+        navToCharacters = navToCharacters,
         resetNavToCharacters = { addEditCharacterViewModel.resetReadyToNavToCharacters() },
         startImage = addEditCharacterViewModel.character.value.imagePublicUrl.value?.toUri(),
         onBackNav = onBackNav
@@ -91,13 +93,14 @@ fun AddEditCharacterScreen(
     updateNeutrals: (String, Boolean) -> Unit,
     submitCharacter: (CharacterEntity, Uri?) -> Unit,
     readyToNavToCharacters: Boolean,
+    navToCharacters: () -> Unit,
     resetNavToCharacters: () -> Unit,
     startImage: Uri?,
     onBackNav: () -> Unit,
 ){
     if (readyToNavToCharacters){
         resetNavToCharacters()
-        onBackNav()
+        navToCharacters()
     }
     val localUri = remember(key1 = startImage) {
         mutableStateOf(startImage)
@@ -277,6 +280,7 @@ fun PreviewAddCharacterScreen(){
                 updateNeutrals = {_, _ ->},
                 submitCharacter = {_, _ ->},
                 readyToNavToCharacters = false,
+                navToCharacters = {},
                 resetNavToCharacters = { /*TODO*/ },
                 startImage = null
             ) {

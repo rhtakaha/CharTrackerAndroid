@@ -53,6 +53,7 @@ import com.chartracker.viewmodels.story.AddEditStoryViewModelFactory
 
 @Composable
 fun AddEditStoryScreen(
+    navToStories: () -> Unit,
     onBackNav: () -> Unit,
     storyId: String?,
     addEditStoryViewModel: AddEditStoryViewModel = viewModel(factory = AddEditStoryViewModelFactory(storyId))
@@ -60,7 +61,8 @@ fun AddEditStoryScreen(
     AddEditStoryScreen(
         story = addEditStoryViewModel.story.value,
         submitStory = {story, localImageURI -> addEditStoryViewModel.submitStory(story, localImageURI)},
-        readyToNavToCharacters = addEditStoryViewModel.navToStories.value,
+        readyToNavToStories = addEditStoryViewModel.navToStories.value,
+        navToStories = navToStories,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
         startImage = addEditStoryViewModel.story.value.imagePublicUrl.value?.toUri(),
         onBackNav = onBackNav)
@@ -71,14 +73,15 @@ fun AddEditStoryScreen(
 fun AddEditStoryScreen(
     story: StoryEntity,
     submitStory: (StoryEntity, Uri?) -> Unit,
-    readyToNavToCharacters: Boolean,
+    readyToNavToStories: Boolean,
+    navToStories: () -> Unit,
     resetNavToStories: () -> Unit,
     startImage: Uri?,
     onBackNav: () -> Unit
 ){
-    if (readyToNavToCharacters){
+    if (readyToNavToStories){
         resetNavToStories()
-        onBackNav()
+        navToStories()
     }
     val localUri = remember(key1 = startImage) {
         mutableStateOf(startImage)
@@ -190,7 +193,8 @@ fun PreviewAddStoryScreen(){
             AddEditStoryScreen(
                 story = story,
                 submitStory = { _, _ ->},
-                readyToNavToCharacters = false,
+                readyToNavToStories = false,
+                navToStories = {},
                 startImage = null,
                 resetNavToStories = { /*TODO*/ }) {
                 

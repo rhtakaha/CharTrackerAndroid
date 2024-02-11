@@ -318,6 +318,7 @@ class DatabaseAccess {
     }
 
     suspend fun getStoryId(storyTitle: String): String{
+        Log.w(tag, "stared retrieving the story document ID")
         var story = ""
         db.collection("users")
             .document(auth.currentUser!!.uid)
