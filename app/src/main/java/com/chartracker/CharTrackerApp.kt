@@ -42,7 +42,7 @@ fun CharTrackerNavHost(
         }
         composable(route = SignUp.route){
             SignUpScreen(
-                navToEmailVerify = {email -> navController.navigateSingleTopTo("${EmailVerify.route}/$email") },
+                navToEmailVerify = {email -> navController.navigateSingleTopToNoReturn("${EmailVerify.route}/$email") },
                 onBackNav = {navController.navigateUp()}
             )
         }
@@ -54,7 +54,7 @@ fun CharTrackerNavHost(
             val userEmail = navBackStackEntry.arguments?.getString(EmailVerify.userEmailArg) ?: ""
             EmailVerifyScreen(
                 navToUpdateEmail = { /*TODO*/ },
-                navToStories = {navController.navigateSingleTopTo(Stories.route)},
+                navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 userEmail = userEmail,
                 onBackNav = {navController.navigateUp()})
         }
@@ -71,7 +71,7 @@ fun CharTrackerNavHost(
             navBackStackEntry ->
             val storyId = navBackStackEntry.arguments?.getString(AddEditStory.storyIdArg)
             AddEditStoryScreen(
-                navToStories = {navController.navigateSingleTopTo(Stories.route)},
+                navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 onBackNav = {navController.navigateUp()},
                 storyId = storyId
                 )
@@ -119,7 +119,7 @@ fun CharTrackerNavHost(
                     storyId = storyId,
                     storyTitle = storyTitle,
                     charName = charName,
-                    navToCharacters = { navController.navigateSingleTopTo("${Characters.route}/$storyTitle") },
+                    navToCharacters = { navController.navigateSingleTopToNoReturn("${Characters.route}/$storyTitle") },
                     onBackNav = { navController.navigateUp() }
                 )
             }
@@ -131,3 +131,8 @@ fun CharTrackerNavHost(
 //navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}/$storyId") },
 
 fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) { launchSingleTop = true }
+
+fun NavHostController.navigateSingleTopToNoReturn(route: String) = this.navigate(route) {
+    popBackStack()
+    launchSingleTop = true
+}
