@@ -36,6 +36,7 @@ fun CharTrackerTopBar(
                 Text(
                     text = title,
                     overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
                     style = MaterialTheme.typography.headlineLarge
                 )
             }

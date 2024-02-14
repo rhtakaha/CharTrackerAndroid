@@ -32,6 +32,14 @@ class SignInViewModel() : ViewModel(){
     val signedIn: MutableState<Boolean>
         get() = _signedIn
 
+    fun resetSignedIn(){
+        _signedIn.value = false
+    }
+
+    init {
+        _signedIn.value = auth.currentUser != null
+    }
+
     fun sendPasswordResetEmail(email: String){
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->

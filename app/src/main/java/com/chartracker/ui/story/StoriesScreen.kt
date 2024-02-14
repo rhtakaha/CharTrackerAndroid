@@ -30,6 +30,7 @@ import com.chartracker.viewmodels.story.StoriesViewModel
 fun StoriesScreen(
     navToAddStory: () -> Unit,
     navToCharacters: (String) -> Unit,
+    navToSettings: () -> Unit,
     onBackNav: () -> Unit,//TODO figure out if actually want to go back
     storiesViewModel: StoriesViewModel = viewModel()
 ){
@@ -38,6 +39,7 @@ fun StoriesScreen(
         stories = stories,
         navToAddStory= navToAddStory,
         navToCharacters= navToCharacters,
+        navToSettings = navToSettings,
         onBackNav = onBackNav
     )
 }
@@ -47,6 +49,7 @@ fun StoriesScreen(
     stories: List<StoryEntity>,
     navToAddStory: () -> Unit,
     navToCharacters: (String) -> Unit,
+    navToSettings: () -> Unit,
     onBackNav: () -> Unit){
     Scaffold(
         topBar = { 
@@ -54,7 +57,7 @@ fun StoriesScreen(
                 title =  stringResource(R.string.stories),
                 onBackNav = onBackNav,
                 actionButtons = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navToSettings() }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = stringResource(id = R.string.settings)
@@ -97,7 +100,8 @@ fun PreviewStoriesScreen(){
         Surface {
             StoriesScreen(stories = stories,
                 navToAddStory = { /*TODO*/ },
-                navToCharacters = {}) {
+                navToCharacters = {},
+                navToSettings = {}) {
 
             }
         }

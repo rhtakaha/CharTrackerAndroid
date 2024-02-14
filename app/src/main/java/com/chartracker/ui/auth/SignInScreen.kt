@@ -39,6 +39,7 @@ fun SignInScreen(
         onSignInClick = {email, password ->  signInViewModel.signInWithEmailPassword(email, password) },
         onSignUpClick = { navToSignUp() },
         signedIn = signInViewModel.signedIn.value,
+        resetSignedIn = { signInViewModel.resetSignedIn() },
         navToStories = navToStories,
         onPasswordResetClick = {signInViewModel.sendPasswordResetEmail(signInViewModel.email.value)}
     )
@@ -54,11 +55,13 @@ fun SignInScreen(
     onSignInClick: (String, String) -> Unit,
     onSignUpClick: () -> Unit,
     signedIn: Boolean,
+    resetSignedIn: () -> Unit,
     navToStories: () -> Unit,
     onPasswordResetClick: (String) -> Unit,
 ){
     if (signedIn){
         //event for navigation
+        resetSignedIn()
         navToStories()
     }
     Column(
@@ -117,6 +120,7 @@ fun PreviewSignInScreen(){
                 onSignInClick = { _, _ -> },
                 onSignUpClick = { /*TODO*/ },
                 signedIn = false,
+                resetSignedIn = {},
                 navToStories = {},
                 onPasswordResetClick = {}
             )

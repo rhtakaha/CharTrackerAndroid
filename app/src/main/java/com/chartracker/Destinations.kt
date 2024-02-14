@@ -75,6 +75,10 @@ object AddEditCharacter: Destination{
     )
 }
 
+object Settings: Destination{
+    override val route = "settings"
+}
+
 // list of all screens for use to determine which screen currently at
 val charTrackerScreens = listOf(
     SignIn,
@@ -84,5 +88,6 @@ val charTrackerScreens = listOf(
     AddEditStory,
     Characters,
     CharacterDetails,
-    AddEditCharacter
+    AddEditCharacter,
+    Settings
 )

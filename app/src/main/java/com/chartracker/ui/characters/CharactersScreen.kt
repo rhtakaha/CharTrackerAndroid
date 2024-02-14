@@ -34,6 +34,7 @@ fun CharactersScreen(
     navToAddCharacter: (String, String, String?) -> Unit,
     navToCharacterDetails: (String, String, String) -> Unit,
     navToEditStory: (String) -> Unit,
+    navToSettings: () -> Unit,
     onBackNav: () -> Unit,
     storyTitle: String,
     charactersViewModel: CharactersViewModel = viewModel(factory = CharactersViewModelFactory(storyTitle = storyTitle))
@@ -47,6 +48,7 @@ fun CharactersScreen(
         /* convert 2 input lambda into 1 input by adding the storyId here*/
         navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, storyTitle, charName)},
         navToEditStory = { navToEditStory(charactersViewModel.storyId) },
+        navToSettings = navToSettings,
         onBackNav = onBackNav)
 }
 
@@ -57,6 +59,7 @@ fun CharactersScreen(
     navToAddCharacter: () -> Unit,
     navToCharacterDetails: (String) -> Unit,
     navToEditStory: () -> Unit,
+    navToSettings: () -> Unit,
     onBackNav: () -> Unit,
 ){
     Scaffold(
@@ -71,7 +74,7 @@ fun CharactersScreen(
                             contentDescription = stringResource(id =R.string.edit_story)
                         )
                     }
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { navToSettings() }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = stringResource(id = R.string.settings)
@@ -120,6 +123,7 @@ fun PreviewCharactersScreen(){
                 navToAddCharacter = {},
                 navToCharacterDetails = {},
                 navToEditStory = {},
+                navToSettings = {},
                 onBackNav = { /*TODO*/ })
         }
     }

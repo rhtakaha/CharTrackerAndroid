@@ -107,10 +107,12 @@ fun SettingsScreen(
                 .semantics { contentDescription = "Settings Screen" }
         ) {
             // change email
+            //TODO: Add a dialogue telling that they need to verify the email to complete the change
             TextEntryHolder(
                 title = R.string.update_email,
                 label = R.string.update_email_hint,
                 text = updatedEmail,
+                isEmail = true,
                 onTyping = {newInput -> onUpdatedEmailChange(newInput)}
             )
             Button(onClick = { submitUpdatedEmail(updatedEmail) }) {
@@ -122,12 +124,14 @@ fun SettingsScreen(
                 title = R.string.update_password,
                 label = R.string.update_password_hint,
                 text = updatedPassword,
+                isPassword = true,
                 onTyping = {newInput -> onUpdatedPasswordChange(newInput)}
             )
             TextEntryHolder(
                 title = R.string.password_confirm,
                 label = R.string.password_confirm_hint,
                 text = confirmedPassword,
+                isPassword = true,
                 onTyping = {newInput -> onConfirmedPasswordChange(newInput)}
             )
             if (updatedPassword != confirmedPassword){
@@ -137,7 +141,7 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.titleLarge)
             }
             Button(onClick = {
-                if (updatedPassword != confirmedPassword) {
+                if (updatedPassword == confirmedPassword) {
                     submitUpdatedPassword(updatedPassword)
                 }
             }

@@ -11,6 +11,7 @@ import com.chartracker.ui.theme.CharTrackerTheme
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chartracker.ui.auth.EmailVerifyScreen
+import com.chartracker.ui.auth.SettingsScreen
 import com.chartracker.ui.characters.AddEditCharacterScreen
 import com.chartracker.ui.characters.CharacterDetailsScreen
 import com.chartracker.ui.characters.CharactersScreen
@@ -63,6 +64,7 @@ fun CharTrackerNavHost(
             StoriesScreen(
                 navToAddStory = { navController.navigateSingleTopTo(AddEditStory.route) },
                 navToCharacters = { storyTitle -> navController.navigateSingleTopTo("${Characters.route}/$storyTitle") },
+                navToSettings = {navController.navigateSingleTopToNoReturn(Settings.route)},
                 onBackNav = {navController.navigateUp()})
         }
         composable(
@@ -88,6 +90,7 @@ fun CharTrackerNavHost(
                     navToAddCharacter = { storyId, title, charName -> navController.navigateSingleTopTo("${AddEditCharacter.route}/${storyId}/${title}?${charName}") },
                     navToCharacterDetails = { storyId, title, charName -> navController.navigateSingleTopTo("${CharacterDetails.route}/$storyId/$title/$charName")},
                     navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}?$storyId")},
+                    navToSettings = {navController.navigateSingleTopToNoReturn(Settings.route)},
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle
                 )
@@ -124,7 +127,12 @@ fun CharTrackerNavHost(
                     onBackNav = { navController.navigateUp() }
                 )
             }
-
+        }
+        composable(route= Settings.route){
+            SettingsScreen(
+                navToSignIn = { navController.navigateSingleTopToNoReturn(SignIn.route) },
+                onBackNav = { navController.navigateUp() }
+            )
         }
     }
 }
