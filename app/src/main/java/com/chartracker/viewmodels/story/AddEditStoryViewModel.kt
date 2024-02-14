@@ -109,6 +109,18 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             originalFilename = story.value.imageFilename.value
         }
     }
+
+    fun submitStoryDelete(){
+        viewModelScope.launch {
+            Log.i(tag, "starting to delete story")
+            if (storyId != null) {
+                db.deleteStory(storyId)
+            }
+            // if it has an image delete that too
+            story.value.imageFilename.value?.let { db.deleteImage(it) }
+            _navToStories.value = true
+        }
+    }
 }
 
 /* time ensures that filenames are unique:

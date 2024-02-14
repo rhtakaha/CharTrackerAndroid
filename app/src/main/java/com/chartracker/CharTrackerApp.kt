@@ -25,7 +25,8 @@ fun CharTrackerApp(){
         //peek at top of backstack to know where we are then compare with destinations to know which it is
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
-        val currentScreen = charTrackerScreens.find { it.route == currentDestination?.route } ?: SignIn
+        val currentScreen =
+            charTrackerScreens.find { it.route == currentDestination?.route } ?: SignIn
         CharTrackerNavHost(navController = navController)
     }
 }

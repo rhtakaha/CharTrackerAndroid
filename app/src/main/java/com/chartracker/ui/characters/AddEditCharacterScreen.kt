@@ -16,9 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -70,11 +71,13 @@ fun AddEditCharacterScreen(
 ){
     AddEditCharacterScreen(
         character = addEditCharacterViewModel.character.value,
+        editing = charName != null,
         charactersStringList = addEditCharacterViewModel.charactersStringList,
         updateAllies = { name, selected -> addEditCharacterViewModel.alliesUpdated(name, selected) },
         updateEnemies = { name, selected -> addEditCharacterViewModel.enemiesUpdated(name, selected) },
         updateNeutrals = { name, selected -> addEditCharacterViewModel.neutralsUpdated(name, selected) },
         submitCharacter = {character: CharacterEntity, localUri: Uri? -> addEditCharacterViewModel.submitCharacter(character, localUri)},
+        deleteCharacter = { addEditCharacterViewModel.submitCharacterDelete() },
         readyToNavToCharacters = addEditCharacterViewModel.readyToNavToCharacters.value,
         navToCharacters = navToCharacters,
         resetNavToCharacters = { addEditCharacterViewModel.resetReadyToNavToCharacters() },
@@ -87,11 +90,13 @@ fun AddEditCharacterScreen(
 @Composable
 fun AddEditCharacterScreen(
     character: CharacterEntity,
+    editing: Boolean = false,
     charactersStringList: List<String>,
     updateAllies: (String, Boolean) -> Unit,
     updateEnemies: (String, Boolean) -> Unit,
     updateNeutrals: (String, Boolean) -> Unit,
     submitCharacter: (CharacterEntity, Uri?) -> Unit,
+    deleteCharacter: () -> Unit,
     readyToNavToCharacters: Boolean,
     navToCharacters: () -> Unit,
     resetNavToCharacters: () -> Unit,
@@ -120,6 +125,14 @@ fun AddEditCharacterScreen(
                     imageVector = Icons.Filled.Done,
                     contentDescription = stringResource(id = R.string.submit_char)
                 )
+            }
+            if (editing){
+                IconButton(onClick = { deleteCharacter() }) {
+                    Icon(
+                        imageVector = Icons.Filled.DeleteForever,
+                        contentDescription = stringResource(id = R.string.delete)
+                    )
+                }
             }
             IconButton(onClick = { /* do something */ }) {
                 Icon(
@@ -279,6 +292,7 @@ fun PreviewAddCharacterScreen(){
                 updateEnemies = {_, _ ->},
                 updateNeutrals = {_, _ ->},
                 submitCharacter = {_, _ ->},
+                deleteCharacter = {},
                 readyToNavToCharacters = false,
                 navToCharacters = {},
                 resetNavToCharacters = { /*TODO*/ },

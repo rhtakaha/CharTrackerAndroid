@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -137,6 +139,15 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             // if both were null it would be that there started with and ended with no image
         }
         db.updateCharacter(storyId, charId, updatedCharacter)
+    }
+
+    fun submitCharacterDelete(){
+        CoroutineScope(Dispatchers.IO).launch {
+            Log.i(tag, "starting to delete character")
+            charId?.let { db.deleteCharacter(storyId, it, character.value.name.value) }
+            character.value.imageFilename.value?.let { db.deleteImage(it) }
+        }
+        _readyToNavToCharacters.value = true
     }
 
     fun alliesUpdated(charName: String, selected: Boolean){

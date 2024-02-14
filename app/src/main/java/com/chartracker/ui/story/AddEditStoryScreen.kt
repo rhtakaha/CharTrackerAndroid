@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -60,7 +61,9 @@ fun AddEditStoryScreen(
 ){
     AddEditStoryScreen(
         story = addEditStoryViewModel.story.value,
+        editing = storyId != null,
         submitStory = {story, localImageURI -> addEditStoryViewModel.submitStory(story, localImageURI)},
+        deleteStory = { addEditStoryViewModel.submitStoryDelete() },
         readyToNavToStories = addEditStoryViewModel.navToStories.value,
         navToStories = navToStories,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
@@ -72,7 +75,9 @@ fun AddEditStoryScreen(
 @Composable
 fun AddEditStoryScreen(
     story: StoryEntity,
+    editing: Boolean = false,
     submitStory: (StoryEntity, Uri?) -> Unit,
+    deleteStory: () -> Unit,
     readyToNavToStories: Boolean,
     navToStories: () -> Unit,
     resetNavToStories: () -> Unit,
@@ -100,6 +105,14 @@ fun AddEditStoryScreen(
                     imageVector = Icons.Filled.Done,
                     contentDescription = stringResource(id = R.string.submit_story)
                 )
+            }
+            if (editing){
+                IconButton(onClick = { deleteStory() }) {
+                    Icon(
+                        imageVector = Icons.Filled.DeleteForever,
+                        contentDescription = stringResource(id = R.string.delete)
+                    )
+                }
             }
             IconButton(onClick = { /* do something */ }) {
                 Icon(
@@ -193,6 +206,7 @@ fun PreviewAddStoryScreen(){
             AddEditStoryScreen(
                 story = story,
                 submitStory = { _, _ ->},
+                deleteStory = {},
                 readyToNavToStories = false,
                 navToStories = {},
                 startImage = null,
