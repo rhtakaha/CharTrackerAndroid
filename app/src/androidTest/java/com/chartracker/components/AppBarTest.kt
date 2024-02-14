@@ -24,7 +24,7 @@ class AppBarTest {
     @Test
     fun defaultTopBarTest(){
         composeTestRule.setContent {
-            CharTrackerTopBar(onBackNav = { /*TODO*/ },actionButtons = {})
+            CharTrackerTopBar(onBackNav = { /**/ },actionButtons = {})
         }
 
         composeTestRule
@@ -37,7 +37,7 @@ class AppBarTest {
         composeTestRule.setContent {
             CharTrackerTopBar(
                 title = stringResource(R.string.stories),
-                onBackNav = { /*TODO*/ }, actionButtons = {})
+                onBackNav = { /**/ }, actionButtons = {})
         }
 
         composeTestRule
@@ -52,7 +52,7 @@ class AppBarTest {
     @Test
     fun topBarWithOneActionButtonTest(){
         composeTestRule.setContent {
-            CharTrackerTopBar(onBackNav = { /*TODO*/ }, actionButtons = {
+            CharTrackerTopBar(onBackNav = { /**/ }, actionButtons = {
                 IconButton(onClick = { /* do something */ },
                     modifier = Modifier.semantics { contentDescription = "menu button" }) {
                     Icon(
@@ -75,7 +75,7 @@ class AppBarTest {
     @Test
     fun topBarWithTwoActionButtonsTest(){
         composeTestRule.setContent {
-            CharTrackerTopBar(onBackNav = { /*TODO*/ }, actionButtons = {
+            CharTrackerTopBar(onBackNav = { /**/ }, actionButtons = {
                 IconButton(onClick = { /* do something */ },
                     modifier = Modifier.semantics { contentDescription = "menu button" }) {
                     Icon(
@@ -92,6 +92,47 @@ class AppBarTest {
                 }
             })
         }
+
+        composeTestRule
+            .onNodeWithContentDescription("Up button")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithContentDescription("menu button")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithContentDescription("spa button")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun topBarWithTwoActionButtonsTooLongTitleTest(){
+        composeTestRule.setContent {
+            CharTrackerTopBar(
+                title = "Indiana Jones and the Raider of the Lost Ark",
+                onBackNav = { /**/ },
+                actionButtons = {
+                IconButton(onClick = { /* do something */ },
+                    modifier = Modifier.semantics { contentDescription = "menu button" }) {
+                    Icon(
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "Localized description"
+                    )
+                }
+                IconButton(onClick = { /* do something */ },
+                    modifier = Modifier.semantics { contentDescription = "spa button" }) {
+                    Icon(
+                        imageVector = Icons.Filled.Spa,
+                        contentDescription = "Localized description"
+                    )
+                }
+            })
+        }
+
+        composeTestRule
+            .onNodeWithText("Indiana Jones and the Raider of the Lost Ark")
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithContentDescription("Up button")

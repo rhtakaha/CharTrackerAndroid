@@ -30,7 +30,7 @@
       <entry key="topBarWithTitleTest()">
         <State />
       </entry>
-      <entry key="topBarWithTwoActionButtonsTest()">
+      <entry key="topBarWithTwoActionButtonsTooLongTitleTest()">
         <State />
       </entry>
     </value>
