@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="EntityElementsTest">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -18,19 +21,16 @@
           <timeTargetWasSelectedWithDropDown value="2024-01-31T05:09:45.868105800Z" />
         </State>
       </entry>
-      <entry key="confirmPasswordObscuredTest()">
+      <entry key="entityHolderListCharactersWithStoryTest()">
         <State />
       </entry>
-      <entry key="screenContentsTest()">
+      <entry key="entityHolderListStoriesTest()">
         <State />
       </entry>
-      <entry key="screenContentsTest() (1)">
+      <entry key="storyDetailsTest()">
         <State />
       </entry>
-      <entry key="topBarWithTitleTest()">
-        <State />
-      </entry>
-      <entry key="topBarWithTwoActionButtonsTooLongTitleTest()">
+      <entry key="storyDetailsWithImageTest()">
         <State />
       </entry>
     </value>

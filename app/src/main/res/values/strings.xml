@@ -91,4 +91,5 @@
     <string name="scroll_to_top">scroll to the top</string>
     <string name="submit_char">Submit character</string>
     <string name="submit_story">Submit story</string>
+    <string name="entity_image">Entity image</string>
 </resources>

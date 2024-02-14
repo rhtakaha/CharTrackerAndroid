@@ -66,7 +66,7 @@ fun StoryDetails(story: StoryEntity){
             if (story.imagePublicUrl.value != null) {
                 GlideImage(
                     model = story.imagePublicUrl.value,
-                    contentDescription = null,
+                    contentDescription = stringResource(id = R.string.story_image_desc),
                     loading = placeholder(R.drawable.baseline_downloading_24),
                     failure = placeholder(R.drawable.baseline_broken_image_24),
                     modifier = Modifier
@@ -132,7 +132,7 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
             if (imageUrl != null) {
                 GlideImage(
                     model = imageUrl,
-                    contentDescription = null,
+                    contentDescription = stringResource(id = R.string.entity_image),
                     loading = placeholder(R.drawable.baseline_downloading_24),
                     failure = placeholder(R.drawable.baseline_broken_image_24),
 //                contentScale = ContentScale.Crop,
