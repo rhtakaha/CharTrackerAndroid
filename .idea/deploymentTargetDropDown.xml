@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="EntityElementsTest">
+      <entry key="ChipsTest">
         <State />
       </entry>
       <entry key="app">
@@ -21,16 +21,16 @@
           <timeTargetWasSelectedWithDropDown value="2024-01-31T05:09:45.868105800Z" />
         </State>
       </entry>
-      <entry key="entityHolderListCharactersWithStoryTest()">
+      <entry key="basicChipUnpressTest()">
         <State />
       </entry>
-      <entry key="entityHolderListStoriesTest()">
+      <entry key="chipGroupContentsTest()">
         <State />
       </entry>
-      <entry key="storyDetailsTest()">
+      <entry key="chipGroupScrollTest()">
         <State />
       </entry>
-      <entry key="storyDetailsWithImageTest()">
+      <entry key="chipGroupSelectableTest()">
         <State />
       </entry>
     </value>

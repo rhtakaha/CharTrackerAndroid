@@ -2,9 +2,11 @@ package com.chartracker.ui.components
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +32,10 @@ fun ChipGroupRow(
     onClick: (String, Boolean) -> Unit){
     Column {
         Text(text = header)
-        Row {
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+        ) {
             for (item in contentsList){
                 BasicChip(
                     text = item,
@@ -80,7 +85,7 @@ fun BasicChip(
     name = "Light Mode")
 @Composable
 fun PreviewChipGroupRow(){
-    val characters = listOf("Aragorn", "Gandalf", "Merry", "Pippin")
+    val characters = listOf("Aragorn", "Gandalf", "Merry", "Pippin", "Sam", "Frodo")
     CharTrackerTheme {
         Surface {
             ChipGroupRow(
