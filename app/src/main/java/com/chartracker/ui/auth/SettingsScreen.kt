@@ -109,7 +109,7 @@ fun SettingsScreen(
             // change email
             //TODO: Add a dialogue telling that they need to verify the email to complete the change
             TextEntryHolder(
-                title = R.string.update_email,
+                title = R.string.update_email_prompt,
                 label = R.string.update_email_hint,
                 text = updatedEmail,
                 isEmail = true,
@@ -121,7 +121,7 @@ fun SettingsScreen(
             
             // change password
             TextEntryHolder(
-                title = R.string.update_password,
+                title = R.string.update_password_prompt,
                 label = R.string.update_password_hint,
                 text = updatedPassword,
                 isPassword = true,

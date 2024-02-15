@@ -54,8 +54,8 @@
     <string name="character_details">Character Details</string>
     <string name="edit">Edit</string>
     <string name="edit_character">Edit Character</string>
-    <string name="password_confirm">Confirm password:</string>
-    <string name="sign_out">Sign out</string>
+    <string name="password_confirm">Confirm Password:</string>
+    <string name="sign_out">Sign Out</string>
     <string name="settings">Settings</string>
     <string name="sign_in_credentials">Sign In With Saved Credentials</string>
     <string name="story_image_desc">Image representing the story</string>
@@ -66,12 +66,14 @@
     <string name="Im_verified">I\'m verified!</string>
     <string name="change_email">Change email</string>
     <string name="update_email">Update Email</string>
+    <string name="update_email_prompt">Update Email:</string>
     <string name="update_email_hint">Enter New Email</string>
     <string name="current_email_header">Current Email</string>
     <string name="new_email">Input new email</string>
     <string name="email_update_instructions">A verification email will be sent to the new email. Verify that email to complete the update.</string>
     <string name="password_reset">Send password reset email</string>
     <string name="update_password">Update Password</string>
+    <string name="update_password_prompt">Update Password:</string>
     <string name="update_password_hint">Enter New Password</string>
     <string name="new_password">New password</string>
     <string name="delete_account">DELETE ACCOUNT</string>
@@ -87,7 +89,7 @@
     <string name="email">Email:</string>
     <string name="password">Password:</string>
     <string name="password_mismatch">Passwords do not match</string>
-    <string name="password_confirm_hint">Confirm password</string>
+    <string name="password_confirm_hint">Confirm New Password</string>
     <string name="scroll_to_top">scroll to the top</string>
     <string name="submit_char">Submit character</string>
     <string name="submit_story">Submit story</string>
