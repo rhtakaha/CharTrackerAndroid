@@ -5,10 +5,10 @@
       <entry key="AddStoryScreenTest">
         <State />
       </entry>
-      <entry key="EditStoryScreenTest">
+      <entry key="CharactersScreenTest">
         <State />
       </entry>
-      <entry key="addStoryEditFieldsTest()">
+      <entry key="EditStoryScreenTest">
         <State />
       </entry>
       <entry key="app">
@@ -27,7 +27,7 @@
           <timeTargetWasSelectedWithDropDown value="2024-01-31T05:09:45.868105800Z" />
         </State>
       </entry>
-      <entry key="editStoryContentsTest()">
+      <entry key="charactersContentTest()">
         <State />
       </entry>
       <entry key="editStoryEditFieldsTest()">

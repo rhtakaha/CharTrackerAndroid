@@ -82,25 +82,25 @@ fun StoryDetails(story: StoryEntity){
                 modifier = Modifier
                     .padding(start = 40.dp)
             ) {
-                story.author.value.let {
+                if (story.author.value != ""){
                     Text(
-                        text = it,
+                        text = story.author.value,
                         style = MaterialTheme.typography.headlineLarge,
                         modifier = Modifier
                             .padding(bottom = 8.dp)
                     )
                 }
-                story.genre.value.let {
+                if (story.genre.value != ""){
                     Text(
-                        text = it,
+                        text = story.genre.value,
                         style = MaterialTheme.typography.headlineLarge,
                         modifier = Modifier
                             .padding(bottom = 8.dp)
                     )
                 }
-                story.type.value.let {
+                if (story.type.value != ""){
                     Text(
-                        text = it,
+                        text = story.type.value,
                         style = MaterialTheme.typography.headlineLarge,
                         modifier = Modifier
                             .padding(bottom = 8.dp)
