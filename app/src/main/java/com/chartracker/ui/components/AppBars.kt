@@ -47,11 +47,11 @@ fun CharTrackerTopBar(
         ),
         navigationIcon = {
             IconButton(
-                onClick = { onBackNav() },
-                modifier = Modifier.semantics { contentDescription = "Up button" }) {
+                onClick = { onBackNav() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Localized description"
+                    contentDescription = stringResource(id = R.string.up_button)
                 )
             }
         },
