@@ -1,5 +1,6 @@
 package com.chartracker.components
 
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -30,6 +31,7 @@ class EntityElementsTest {
         composeTestRule
             .onNodeWithText("Aragorn")
             .assertIsDisplayed()
+            .assertHasClickAction()
     }
 
     @Test
@@ -45,6 +47,7 @@ class EntityElementsTest {
         composeTestRule
             .onNodeWithText("Aragorn")
             .assertIsDisplayed()
+            .assertHasClickAction()
         composeTestRule
             .onNodeWithContentDescription("Entity image")
             .assertIsDisplayed()
