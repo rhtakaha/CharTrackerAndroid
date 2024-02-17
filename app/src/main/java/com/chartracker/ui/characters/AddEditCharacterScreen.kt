@@ -143,7 +143,7 @@ fun AddEditCharacterScreen(
                 .navigationBarsPadding()
                 .padding(paddingValue)
                 .verticalScroll(rememberScrollState())
-                .semantics { contentDescription = "AddEditStory Screen" }){
+                .semantics { contentDescription = "AddEditCharacter Screen" }){
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center) {
@@ -242,7 +242,6 @@ fun AddEditCharacterScreen(
                 label = R.string.faction_hint,
                 text = character.faction.value,
                 onTyping = {newInput -> character.faction.value = newInput})
-            //TODO figure out chips
             ChipGroupRow(
                 header = stringResource(id = R.string.allies),
                 contentsList = charactersStringList,

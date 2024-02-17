@@ -2,13 +2,16 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AddStoryScreenTest">
+      <entry key="AddCharacterScreenTest">
         <State />
       </entry>
-      <entry key="CharactersScreenTest">
+      <entry key="EditCharacterScreenTest">
         <State />
       </entry>
-      <entry key="EditStoryScreenTest">
+      <entry key="addCharacterContentsTest()">
+        <State />
+      </entry>
+      <entry key="addCharacterEditFieldsTest()">
         <State />
       </entry>
       <entry key="app">
@@ -27,10 +30,7 @@
           <timeTargetWasSelectedWithDropDown value="2024-01-31T05:09:45.868105800Z" />
         </State>
       </entry>
-      <entry key="characterDetailsContentsTest()">
-        <State />
-      </entry>
-      <entry key="charactersContentTest()">
+      <entry key="editCharacterContentsTest()">
         <State />
       </entry>
     </value>
