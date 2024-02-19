@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CharTracker"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <!--        TODO REMEMBER TO REMOVE CLEARTEXTTRAFFIC FOR PRODUCTION-->
         <activity
             android:name="com.chartracker.MainActivity"
             android:exported="true">
@@ -21,16 +23,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Trigger Google Play services to install the backported photo picker module. -->
-        <service android:name="com.google.android.gms.metadata.ModuleDependencies"
-            android:enabled="false"
-            android:exported="false"
-            tools:ignore="MissingClass">
-            <intent-filter>
-                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
-            </intent-filter>
-            <meta-data android:name="photopicker_activity:0:required" android:value="" />
-        </service>
+<!--        &lt;!&ndash; Trigger Google Play services to install the backported photo picker module. &ndash;&gt;-->
+<!--        <service android:name="com.google.android.gms.metadata.ModuleDependencies"-->
+<!--            android:enabled="false"-->
+<!--            android:exported="false"-->
+<!--            tools:ignore="MissingClass">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />-->
+<!--            </intent-filter>-->
+<!--            <meta-data android:name="photopicker_activity:0:required" android:value="" />-->
+<!--        </service>-->
 
     </application>
 

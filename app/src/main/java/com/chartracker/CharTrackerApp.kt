@@ -64,7 +64,7 @@ fun CharTrackerNavHost(
             StoriesScreen(
                 navToAddStory = { navController.navigateSingleTopTo(AddEditStory.route) },
                 navToCharacters = { storyTitle -> navController.navigateSingleTopTo("${Characters.route}/$storyTitle") },
-                navToSettings = {navController.navigateSingleTopToNoReturn(Settings.route)},
+                navToSettings = {navController.navigateSingleTopTo(Settings.route)},
                 onBackNav = {navController.navigateUp()})
         }
         composable(
@@ -90,7 +90,7 @@ fun CharTrackerNavHost(
                     navToAddCharacter = { storyId, title, charName -> navController.navigateSingleTopTo("${AddEditCharacter.route}/${storyId}/${title}?${charName}") },
                     navToCharacterDetails = { storyId, title, charName -> navController.navigateSingleTopTo("${CharacterDetails.route}/$storyId/$title/$charName")},
                     navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}?$storyId")},
-                    navToSettings = {navController.navigateSingleTopToNoReturn(Settings.route)},
+                    navToSettings = {navController.navigateSingleTopTo(Settings.route)},
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle
                 )

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.chartracker.database.DatabaseAccess
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -38,6 +39,9 @@ class SignInViewModel() : ViewModel(){
 
     init {
         _signedIn.value = auth.currentUser != null
+
+        //ONLY FOR TESTING
+        DatabaseAccess().enableEmulatorTesting()
     }
 
     fun sendPasswordResetEmail(email: String){

@@ -6,6 +6,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Source
+import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -18,6 +19,18 @@ class DatabaseAccess {
     private val db = Firebase.firestore
     private val auth = Firebase.auth
     private val storage = Firebase.storage
+
+    fun enableEmulatorTesting(){
+        Log.i(tag, "ENABLING EMULATORS")
+        db.useEmulator("10.0.2.2", 8080)
+        auth.useEmulator("10.0.2.2", 9099)
+        storage.useEmulator("10.0.2.2", 9199)
+
+
+        db.firestoreSettings = firestoreSettings {
+            isPersistenceEnabled = false
+        }
+    }
 
     fun deleteImage(filename: String){
         val imageRef = storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
