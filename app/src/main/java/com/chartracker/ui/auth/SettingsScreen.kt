@@ -34,7 +34,6 @@ import com.chartracker.viewmodels.auth.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
-//    navToEmailVerify: () -> Unit,
     navToSignIn: () -> Unit,
     onBackNav: () -> Unit,
     settingsViewModel: SettingsViewModel = viewModel()
@@ -43,9 +42,6 @@ fun SettingsScreen(
        updatedEmail = settingsViewModel.updatedEmail.value,
        onUpdatedEmailChange = {newInput -> settingsViewModel.updateUpdatedEmail(newInput)},
        submitUpdatedEmail = {newEmail -> settingsViewModel.updateUserEmail(newEmail)},
-//       readyToNavToEmailVerify = settingsViewModel.readyToNavToEmailVerify.value,
-//       resetReadyToNavToEmailVerify = { settingsViewModel.resetReadyToNavToEmailVerify() },
-//       navToEmailVerify = navToEmailVerify,
        updatedPassword = settingsViewModel.updatedPassword.value,
        onUpdatedPasswordChange = { newInput -> settingsViewModel.updateUpdatedPassword(newInput)},
        submitUpdatedPassword = {newPassword -> settingsViewModel.updatePassword(newPassword)},
@@ -64,9 +60,6 @@ fun SettingsScreen(
     updatedEmail: String,
     onUpdatedEmailChange: (String) -> Unit,
     submitUpdatedEmail: (String) -> Unit,
-//    readyToNavToEmailVerify: Boolean,
-//    resetReadyToNavToEmailVerify: () -> Unit,
-//    navToEmailVerify: () -> Unit,
     updatedPassword: String,
     onUpdatedPasswordChange: (String) -> Unit,
     submitUpdatedPassword: (String) -> Unit,
@@ -83,10 +76,6 @@ fun SettingsScreen(
         resetReadyToNavToSignIn()
         navToSignIn()
     }
-//    if (readyToNavToEmailVerify){
-//        resetReadyToNavToEmailVerify()
-//        navToEmailVerify()
-//    }
     Scaffold(
         topBar = {
             CharTrackerTopBar(
