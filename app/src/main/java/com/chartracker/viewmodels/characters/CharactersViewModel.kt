@@ -20,7 +20,6 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     val story: StateFlow<StoryEntity> = _story.asStateFlow()
 
 
-
     init {
         viewModelScope.launch {
             getStoryId()
@@ -37,8 +36,10 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
         _story.value = db.getStoryFromId(storyId)
     }
 
-    private suspend fun getCharacters(){
-        _characters.value = db.getCharacters(storyId)
+    fun getCharacters(){
+        viewModelScope.launch {
+            _characters.value = db.getCharacters(storyId)
+        }
     }
 }
 

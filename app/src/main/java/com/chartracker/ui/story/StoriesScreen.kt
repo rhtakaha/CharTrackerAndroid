@@ -1,10 +1,15 @@
 package com.chartracker.ui.story
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -12,6 +17,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -37,6 +45,7 @@ fun StoriesScreen(
     val stories by storiesViewModel.stories.collectAsStateWithLifecycle()
     StoriesScreen(
         stories = stories,
+        refreshStories = { storiesViewModel.getStories() },
         navToAddStory= navToAddStory,
         navToCharacters= navToCharacters,
         navToSettings = navToSettings,
@@ -44,13 +53,17 @@ fun StoriesScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StoriesScreen(
     stories: List<StoryEntity>,
+    refreshStories: () -> Unit,
     navToAddStory: () -> Unit,
     navToCharacters: (String) -> Unit,
     navToSettings: () -> Unit,
     onBackNav: () -> Unit){
+    val refreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(refreshing, { refreshStories() })
     Scaffold(
         topBar = { 
             CharTrackerTopBar(
@@ -71,12 +84,19 @@ fun StoriesScreen(
             }
         }
     ) { paddingValue ->
-        EntityHolderList(
-            entities = stories,
-            onClick = navToCharacters,
-            modifier = Modifier
-                .padding(paddingValue)
-                .semantics { contentDescription = "Stories Screen" })
+        Box(modifier = Modifier
+            .padding(paddingValue)
+            .pullRefresh(pullRefreshState)
+        ){
+            EntityHolderList(
+                entities = stories,
+                onClick = navToCharacters,
+                modifier = Modifier
+                    .semantics { contentDescription = "Stories Screen" })
+
+            PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+        }
+
     }
 }
 
@@ -98,7 +118,9 @@ fun PreviewStoriesScreen(){
         StoryEntity(name = "Really Really Really Really Long Ahh Title Just to see how it looks"))
     CharTrackerTheme {
         Surface {
-            StoriesScreen(stories = stories,
+            StoriesScreen(
+                stories = stories,
+                refreshStories = {},
                 navToAddStory = { /*TODO*/ },
                 navToCharacters = {},
                 navToSettings = {}) {
