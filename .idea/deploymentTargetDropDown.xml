@@ -2,23 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="EditCharacterScreenTest">
-        <State>
-          <targetSelectedWithDropDown>
-            <Target>
-              <type value="QUICK_BOOT_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\RYTak\.android\avd\Pixel_7_API_30.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-02-18T23:26:46.599955700Z" />
-        </State>
-      </entry>
-      <entry key="addCharacterEditFieldsTest()">
+      <entry key="SignInScreenTest">
         <State />
       </entry>
       <entry key="app">
@@ -38,6 +22,15 @@
         </State>
       </entry>
       <entry key="basic()">
+        <State />
+      </entry>
+      <entry key="invalidDialogTest()">
+        <State />
+      </entry>
+      <entry key="messageDialogTest()">
+        <State />
+      </entry>
+      <entry key="passwordTest()">
         <State />
       </entry>
     </value>

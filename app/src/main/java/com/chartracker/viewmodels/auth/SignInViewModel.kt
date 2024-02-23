@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -36,6 +38,24 @@ class SignInViewModel() : ViewModel(){
         _signedIn.value = false
     }
 
+    /* event for displaying incorrect password dialog*/
+    private val _invalidCredentials = mutableStateOf(false)
+    val invalidCredentials: MutableState<Boolean>
+        get() = _invalidCredentials
+
+    fun resetInvalidCredentials(){
+        _invalidCredentials.value = false
+    }
+
+    /* event for telling user the email was sent IF the email is valid*/
+    private val _emailSent = mutableStateOf(false)
+    val emailSent: MutableState<Boolean>
+        get() = _emailSent
+
+    fun resetEmailSent(){
+        _emailSent.value = false
+    }
+
     init {
         _signedIn.value = auth.currentUser != null
 
@@ -46,8 +66,12 @@ class SignInViewModel() : ViewModel(){
     fun sendPasswordResetEmail(email: String){
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
+                _emailSent.value = true
                 if (task.isSuccessful) {
                     Log.d(tag, "Email sent.")
+                }else{
+                    //if the email was not a valid user
+                    // Don't say anything to protect vs email enumeration attacks
                 }
             }
     }
@@ -73,7 +97,12 @@ class SignInViewModel() : ViewModel(){
 
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(tag, "signInWithEmail:failure", task.exception)
+                    if (task.exception is FirebaseAuthInvalidUserException ||
+                        task.exception is FirebaseAuthInvalidCredentialsException){
+                        //email and/or password is incorrect
+                        //not differentiating to protect vs email enumeration attacks
+                        _invalidCredentials.value = true
+                    }
                 }
             }
     }

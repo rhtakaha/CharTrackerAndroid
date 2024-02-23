@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.R
+import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.auth.SignInViewModel
@@ -40,6 +41,10 @@ fun SignInScreen(
         onSignUpClick = { navToSignUp() },
         signedIn = signInViewModel.signedIn.value,
         resetSignedIn = { signInViewModel.resetSignedIn() },
+        invalidCredentials = signInViewModel.invalidCredentials.value,
+        resetInvalidCredentials = { signInViewModel.resetInvalidCredentials() },
+        emailSent = signInViewModel.emailSent.value,
+        resetEmailSent = { signInViewModel.resetEmailSent() },
         navToStories = navToStories,
         onPasswordResetClick = {signInViewModel.sendPasswordResetEmail(signInViewModel.email.value)}
     )
@@ -56,6 +61,10 @@ fun SignInScreen(
     onSignUpClick: () -> Unit,
     signedIn: Boolean,
     resetSignedIn: () -> Unit,
+    invalidCredentials: Boolean,
+    resetInvalidCredentials: () -> Unit,
+    emailSent: Boolean,
+    resetEmailSent: () -> Unit,
     navToStories: () -> Unit,
     onPasswordResetClick: (String) -> Unit,
 ){
@@ -95,7 +104,18 @@ fun SignInScreen(
         }
 
     }
-
+    if (invalidCredentials){
+        MessageDialog(
+            message = R.string.invalid_email_password,
+            onDismiss = {resetInvalidCredentials()}
+        )
+    }
+    if (emailSent){
+        MessageDialog(
+            message = R.string.email_sent,
+            onDismiss = {resetEmailSent()}
+        )
+    }
 }
 
 
@@ -121,7 +141,11 @@ fun PreviewSignInScreen(){
                 onSignUpClick = { /*TODO*/ },
                 signedIn = false,
                 resetSignedIn = {},
+                invalidCredentials = false,
+                resetInvalidCredentials = {},
                 navToStories = {},
+                emailSent = false,
+                resetEmailSent = {},
                 onPasswordResetClick = {}
             )
         }
