@@ -2,9 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AddCharacterScreenTest">
-        <State />
-      </entry>
       <entry key="EditCharacterScreenTest">
         <State>
           <targetSelectedWithDropDown>
@@ -20,9 +17,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-02-18T23:26:46.599955700Z" />
         </State>
-      </entry>
-      <entry key="addCharacterContentsTest()">
-        <State />
       </entry>
       <entry key="addCharacterEditFieldsTest()">
         <State />
@@ -40,10 +34,10 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-01-31T05:09:45.868105800Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-02-21T02:00:13.059160500Z" />
         </State>
       </entry>
-      <entry key="editCharacterContentsTest()">
+      <entry key="basic()">
         <State />
       </entry>
     </value>
