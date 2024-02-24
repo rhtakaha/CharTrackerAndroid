@@ -106,13 +106,13 @@ fun SignInScreen(
     }
     if (invalidCredentials){
         MessageDialog(
-            message = R.string.invalid_email_password,
+            message = stringResource(id = R.string.invalid_email_password),
             onDismiss = {resetInvalidCredentials()}
         )
     }
     if (emailSent){
         MessageDialog(
-            message = R.string.email_sent,
+            message = stringResource(id = R.string.email_sent),
             onDismiss = {resetEmailSent()}
         )
     }

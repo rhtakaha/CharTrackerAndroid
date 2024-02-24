@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.viewmodels.auth.SignUpViewModel
 
@@ -45,6 +46,9 @@ fun SignUpScreen(
         onPassword2Type = {newInput -> signUpViewModel.updateInputPassword2(newInput)},
         onSignUpClick = {email, password -> signUpViewModel.signUpUserWithEmailPassword(email, password)},
         signedIn = signUpViewModel.signedIn.value,
+        resetSignedIn = { signUpViewModel.resetSignedIn() },
+        signUpErrorMessage = signUpViewModel.signUpErrorMessage.value,
+        resetSignUpErrorMessage = { signUpViewModel.resetSignUpErrorMessage() },
         navToVerifyEmail= navToEmailVerify,
         onBackNav = onBackNav
     )
@@ -60,11 +64,15 @@ fun SignUpScreen(
     onPassword2Type: (String) -> Unit,
     onSignUpClick: (String, String) -> Unit,
     signedIn: Boolean,
+    resetSignedIn: () -> Unit,
+    signUpErrorMessage: Any?,
+    resetSignUpErrorMessage: () -> Unit,
     navToVerifyEmail: (String) -> Unit,
     onBackNav: () -> Unit
 ){
     if (signedIn){
         //event for navigation
+        resetSignedIn()
         navToVerifyEmail(email)
     }
     Scaffold(topBar = { CharTrackerTopBar(onBackNav=onBackNav) {} }) { paddingValue ->
@@ -110,6 +118,19 @@ fun SignUpScreen(
                 Text(text = stringResource(id = R.string.SignUp))
             }
         }
+        if (signUpErrorMessage != null){
+            if (signUpErrorMessage is String){
+                MessageDialog(
+                    message = signUpErrorMessage,
+                    onDismiss = {resetSignUpErrorMessage()}
+                )
+            }else if (signUpErrorMessage is Int){
+                MessageDialog(
+                    message = stringResource(id = signUpErrorMessage),
+                    onDismiss = {resetSignUpErrorMessage()}
+                )
+            }
+        }
     }
 }
 
@@ -135,6 +156,9 @@ fun PreviewSignUpScreen(){
                 onPassword2Type = {newInput -> password2 = newInput} ,
                 onSignUpClick = { _, _ ->},
                 signedIn = false,
+                resetSignedIn = {},
+                signUpErrorMessage = null,
+                resetSignUpErrorMessage = {},
                 navToVerifyEmail = {},
                 onBackNav = {}
             )

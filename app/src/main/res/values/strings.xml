@@ -97,4 +97,6 @@
     <string name="up_button">Up button</string>
     <string name="invalid_email_password">Invalid email or password!</string>
     <string name="email_sent">Password reset email was sent to the email if it matches a user. Please wait a moment for it to arrive.</string>
+    <string name="malformed_email_message">Malformed email</string>
+    <string name="user_collision_message">User with this email already exists!</string>
 </resources>

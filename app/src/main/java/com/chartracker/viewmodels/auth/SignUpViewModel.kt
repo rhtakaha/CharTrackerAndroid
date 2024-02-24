@@ -4,8 +4,12 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.chartracker.R
 import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.UserEntity
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +50,19 @@ class SignUpViewModel: ViewModel(){
     val signedIn: MutableState<Boolean>
         get() = _signedIn
 
+    fun resetSignedIn(){
+        _signedIn.value = false
+    }
+
+    /* event/message for error with sign Up*/
+    private val _signUpErrorMessage = mutableStateOf<Any?>(null)
+    val signUpErrorMessage: MutableState<Any?>
+        get() = _signUpErrorMessage
+
+    fun resetSignUpErrorMessage(){
+        _signUpErrorMessage.value = null
+    }
+
     fun signUpUserWithEmailPassword(email: String, password: String){
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -60,11 +77,16 @@ class SignUpViewModel: ViewModel(){
 
                     //event for navigating out
                     _signedIn.value = true
-                    //onSignUpNavigate()
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(tag, "createUserWithEmail:failure", task.exception)
-                    //TODO need to flush out the user message since things like a non email, email in use, etc
+                    val exception = task.exception
+                    Log.w(tag, "createUserWithEmail:failure", exception)
+                    _signUpErrorMessage.value = when(exception){
+                        is FirebaseAuthWeakPasswordException -> exception.message.toString()
+                        is FirebaseAuthInvalidCredentialsException -> R.string.malformed_email_message
+                        is FirebaseAuthUserCollisionException -> R.string.user_collision_message
+                        else -> null
+                    }
                 }
             }
     }

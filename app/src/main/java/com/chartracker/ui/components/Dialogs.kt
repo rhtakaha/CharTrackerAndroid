@@ -1,7 +1,6 @@
 package com.chartracker.ui.components
 
 import android.content.res.Configuration
-import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,13 +15,13 @@ import com.chartracker.ui.theme.CharTrackerTheme
 
 @Composable
 fun MessageDialog(
-    @StringRes message: Int,
+    message: String,
     onDismiss: () -> Unit
 ){
     /* Dialog for instances where just need to inform the user about something*/
     AlertDialog(
         onDismissRequest = { },
-        text = { Text(text = stringResource(id = message), textAlign = TextAlign.Center) },
+        text = { Text(text = message, textAlign = TextAlign.Center) },
         confirmButton = {
             TextButton(
                 onClick = {onDismiss()}
@@ -43,7 +42,7 @@ fun PreviewMessageDialog(){
     CharTrackerTheme {
         Surface {
             MessageDialog(
-                message = R.string.invalid_email_password,
+                message = stringResource(id = R.string.invalid_email_password),
                 onDismiss = {}
             )
         }
