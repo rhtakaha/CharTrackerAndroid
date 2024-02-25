@@ -21,6 +21,7 @@ import com.chartracker.ui.components.TextAndContentHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.MessageDialog
 import com.chartracker.viewmodels.auth.EmailVerifyViewModel
 
 @Composable
@@ -36,6 +37,8 @@ fun EmailVerifyScreen(
         changeEmail = { navToUpdateEmail() },
         checkVerification = {emailVerifyViewModel.isEmailVerified()},
         navToStories = navToStories,
+        failedReload = emailVerifyViewModel.failedReload.value,
+        resetFailedReload = {emailVerifyViewModel.resetFailedReload()},
         onBackNav= onBackNav)
 }
 
@@ -45,6 +48,8 @@ fun EmailVerifyScreen(
     sendEmail: () -> Unit,
     changeEmail: () -> Unit,
     checkVerification: () -> Boolean,
+    failedReload: Boolean,
+    resetFailedReload: () -> Unit,
     navToStories: () -> Unit,
     onBackNav: () -> Unit
 ){
@@ -71,11 +76,18 @@ fun EmailVerifyScreen(
                     // if we are verified then navigate
                     navToStories()
                 }else{
-                    //snackbar?
+                    //UNSURE - snackbar?
                 }
             }) {
                 Text(text = stringResource(id = R.string.Im_verified))
             }
+        }
+        if (failedReload){
+            // really shouldn't ever see, but here in case
+            MessageDialog(
+                message = stringResource(id = R.string.fail_user_reload_message),
+                onDismiss = {resetFailedReload()}
+            )
         }
     }
 }
@@ -95,6 +107,8 @@ fun PreviewEmailVerifyScreen(){
             changeEmail = { /*TODO*/ },
             checkVerification = { -> false},
             navToStories = {},
+            failedReload = false,
+            resetFailedReload = {},
             onBackNav = {})
     }
 }
