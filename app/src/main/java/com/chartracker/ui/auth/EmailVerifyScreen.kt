@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,6 +28,7 @@ import com.chartracker.R
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.viewmodels.auth.EmailVerifyViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun EmailVerifyScreen(
@@ -36,9 +42,11 @@ fun EmailVerifyScreen(
         sendEmail = { emailVerifyViewModel.sendVerificationEmail()},
         changeEmail = { navToUpdateEmail() },
         checkVerification = {emailVerifyViewModel.isEmailVerified()},
-        navToStories = navToStories,
         failedReload = emailVerifyViewModel.failedReload.value,
         resetFailedReload = {emailVerifyViewModel.resetFailedReload()},
+        emailSent = emailVerifyViewModel.emailSent.value,
+        resetEmailSent = { emailVerifyViewModel.resetEmailSent() },
+        navToStories = navToStories,
         onBackNav= onBackNav)
 }
 
@@ -50,10 +58,18 @@ fun EmailVerifyScreen(
     checkVerification: () -> Boolean,
     failedReload: Boolean,
     resetFailedReload: () -> Unit,
+    emailSent: Boolean,
+    resetEmailSent: () -> Unit,
     navToStories: () -> Unit,
     onBackNav: () -> Unit
 ){
-    Scaffold(topBar = { CharTrackerTopBar(onBackNav=onBackNav) {} }) {paddingValue ->
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val notVerifiedMessage = stringResource(id = R.string.not_verified)
+    Scaffold(
+        snackbarHost ={SnackbarHost(hostState = snackbarHostState) },
+        topBar = { CharTrackerTopBar(onBackNav=onBackNav) {} }
+    ) {paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +92,9 @@ fun EmailVerifyScreen(
                     // if we are verified then navigate
                     navToStories()
                 }else{
-                    //UNSURE - snackbar?
+                    scope.launch {
+                        snackbarHostState.showSnackbar(notVerifiedMessage)
+                    }
                 }
             }) {
                 Text(text = stringResource(id = R.string.Im_verified))
@@ -88,6 +106,15 @@ fun EmailVerifyScreen(
                 message = stringResource(id = R.string.fail_user_reload_message),
                 onDismiss = {resetFailedReload()}
             )
+        }
+        if (emailSent){
+            resetEmailSent()
+            val message = stringResource(id = R.string.email_sent)
+            LaunchedEffect(key1 = Unit){
+                scope.launch {
+                    snackbarHostState.showSnackbar(message)
+                }
+            }
         }
     }
 }
@@ -106,9 +133,11 @@ fun PreviewEmailVerifyScreen(){
             sendEmail = {},
             changeEmail = { /*TODO*/ },
             checkVerification = { -> false},
-            navToStories = {},
             failedReload = false,
             resetFailedReload = {},
+            emailSent = false,
+            resetEmailSent = {},
+            navToStories = {},
             onBackNav = {})
     }
 }

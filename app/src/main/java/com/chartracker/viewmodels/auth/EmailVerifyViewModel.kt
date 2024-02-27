@@ -26,13 +26,24 @@ class EmailVerifyViewModel : ViewModel(){
         _failedReload.value = false
     }
 
+    /* event for email successfully sent to trigger snackbar*/
+    private val _emailSent = mutableStateOf(false)
+    val emailSent: MutableState<Boolean>
+        get() = _emailSent
+
+    fun resetEmailSent(){
+        _emailSent.value = false
+    }
+
     /* once on entry and then when the button it pressed*/
     fun sendVerificationEmail(){
         user!!.sendEmailVerification()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(tag, "Email sent.")
-                    //UNSURE - maybe add event and snackbar for this to provide response to button?
+                    _emailSent.value = true
+                }else{
+                    Log.w(tag, "Email failed to send!", task.exception)
                 }
             }
     }

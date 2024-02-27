@@ -112,7 +112,7 @@ fun SignInScreen(
     }
     if (emailSent){
         MessageDialog(
-            message = stringResource(id = R.string.email_sent),
+            message = stringResource(id = R.string.password_reset_email_sent),
             onDismiss = {resetEmailSent()}
         )
     }
