@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,53 +70,90 @@ fun SignInScreen(
     navToStories: () -> Unit,
     onPasswordResetClick: (String) -> Unit,
 ){
+    var missingEmailOrPassword by remember {
+        mutableStateOf(false)
+    }
+    var missingEmail by remember {
+        mutableStateOf(false)
+    }
     if (signedIn){
         //event for navigation
         resetSignedIn()
         navToStories()
     }
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .navigationBarsPadding()
-            .fillMaxSize()
-            .semantics { contentDescription = "SignIn Screen" }) {
-        Text(text = stringResource(id = R.string.SignIn))
-        TextEntryHolder(
-            title = R.string.email,
-            label = R.string.emailHint,
-            text = email,
-            onTyping = { newInput -> onEmailType(newInput) },
-            isEmail = true)
-        TextEntryHolder(
-            title = R.string.password,
-            label = R.string.passwordHint,
-            text = password,
-            onTyping = { newInput -> onPasswordType(newInput)},
-            isPassword = true)
-        Button(onClick = {onSignInClick(email, password) }) {
+    Scaffold { paddingValue ->
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .navigationBarsPadding()
+                .padding(paddingValue)
+                .fillMaxSize()
+                .semantics { contentDescription = "SignIn Screen" }) {
             Text(text = stringResource(id = R.string.SignIn))
-        }
-        Button(onClick = { onSignUpClick() }) {
-            Text(text = stringResource(id = R.string.SignUp))
-        }
-        Button(onClick = { onPasswordResetClick(email) }) {
-            Text(text = stringResource(id = R.string.password_reset))
-        }
+            TextEntryHolder(
+                title = R.string.email,
+                label = R.string.emailHint,
+                text = email,
+                onTyping = { newInput -> onEmailType(newInput) },
+                isEmail = true
+            )
+            TextEntryHolder(
+                title = R.string.password,
+                label = R.string.passwordHint,
+                text = password,
+                onTyping = { newInput -> onPasswordType(newInput) },
+                isPassword = true
+            )
+            Button(onClick = {
+                if (email != "" && password != "") {
+                    onSignInClick(email, password)
+                } else {
+                    missingEmailOrPassword = true
+                }
 
-    }
-    if (invalidCredentials){
-        MessageDialog(
-            message = stringResource(id = R.string.invalid_email_password),
-            onDismiss = {resetInvalidCredentials()}
-        )
-    }
-    if (emailSent){
-        MessageDialog(
-            message = stringResource(id = R.string.password_reset_email_sent),
-            onDismiss = {resetEmailSent()}
-        )
+            }) {
+                Text(text = stringResource(id = R.string.SignIn))
+            }
+            Button(onClick = { onSignUpClick() }) {
+                Text(text = stringResource(id = R.string.SignUp))
+            }
+            Button(onClick = {
+                if (email != "") {
+                    onPasswordResetClick(email)
+                } else {
+                    missingEmail = true
+                }
+
+            }) {
+                Text(text = stringResource(id = R.string.password_reset))
+            }
+
+        }
+        if (missingEmail) {
+            MessageDialog(
+                message = stringResource(id = R.string.missing_email),
+                onDismiss = { missingEmail = false }
+            )
+        }
+        if (missingEmailOrPassword) {
+            MessageDialog(
+                message = stringResource(id = R.string.missing_email_password),
+                onDismiss = { missingEmailOrPassword = false }
+            )
+        }
+        if (invalidCredentials) {
+            MessageDialog(
+                message = stringResource(id = R.string.invalid_email_password),
+                onDismiss = { resetInvalidCredentials() }
+            )
+        }
+        if (emailSent) {
+            MessageDialog(
+                message = stringResource(id = R.string.password_reset_email_sent),
+                onDismiss = { resetEmailSent() }
+            )
+        }
     }
 }
 

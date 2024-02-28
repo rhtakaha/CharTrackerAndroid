@@ -102,4 +102,6 @@
     <string name="fail_user_reload_message">Error with account!</string>
     <string name="email_sent">Email sent!</string>
     <string name="not_verified">Email not yet verified. Please try again in a moment.</string>
+    <string name="missing_email_password">Missing email and/or password!</string>
+    <string name="missing_email">Missing email!</string>
 </resources>
