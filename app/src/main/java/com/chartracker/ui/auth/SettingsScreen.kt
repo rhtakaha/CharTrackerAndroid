@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -28,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.R
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.MessageDialog
+import com.chartracker.ui.components.ReAuthDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.auth.SettingsViewModel
@@ -42,11 +42,22 @@ fun SettingsScreen(
        updatedEmail = settingsViewModel.updatedEmail.value,
        onUpdatedEmailChange = {newInput -> settingsViewModel.updateUpdatedEmail(newInput)},
        submitUpdatedEmail = {newEmail -> settingsViewModel.updateUserEmail(newEmail)},
+       updateEmailVerificationSent = settingsViewModel.updateEmailVerificationSent.value,
+       resetUpdateEmailVerificationSent = { settingsViewModel.resetUpdateEmailVerificationSent() },
        updatedPassword = settingsViewModel.updatedPassword.value,
        onUpdatedPasswordChange = { newInput -> settingsViewModel.updateUpdatedPassword(newInput)},
        submitUpdatedPassword = {newPassword -> settingsViewModel.updatePassword(newPassword)},
        confirmedPassword = settingsViewModel.confirmedPassword.value,
        onConfirmedPasswordChange = { newInput -> settingsViewModel.updateConfirmedPassword(newInput)},
+       weakPassword = settingsViewModel.weakPassword.value,
+       resetWeakPassword = { settingsViewModel.resetWeakPassword() },
+       invalidUser = settingsViewModel.invalidUser.value,
+       resetInvalidUser = { settingsViewModel.resetInvalidUser() },
+       triggerReAuth = settingsViewModel.triggerReAuth.value,
+       resetTriggerReAuth = { settingsViewModel.resetTriggerReAuth() },
+       reAuthenticateUser = {input -> settingsViewModel.reAuthUser(input)},
+       passwordUpdateSuccess = settingsViewModel.passwordUpdateSuccess.value,
+       resetPasswordUpdateSuccess = { settingsViewModel.resetPasswordUpdateSuccess() },
        signOut = { settingsViewModel.signOut() },
        readyToNavToSignIn = settingsViewModel.readyToNavToSignIn.value,
        resetReadyToNavToSignIn = { settingsViewModel.resetReadyToNavToSignIn() },
@@ -60,11 +71,22 @@ fun SettingsScreen(
     updatedEmail: String,
     onUpdatedEmailChange: (String) -> Unit,
     submitUpdatedEmail: (String) -> Unit,
+    updateEmailVerificationSent: Boolean,
+    resetUpdateEmailVerificationSent: () -> Unit,
     updatedPassword: String,
     onUpdatedPasswordChange: (String) -> Unit,
     submitUpdatedPassword: (String) -> Unit,
     confirmedPassword: String,
     onConfirmedPasswordChange: (String) -> Unit,
+    weakPassword: String,
+    resetWeakPassword: () -> Unit,
+    invalidUser: Boolean,
+    resetInvalidUser: () -> Unit,
+    triggerReAuth: Boolean,
+    resetTriggerReAuth: () -> Unit,
+    reAuthenticateUser: (String) -> Unit,
+    passwordUpdateSuccess: Boolean,
+    resetPasswordUpdateSuccess: () -> Unit,
     signOut: () -> Unit,
     readyToNavToSignIn: Boolean,
     resetReadyToNavToSignIn: () -> Unit,
@@ -72,6 +94,15 @@ fun SettingsScreen(
     deleteAccount: () -> Unit,
     onBackNav: () -> Unit
 ){
+    var missingEmail by remember {
+        mutableStateOf(false)
+    }
+    var passwordMismatch by remember {
+        mutableStateOf(false)
+    }
+    var missingPassword by remember {
+        mutableStateOf(false)
+    }
     if (readyToNavToSignIn){
         resetReadyToNavToSignIn()
         navToSignIn()
@@ -83,8 +114,7 @@ fun SettingsScreen(
                 onBackNav = onBackNav,
                 actionButtons = {})
         }
-    ) {
-            paddingValue ->
+    ) { paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -96,7 +126,6 @@ fun SettingsScreen(
                 .semantics { contentDescription = "Settings Screen" }
         ) {
             // change email
-            //TODO: Add a dialogue telling that they need to verify the email to complete the change
             TextEntryHolder(
                 title = R.string.update_email_prompt,
                 label = R.string.update_email_hint,
@@ -104,7 +133,14 @@ fun SettingsScreen(
                 isEmail = true,
                 onTyping = {newInput -> onUpdatedEmailChange(newInput)}
             )
-            Button(onClick = { submitUpdatedEmail(updatedEmail) }) {
+            Button(onClick = {
+                if (updatedEmail != ""){
+                    submitUpdatedEmail(updatedEmail)
+                }else{
+                    missingEmail = true
+                }
+
+            }) {
                 Text(text = stringResource(id = R.string.update_email))
             }
             
@@ -123,16 +159,17 @@ fun SettingsScreen(
                 isPassword = true,
                 onTyping = {newInput -> onConfirmedPasswordChange(newInput)}
             )
-            if (updatedPassword != confirmedPassword){
-                Text(
-                    text = stringResource(id = R.string.password_mismatch),
-                    color = Color.Red,
-                    style = MaterialTheme.typography.titleLarge)
-            }
             Button(onClick = {
-                if (updatedPassword == confirmedPassword) {
-                    submitUpdatedPassword(updatedPassword)
+                if (updatedPassword != "" && confirmedPassword != ""){
+                    if (updatedPassword == confirmedPassword) {
+                        submitUpdatedPassword(updatedPassword)
+                    }else{
+                        passwordMismatch = true
+                    }
+                }else{
+                    missingPassword = true
                 }
+
             }
             ) {
                 Text(text = stringResource(id = R.string.update_password))
@@ -148,6 +185,54 @@ fun SettingsScreen(
                 Text(text = stringResource(id = R.string.delete_account))
             }
 
+        }
+        if (passwordUpdateSuccess){
+            MessageDialog(
+                message = stringResource(id = R.string.password_update_success),
+                onDismiss = { resetPasswordUpdateSuccess() }
+            )
+        }
+        if (triggerReAuth){
+            //TODO need to test
+            ReAuthDialog(
+                confirmReauthentication = reAuthenticateUser,
+                onDismiss = {resetTriggerReAuth()}
+                )
+        }
+        if (weakPassword != ""){
+            MessageDialog(
+                message = weakPassword,
+                onDismiss = { resetWeakPassword() }
+            )
+        }
+        if (invalidUser){
+            MessageDialog(
+                message = stringResource(id = R.string.invalid_user),
+                onDismiss = { resetInvalidUser() }
+            )
+        }
+        if (updateEmailVerificationSent){
+            MessageDialog(
+                message = stringResource(id = R.string.email_update_instructions),
+                onDismiss = { resetUpdateEmailVerificationSent() }
+            )
+        }
+        if (missingPassword) {
+            MessageDialog(
+                message = stringResource(id = R.string.missing_password),
+                onDismiss = { missingPassword = false }
+            )
+        }
+        if (passwordMismatch) {
+            MessageDialog(
+                message = stringResource(id = R.string.password_mismatch),
+                onDismiss = { passwordMismatch = false }
+            )
+        }
+        if (missingEmail){
+            MessageDialog(
+                message = stringResource(id = R.string.missing_email),
+                onDismiss = {missingEmail = false})
         }
     }
 }
@@ -169,11 +254,22 @@ fun PreviewSettingScreen(){
                 updatedEmail = updateEmail,
                 onUpdatedEmailChange = {new -> updateEmail = new},
                 submitUpdatedEmail = {},
+                updateEmailVerificationSent = false,
+                resetUpdateEmailVerificationSent = {},
                 updatedPassword = updatePassword,
                 onUpdatedPasswordChange = {new -> updatePassword = new},
                 submitUpdatedPassword = {},
                 confirmedPassword = confirmedPassword,
                 onConfirmedPasswordChange = {new -> confirmedPassword = new},
+                weakPassword = "",
+                resetWeakPassword = {},
+                invalidUser = false,
+                resetInvalidUser = {},
+                triggerReAuth = false,
+                resetTriggerReAuth = {},
+                reAuthenticateUser = {_ ->},
+                passwordUpdateSuccess = false,
+                resetPasswordUpdateSuccess = {},
                 signOut = { /*TODO*/ },
                 readyToNavToSignIn = false,
                 resetReadyToNavToSignIn = { /*TODO*/ },

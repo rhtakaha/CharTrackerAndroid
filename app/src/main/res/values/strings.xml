@@ -104,4 +104,8 @@
     <string name="not_verified">Email not yet verified. Please try again in a moment.</string>
     <string name="missing_email_password">Missing email and/or password!</string>
     <string name="missing_email">Missing email!</string>
+    <string name="missing_password">Missing password!</string>
+    <string name="invalid_user">Error with account. Try signing in again.</string>
+    <string name="password_update_success">Password successfully updated!</string>
+    <string name="reauth_message">This operation requires a recent sign in. Enter password to continue.</string>
 </resources>

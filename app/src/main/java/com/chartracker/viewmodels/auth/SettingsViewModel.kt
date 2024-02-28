@@ -7,7 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
@@ -41,16 +44,6 @@ class SettingsViewModel : ViewModel(){
         _confirmedPassword.value = new
     }
 
-
-//    /*navigate to email verify event*/
-//    private val _readyToNavToEmailVerify = mutableStateOf(false)
-//    val readyToNavToEmailVerify: MutableState<Boolean>
-//        get() = _readyToNavToEmailVerify
-//
-//    fun resetReadyToNavToEmailVerify(){
-//        _readyToNavToEmailVerify.value = false
-//    }
-
     /*navigate to sign in event (on sign out or account delete)*/
     private val _readyToNavToSignIn = mutableStateOf(false)
     val readyToNavToSignIn: MutableState<Boolean>
@@ -60,12 +53,63 @@ class SettingsViewModel : ViewModel(){
         _readyToNavToSignIn.value = false
     }
 
+    /*event for email updated (so verification email on the way)*/
+    private val _updateEmailVerificationSent = mutableStateOf(false)
+    val updateEmailVerificationSent: MutableState<Boolean>
+        get() = _updateEmailVerificationSent
+
+    fun resetUpdateEmailVerificationSent(){
+        _updateEmailVerificationSent.value = false
+    }
+
+    /*event for weak new password*/
+    private val _weakPassword = mutableStateOf("")
+    val weakPassword: MutableState<String>
+        get() = _weakPassword
+
+    fun resetWeakPassword(){
+        _weakPassword.value = ""
+    }
+
+    /*event for invalid user*/
+    private val _invalidUser = mutableStateOf(false)
+    val invalidUser: MutableState<Boolean>
+        get() = _invalidUser
+
+    fun resetInvalidUser(){
+        _invalidUser.value = false
+    }
+
+    /*event for triggering reauthentication if user signed in too long ago*/
+    private val _triggerReAuth = mutableStateOf(false)
+    val triggerReAuth: MutableState<Boolean>
+        get() = _triggerReAuth
+
+    fun resetTriggerReAuth(){
+        _triggerReAuth.value = false
+    }
+
+    /*event for successful password update*/
+    private val _passwordUpdateSuccess = mutableStateOf(false)
+    val passwordUpdateSuccess: MutableState<Boolean>
+        get() = _passwordUpdateSuccess
+
+    fun resetPasswordUpdateSuccess(){
+        _passwordUpdateSuccess.value = false
+    }
+
     //sends the user a verification email to the new email which completes the change
     fun updateUserEmail(newEmail: String){
         user.verifyBeforeUpdateEmail(newEmail)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(tag, "User email address updated.")
+                    _updateEmailVerificationSent.value = true
+                }else{
+                    //no exceptions listed in documentation
+                    Log.d(tag, "failed to update email", task.exception)
+                    if (task.exception is FirebaseAuthInvalidUserException){
+                        _invalidUser.value = true
+                    }
                 }
             }
     }
@@ -74,7 +118,14 @@ class SettingsViewModel : ViewModel(){
         user.updatePassword(newPassword)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(tag, "User password updated.")
+                    _passwordUpdateSuccess.value = true
+                }else {
+                    // If sign in fails, display a message to the user.
+                    when (task.exception){
+                        is FirebaseAuthInvalidUserException -> _invalidUser.value = true
+                        is FirebaseAuthWeakPasswordException -> _weakPassword.value = (task.exception as FirebaseAuthWeakPasswordException).message.toString()
+                        is FirebaseAuthRecentLoginRequiredException -> _triggerReAuth.value = true
+                    }
                 }
             }
 
@@ -98,19 +149,32 @@ class SettingsViewModel : ViewModel(){
                     }
                     Log.d(tag, "User account deleted.")
                     _readyToNavToSignIn.value = true
-                } else if (task.exception is FirebaseAuthRecentLoginRequiredException){
-                    Log.i(tag, "failed: ${task.exception}")
+                } else{
+                    if (task.exception is FirebaseAuthRecentLoginRequiredException){
+                        _triggerReAuth.value = true
+                    }else if (task.exception is FirebaseAuthInvalidUserException){
+                        _invalidUser.value = true
+                    }
                 }
+
             }
 
     }
 
-    //TODO need to move this into a nice pop up and be reusable for all the ops that could require
-    //  (changing email, changing password, and here with account deletion)
     fun reAuthUser(password: String){
         Log.i(tag, "email: ${user.email} password: $password")
         val credential = EmailAuthProvider.getCredential(user.email!!, password)
         user.reauthenticate(credential)
-            .addOnCompleteListener { task -> if (task.isSuccessful){ Log.d(tag, "User re-authenticated.")}else {Log.d(tag, "failed to reauth")} }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(tag, "User re-authenticated.")
+                } else {
+                    if (task.exception is FirebaseAuthInvalidUserException ||
+                        task.exception is FirebaseAuthInvalidCredentialsException){
+                        // not really the same error but second seems like it would have same outcome
+                        _invalidUser.value = true
+                    }
+                }
+            }
     }
 }

@@ -27,6 +27,8 @@ class EmailVerifyScreenTest {
                 checkVerification = { -> false },
                 failedReload = false,
                 resetFailedReload = {},
+                emailSent = false,
+                resetEmailSent = {},
                 navToStories = { /*TODO*/ }) {
 
             }
