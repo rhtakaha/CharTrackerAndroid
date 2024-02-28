@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -70,6 +68,12 @@ fun SignUpScreen(
     navToVerifyEmail: (String) -> Unit,
     onBackNav: () -> Unit
 ){
+    var missingEmailOrPassword by remember {
+        mutableStateOf(false)
+    }
+    var passwordMismatch by remember {
+        mutableStateOf(false)
+    }
     if (signedIn){
         //event for navigation
         resetSignedIn()
@@ -103,20 +107,32 @@ fun SignUpScreen(
                 text = password2,
                 onTyping = { newInput -> onPassword2Type(newInput) },
                 isPassword = true)
-            if (password1 != password2){
-                Text(
-                    text = stringResource(id = R.string.password_mismatch),
-                    color = Color.Red,
-                    style = MaterialTheme.typography.titleLarge)
-            }
             Button(onClick = {
-                if (password1 == password2) {
-                    onSignUpClick(email, password1)
+                if (password1 != "" && password2 != "" && email != "") {
+                    if (password1 == password2){
+                        onSignUpClick(email, password1)
+                    }else{
+                        passwordMismatch = true
+                    }
+                }else{
+                    missingEmailOrPassword = true
                 }
             })
             {
                 Text(text = stringResource(id = R.string.SignUp))
             }
+        }
+        if (passwordMismatch) {
+            MessageDialog(
+                message = stringResource(id = R.string.password_mismatch),
+                onDismiss = { passwordMismatch = false }
+            )
+        }
+        if (missingEmailOrPassword) {
+            MessageDialog(
+                message = stringResource(id = R.string.missing_email_password),
+                onDismiss = { missingEmailOrPassword = false }
+            )
         }
         if (signUpErrorMessage != null){
             if (signUpErrorMessage is String){
