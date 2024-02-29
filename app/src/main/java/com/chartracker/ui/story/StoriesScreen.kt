@@ -14,11 +14,15 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,6 +37,7 @@ import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.EntityHolderList
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.story.StoriesViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun StoriesScreen(
@@ -46,6 +51,8 @@ fun StoriesScreen(
     StoriesScreen(
         stories = stories,
         refreshStories = { storiesViewModel.getStories() },
+        failedGetStories = storiesViewModel.failedGetStories.value,
+        resetFailedGetStories = { storiesViewModel.resetFailedGetStories() },
         navToAddStory= navToAddStory,
         navToCharacters= navToCharacters,
         navToSettings = navToSettings,
@@ -58,13 +65,18 @@ fun StoriesScreen(
 fun StoriesScreen(
     stories: List<StoryEntity>,
     refreshStories: () -> Unit,
+    failedGetStories: Boolean,
+    resetFailedGetStories: () -> Unit,
     navToAddStory: () -> Unit,
     navToCharacters: (String) -> Unit,
     navToSettings: () -> Unit,
     onBackNav: () -> Unit){
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val refreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(refreshing, { refreshStories() })
     Scaffold(
+        snackbarHost ={ SnackbarHost(hostState = snackbarHostState) },
         topBar = { 
             CharTrackerTopBar(
                 title =  stringResource(R.string.stories),
@@ -96,7 +108,15 @@ fun StoriesScreen(
 
             PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
         }
-
+        if (failedGetStories){
+            resetFailedGetStories()
+            val message = stringResource(id = R.string.failed_get_stories)
+            LaunchedEffect(key1 = Unit){
+                scope.launch {
+                    snackbarHostState.showSnackbar(message)
+                }
+            }
+        }
     }
 }
 
@@ -121,6 +141,8 @@ fun PreviewStoriesScreen(){
             StoriesScreen(
                 stories = stories,
                 refreshStories = {},
+                failedGetStories = false,
+                resetFailedGetStories = {},
                 navToAddStory = { /*TODO*/ },
                 navToCharacters = {},
                 navToSettings = {}) {

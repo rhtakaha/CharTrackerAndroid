@@ -37,6 +37,8 @@ class StoriesScreenTest {
             StoriesScreen(
                 stories = stories,
                 refreshStories = {},
+                failedGetStories = false,
+                resetFailedGetStories = {},
                 navToAddStory = { /**/ },
                 navToCharacters = {},
                 navToSettings = { /**/ }) {

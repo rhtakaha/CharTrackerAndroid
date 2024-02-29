@@ -462,12 +462,8 @@ class DatabaseAccess {
             }
     }
 
-
-    //TODO Eventually going to probably have a function running in the background
-    // which updates the offline cache and then when the user uses the app it pulls
-    // from offline unless a change was made
-    suspend fun getStories(): MutableList<StoryEntity> {
-        val stories = mutableListOf<StoryEntity>()
+    suspend fun getStories(): MutableList<StoryEntity>? {
+        var stories: MutableList<StoryEntity>? = mutableListOf()
         // Source can be CACHE, SERVER, or DEFAULT.
         val source = Source.DEFAULT
 
@@ -479,8 +475,7 @@ class DatabaseAccess {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     Log.i(tag, "document: ${document.data}")
-                    stories.add(buildStoryFromDocumentSnapshot(document))
-//                    stories.add(document.toObject<StoryEntity>())
+                    stories?.add(buildStoryFromDocumentSnapshot(document))
                     Log.i(tag, "${document.id} => ${document.data}")
                 }
                 Log.i(tag, "success")
@@ -488,6 +483,7 @@ class DatabaseAccess {
             }
             .addOnFailureListener { exception ->
                 Log.d(tag, "Error getting documents: ", exception)
+                stories = null
             }.await()
 
         Log.i(tag, "returning!")

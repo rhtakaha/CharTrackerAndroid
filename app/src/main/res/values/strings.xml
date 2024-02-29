@@ -108,4 +108,5 @@
     <string name="invalid_user">Error with account. Try signing in again.</string>
     <string name="password_update_success">Password successfully updated!</string>
     <string name="reauth_message">This operation requires a recent sign in. Enter password to continue.</string>
+    <string name="failed_get_stories">Issue getting stories. Refresh to try again.</string>
 </resources>
