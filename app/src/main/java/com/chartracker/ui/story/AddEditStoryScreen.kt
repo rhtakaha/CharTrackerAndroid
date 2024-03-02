@@ -46,6 +46,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.R
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.story.AddEditStoryViewModel
@@ -63,6 +64,8 @@ fun AddEditStoryScreen(
         editing = storyId != null,
         submitStory = {story, localImageURI -> addEditStoryViewModel.submitStory(story, localImageURI)},
         deleteStory = { addEditStoryViewModel.submitStoryDelete() },
+        uploadError = addEditStoryViewModel.uploadError.value,
+        resetUploadError = { addEditStoryViewModel.resetUploadError() },
         readyToNavToStories = addEditStoryViewModel.navToStories.value,
         navToStories = navToStories,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
@@ -77,6 +80,8 @@ fun AddEditStoryScreen(
     editing: Boolean = false,
     submitStory: (StoryEntity, Uri?) -> Unit,
     deleteStory: () -> Unit,
+    uploadError: Boolean,
+    resetUploadError: () -> Unit,
     readyToNavToStories: Boolean,
     navToStories: () -> Unit,
     resetNavToStories: () -> Unit,
@@ -179,6 +184,12 @@ fun AddEditStoryScreen(
                 onTyping = {newInput -> story.type.value = newInput})
 
         }
+        if (uploadError){
+            MessageDialog(
+                message = stringResource(id = R.string.story_upload_error),
+                onDismiss = {resetUploadError()}
+            )
+        }
     }
 
 }
@@ -200,6 +211,8 @@ fun PreviewAddStoryScreen(){
                 story = story,
                 submitStory = { _, _ ->},
                 deleteStory = {},
+                uploadError = false,
+                resetUploadError = {},
                 readyToNavToStories = false,
                 navToStories = {},
                 startImage = null,

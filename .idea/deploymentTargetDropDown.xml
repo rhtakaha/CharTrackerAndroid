@@ -2,7 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="SignInScreenTest">
+      <entry key="AddStoryScreenTest">
+        <State />
+      </entry>
+      <entry key="EditStoryScreenTest">
+        <State />
+      </entry>
+      <entry key="StoriesScreenTest">
         <State />
       </entry>
       <entry key="app">
@@ -21,13 +27,7 @@
           <timeTargetWasSelectedWithDropDown value="2024-02-21T02:00:13.059160500Z" />
         </State>
       </entry>
-      <entry key="invalidDialogTest()">
-        <State />
-      </entry>
       <entry key="messageDialogTest()">
-        <State />
-      </entry>
-      <entry key="passwordTest()">
         <State />
       </entry>
       <entry key="reAuthDialogTest()">

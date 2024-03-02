@@ -39,22 +39,37 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         _navToStories.value = false
     }
 
+    /*upload error event*/
+    private val _uploadError = mutableStateOf(false)
+    val uploadError: MutableState<Boolean>
+        get() = _uploadError
+
+    fun resetUploadError(){
+        _uploadError.value = false
+    }
+
     /*function that calls a database access method to create the story in Firebase
         also calls navigation*/
     fun submitStory(newStory: StoryEntity, localImageURI: Uri?){
         viewModelScope.launch {
             if (storyId == null) {
-                addStory(newStory, localImageURI)
+                if (!addStory(newStory, localImageURI)){
+                    _uploadError.value = true
+                }else{
+                    _navToStories.value = true
+                }
             }else{
-                updateStory(storyId, newStory, localImageURI)
+                if(!updateStory(storyId, newStory, localImageURI)){
+                    _uploadError.value = true
+                }else{
+                    _navToStories.value = true
+                }
             }
-            _navToStories.value = true
         }
     }
 
-    private suspend fun updateStory(storyId: String, updatedStory: StoryEntity, localImageURI: Uri?){
+    private suspend fun updateStory(storyId: String, updatedStory: StoryEntity, localImageURI: Uri?): Boolean{
         Log.i(tag, "starting to update story")
-
 
         if (localImageURI != null){
             if (!localImageURI.toString().startsWith("https://firebasestorage.googleapis.com")){
@@ -63,14 +78,22 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                 // no matter what adding the new image
                 updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
                 Log.i(tag, "adding new image to story with new filename: ${updatedStory.imageFilename.value}")
-                db.addImage(updatedStory.imageFilename.value!!, localImageURI)
-                db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)
-
-                //if adding a new image be sure to delete the original too (if it had one)
-                originalFilename?.let {
-                        it1 ->
-                    Log.i(tag, "deleting original story image with original filename: $it1")
-                    db.deleteImage(it1)
+                if(db.addImage(updatedStory.imageFilename.value!!, localImageURI)){
+                    if(db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)){
+                        //if adding a new image be sure to delete the original too (if it had one)
+                        originalFilename?.let {
+                                it1 ->
+                            Log.i(tag, "deleting original story image with original filename: $it1")
+                            db.deleteImage(it1)
+                        }
+                    }else{
+                        //if uploaded the image but couldn't get the url to add to the story
+                        db.deleteImage(updatedStory.imageFilename.value!!)
+                        return false
+                    }
+                }else{
+                    // if something went wrong with image upload
+                    return false
                 }
             }
             // if this was just the existing image don't do anything
@@ -88,18 +111,37 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             }
             // if both were null it would be that there started with and ended with no image
         }
-        db.updateStory(storyId, updatedStory)
+        if(!db.updateStory(storyId, updatedStory) && localImageURI != null){
+            //failed and uploaded the image
+            db.deleteImage(updatedStory.imageFilename.value!!)
+            return false
+        }
+        return true
     }
 
-    private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?){
+    private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?): Boolean{
         if (localImageURI != null) {
             // if we are adding an image
             newStory.imageFilename.value = getStoryFilename(newStory.name.value)
-            db.addImage(newStory.imageFilename.value!!, localImageURI)
-            db.addImageDownloadUrlToStory(newStory, newStory.imageFilename.value!!)
+            if (db.addImage(newStory.imageFilename.value!!, localImageURI)){
+                if (!db.addImageDownloadUrlToStory(newStory, newStory.imageFilename.value!!)){
+                    //if uploaded the image but couldn't get the url to add to the story
+                    db.deleteImage(newStory.imageFilename.value!!)
+                    return false
+                }
+            }else{
+                // if something went wrong with image upload
+                return false
+            }
+
         }
         Log.i(tag, "Creation of new story initiated")
-        db.createStory(newStory)
+        if (!db.createStory(newStory) && localImageURI != null){
+            //failed and uploaded the image
+            db.deleteImage(newStory.imageFilename.value!!)
+            return false
+        }
+        return true
     }
 
     /* function which gets the story given the id*/

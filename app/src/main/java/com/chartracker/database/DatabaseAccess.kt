@@ -53,14 +53,17 @@ class DatabaseAccess {
         }.await()
     }
 
-    suspend fun addImageDownloadUrlToStory(story: StoryEntity, filename: String){
+    suspend fun addImageDownloadUrlToStory(story: StoryEntity, filename: String): Boolean{
+        var ret = true
         storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.addOnSuccessListener {url ->
             story.imagePublicUrl.value = url.toString()
             Log.i(tag, "got the public url for the image: $url")
         }.addOnFailureListener {
             // Handle any errors
             Log.i(tag, "failed to get public url for image: $it")
+            ret = false
         }.await()
+        return ret
     }
 
     fun getImageRef(filename: String): StorageReference{
@@ -68,8 +71,9 @@ class DatabaseAccess {
     }
 
     /* function for adding an image into cloud storage
-    * input: String filename WITHOUT EXTENSION*/
-    suspend fun addImage(filename: String, imageURI: Uri){
+    * input: String filename WITHOUT EXTENSION and local imageUri*/
+    suspend fun addImage(filename: String, imageURI: Uri): Boolean{
+        var ret = true
         // make a reference to where the file will be
         val storageRef = storage.reference
         val imageRef = storageRef.child("users/${auth.currentUser!!.uid}/images/$filename")
@@ -81,12 +85,14 @@ class DatabaseAccess {
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
             Log.d(tag, "image upload failed")
+            ret = false
         }.addOnSuccessListener { taskSnapshot ->
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             Log.d(tag, "image upload succeeded!")
         }.await()
         //TODO probably add associated Toast or something to let users know they are waiting for the upload
+        return ret
     }
 
     /*creates a new user in Firebase*/
@@ -354,14 +360,20 @@ class DatabaseAccess {
     }
 
     /*update the document associated with the given Id with the given StoryEntity*/
-    fun updateStory(storyId: String, story: StoryEntity){
+    suspend fun updateStory(storyId: String, story: StoryEntity): Boolean{
+        var ret = true
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .set(story.toHashMap())
             .addOnSuccessListener { Log.d(tag, "Story successfully updated!") }
-            .addOnFailureListener { e -> Log.w(tag, "Error updating story", e) }
+            .addOnFailureListener { e ->
+                Log.w(tag, "Error updating story", e)
+                ret = false
+            }
+            .await()
+        return ret
     }
 
     /*Document ID to story*/
@@ -449,7 +461,8 @@ class DatabaseAccess {
     }
 
     /*creates a new story in Firebase*/
-    fun createStory(story: StoryEntity){
+    suspend fun createStory(story: StoryEntity): Boolean{
+        var ret = true
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -459,7 +472,10 @@ class DatabaseAccess {
             }
             .addOnFailureListener { e ->
                 Log.w(tag, "Error adding document", e)
+                ret = false
             }
+            .await()
+        return ret
     }
 
     suspend fun getStories(): MutableList<StoryEntity>? {
