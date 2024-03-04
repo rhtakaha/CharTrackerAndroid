@@ -32,6 +32,7 @@ class DatabaseAccess {
         }
     }
 
+    //TODO maybe add exponential backoff to retry this since if this fails we have floating images in storage which is not good
     fun deleteImage(filename: String){
         val imageRef = storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
         imageRef.delete().addOnSuccessListener {
@@ -53,46 +54,34 @@ class DatabaseAccess {
         }.await()
     }
 
-    suspend fun addImageDownloadUrlToStory(story: StoryEntity, filename: String): Boolean{
-        var ret = true
-        storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.addOnSuccessListener {url ->
-            story.imagePublicUrl.value = url.toString()
-            Log.i(tag, "got the public url for the image: $url")
-        }.addOnFailureListener {
-            // Handle any errors
-            Log.i(tag, "failed to get public url for image: $it")
-            ret = false
-        }.await()
-        return ret
-    }
-
     fun getImageRef(filename: String): StorageReference{
         return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
     }
 
     /* function for adding an image into cloud storage
     * input: String filename WITHOUT EXTENSION and local imageUri*/
-    suspend fun addImage(filename: String, imageURI: Uri): Boolean{
-        var ret = true
+    suspend fun addImage(filename: String, imageURI: Uri): String{
+        var downloadUrl = ""
         // make a reference to where the file will be
         val storageRef = storage.reference
         val imageRef = storageRef.child("users/${auth.currentUser!!.uid}/images/$filename")
 
-//        val file = Uri.fromFile(File(imageURI))
-        val uploadTask = imageRef.putFile(imageURI)
+        try{
+            downloadUrl = imageRef.putFile(imageURI)
+                .continueWithTask { uploadTask ->
+                    if (!uploadTask.isSuccessful) {
+                        throw uploadTask.exception!!
+                    }
+                    return@continueWithTask imageRef.downloadUrl
+                }
+                .await()
+                .toString()
+        }catch (e: Exception){
+            // if it is still an empty string it knows an error occurred
+        }
 
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener {
-            // Handle unsuccessful uploads
-            Log.d(tag, "image upload failed")
-            ret = false
-        }.addOnSuccessListener { taskSnapshot ->
-            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-            // ...
-            Log.d(tag, "image upload succeeded!")
-        }.await()
         //TODO probably add associated Toast or something to let users know they are waiting for the upload
-        return ret
+        return downloadUrl
     }
 
     /*creates a new user in Firebase*/

@@ -78,18 +78,15 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                 // no matter what adding the new image
                 updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
                 Log.i(tag, "adding new image to story with new filename: ${updatedStory.imageFilename.value}")
-                if(db.addImage(updatedStory.imageFilename.value!!, localImageURI)){
-                    if(db.addImageDownloadUrlToStory(updatedStory, updatedStory.imageFilename.value!!)){
-                        //if adding a new image be sure to delete the original too (if it had one)
-                        originalFilename?.let {
-                                it1 ->
-                            Log.i(tag, "deleting original story image with original filename: $it1")
-                            db.deleteImage(it1)
-                        }
-                    }else{
-                        //if uploaded the image but couldn't get the url to add to the story
-                        db.deleteImage(updatedStory.imageFilename.value!!)
-                        return false
+                val imageUrl = db.addImage(updatedStory.imageFilename.value!!, localImageURI)
+                if(imageUrl != ""){
+                    updatedStory.imagePublicUrl.value = imageUrl
+
+                    //if adding a new image be sure to delete the original too (if it had one)
+                    originalFilename?.let {
+                            it1 ->
+                        Log.i(tag, "deleting original story image with original filename: $it1")
+                        db.deleteImage(it1)
                     }
                 }else{
                     // if something went wrong with image upload
@@ -123,12 +120,9 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         if (localImageURI != null) {
             // if we are adding an image
             newStory.imageFilename.value = getStoryFilename(newStory.name.value)
-            if (db.addImage(newStory.imageFilename.value!!, localImageURI)){
-                if (!db.addImageDownloadUrlToStory(newStory, newStory.imageFilename.value!!)){
-                    //if uploaded the image but couldn't get the url to add to the story
-                    db.deleteImage(newStory.imageFilename.value!!)
-                    return false
-                }
+            val imageUrl = db.addImage(newStory.imageFilename.value!!, localImageURI)
+            if (imageUrl != ""){
+                newStory.imagePublicUrl.value = imageUrl
             }else{
                 // if something went wrong with image upload
                 return false
