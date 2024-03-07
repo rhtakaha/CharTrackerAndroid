@@ -41,6 +41,8 @@ class CharactersScreenTest {
                 imageFilename = "LotR")
             CharactersScreen(
                 characters = characters,
+                failedGetCharacters = false,
+                resetFailedGetCharacters = {},
                 refreshCharacters = {},
                 story = story,
                 navToAddCharacter = { /**/ },

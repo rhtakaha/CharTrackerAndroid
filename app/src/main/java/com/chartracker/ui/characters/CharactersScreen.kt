@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,9 +34,11 @@ import com.chartracker.database.CharacterEntity
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.EntityHolderList
+import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.characters.CharactersViewModel
 import com.chartracker.viewmodels.characters.CharactersViewModelFactory
+import kotlinx.coroutines.launch
 
 @Composable
 fun CharactersScreen(
@@ -49,9 +52,16 @@ fun CharactersScreen(
 ){
     val characters by charactersViewModel.characters.collectAsStateWithLifecycle()
     val story by charactersViewModel.story.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
     CharactersScreen(
         characters = characters,
-        refreshCharacters = { charactersViewModel.getCharacters() },
+        failedGetCharacters = charactersViewModel.failedGetCharacters.value,
+        resetFailedGetCharacters = { charactersViewModel.resetFailedGetCharacters() },
+        refreshCharacters = {
+            scope.launch {
+                charactersViewModel.getCharacters()
+            }
+        },
         story = story,
         navToAddCharacter = {navToAddCharacter(charactersViewModel.storyId, storyTitle, null)},
         /* convert 2 input lambda into 1 input by adding the storyId here*/
@@ -65,6 +75,8 @@ fun CharactersScreen(
 @Composable
 fun CharactersScreen(
     characters: List<CharacterEntity>,
+    failedGetCharacters: Boolean,
+    resetFailedGetCharacters: () -> Unit,
     refreshCharacters: () -> Unit,
     story: StoryEntity,
     navToAddCharacter: () -> Unit,
@@ -115,6 +127,12 @@ fun CharactersScreen(
 
             PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
         }
+        if (failedGetCharacters){
+            MessageDialog(
+                message = stringResource(id = R.string.failed_get_characters),
+                onDismiss = { resetFailedGetCharacters() }
+            )
+        }
     }
 }
 
@@ -137,6 +155,8 @@ fun PreviewCharactersScreen(){
         Surface {
             CharactersScreen(
                 characters = characters,
+                failedGetCharacters = false,
+                resetFailedGetCharacters = {},
                 refreshCharacters = {},
                 story = story,
                 navToAddCharacter = {},

@@ -1,5 +1,8 @@
 package com.chartracker.viewmodels.characters
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,12 +22,35 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     private val _story = MutableStateFlow(StoryEntity())
     val story: StateFlow<StoryEntity> = _story.asStateFlow()
 
+    /* event for failing to get characters*/
+    private val _failedGetCharacters = mutableStateOf(false)
+    val failedGetCharacters: MutableState<Boolean>
+        get() = _failedGetCharacters
+
+    fun resetFailedGetCharacters(){
+        _failedGetCharacters.value = false
+    }
+
 
     init {
         viewModelScope.launch {
             getStoryId()
-            getStory()
-            getCharacters()
+            if (storyId != ""){
+                getStory()
+                if (_story.value.name.value != ""){
+                    getCharacters()
+                    if (_characters.value.isEmpty()){
+                        Log.d("chars", "at characters")
+                        _failedGetCharacters.value = true
+                    }
+                }else{
+                    Log.d("chars", "at story")
+                    _failedGetCharacters.value = true
+                }
+            }else{
+                Log.d("chars", "at id")
+                _failedGetCharacters.value = true
+            }
         }
     }
 
@@ -36,11 +62,16 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
         _story.value = db.getStoryFromId(storyId)
     }
 
-    fun getCharacters(){
-        viewModelScope.launch {
+    suspend fun getCharacters(){
             _characters.value = db.getCharacters(storyId)
-        }
+
     }
+
+//    fun getCharacters(){
+//        viewModelScope.launch {
+//            _characters.value = db.getCharacters(storyId)
+//        }
+//    }
 }
 
 class CharactersViewModelFactory(private val storyTitle: String) :
