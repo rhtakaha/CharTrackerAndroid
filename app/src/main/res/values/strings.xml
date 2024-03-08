@@ -111,4 +111,5 @@
     <string name="failed_get_stories">Issue getting stories. Refresh to try again.</string>
     <string name="story_upload_error">Error uploading story!</string>
     <string name="failed_get_characters">Issue getting characters. Refresh to try again.</string>
+    <string name="failed_get_character">Issue getting the character. Return to try again.</string>
 </resources>

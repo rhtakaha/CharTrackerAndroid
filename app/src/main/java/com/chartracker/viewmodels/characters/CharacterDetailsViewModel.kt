@@ -20,12 +20,26 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
     var enemiesList: String? = null
     var neutralList: String? = null
 
+    /* event for failing to get the character*/
+    private val _failedGetCharacter = mutableStateOf(false)
+    val failedGetCharacter: MutableState<Boolean>
+        get() = _failedGetCharacter
+
+    fun resetFailedGetCharacter(){
+        _failedGetCharacter.value = false
+    }
+
     init {
         viewModelScope.launch {
             getCharacter()
-            alliesList = character.value.allies.value?.let { formatAssociatesList(it) }
-            enemiesList = character.value.enemies.value?.let { formatAssociatesList(it) }
-            neutralList = character.value.neutral.value?.let { formatAssociatesList(it) }
+            if (_character.value.name.value != ""){
+                alliesList = character.value.allies.value?.let { formatAssociatesList(it) }
+                enemiesList = character.value.enemies.value?.let { formatAssociatesList(it) }
+                neutralList = character.value.neutral.value?.let { formatAssociatesList(it) }
+            }else{
+                _failedGetCharacter.value = true
+            }
+
         }
     }
 
