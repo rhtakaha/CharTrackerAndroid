@@ -28,9 +28,6 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         _character.value = new
     }
 
-    //probably just here for passing along later? check on that
-//    private val _charactersStringList = MutableStateFlow<MutableList<String>>(mutableListOf())
-//    val charactersStringList: StateFlow<MutableList<String>> = _charactersStringList.asStateFlow()
     private var _charactersStringList: MutableList<String> = mutableListOf()
     val charactersStringList: List<String>
         get() = _charactersStringList

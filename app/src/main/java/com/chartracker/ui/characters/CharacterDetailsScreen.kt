@@ -31,7 +31,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.ui.components.CharTrackerTopBar
-import com.chartracker.ui.components.MessageDialog
+import com.chartracker.ui.components.RefreshDialog
 import com.chartracker.ui.components.TextAndContentHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.characters.CharacterDetailsViewModel
@@ -51,6 +51,7 @@ fun CharacterDetailsScreen(
         character = characterDetailsViewModel.character.value,
         failedGetCharacter = characterDetailsViewModel.failedGetCharacter.value,
         resetFailedGetCharacter = { characterDetailsViewModel.resetFailedGetCharacter() },
+        refresh = { characterDetailsViewModel.setup() },
         alliesList = characterDetailsViewModel.alliesList,
         enemiesList = characterDetailsViewModel.enemiesList,
         neutralList = characterDetailsViewModel.neutralList,
@@ -64,6 +65,7 @@ fun CharacterDetailsScreen(
     character: CharacterEntity,
     failedGetCharacter: Boolean,
     resetFailedGetCharacter: () -> Unit,
+    refresh: () -> Unit,
     alliesList: String?,
     enemiesList: String?,
     neutralList: String?,
@@ -201,9 +203,13 @@ fun CharacterDetailsScreen(
             }
         }
         if (failedGetCharacter){
-            MessageDialog(
+            RefreshDialog(
                 message = stringResource(id = R.string.failed_get_character),
-                onDismiss = { resetFailedGetCharacter()}) 
+                refresh = {
+                    refresh()
+                    resetFailedGetCharacter()
+                          },
+                onDismiss = { resetFailedGetCharacter()})
         }
     }
 }
@@ -244,6 +250,7 @@ fun PreviewCharacterDetailsScreen(){
                 character = character,
                 failedGetCharacter = false,
                 resetFailedGetCharacter = {},
+                refresh = {},
                 alliesList = "Frodo Baggins, Gandalf, Gimli, Legolas, Farimir",
                 enemiesList = "Sauron, Sauruman, Corsairs of Umbar",
                 neutralList = null,

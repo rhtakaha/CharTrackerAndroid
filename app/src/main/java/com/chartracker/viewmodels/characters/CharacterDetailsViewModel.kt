@@ -30,6 +30,10 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
     }
 
     init {
+        setup()
+    }
+
+    fun setup(){
         viewModelScope.launch {
             getCharacter()
             if (_character.value.name.value != ""){

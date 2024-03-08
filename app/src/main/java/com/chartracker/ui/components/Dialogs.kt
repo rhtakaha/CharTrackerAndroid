@@ -25,13 +25,40 @@ fun MessageDialog(
 ){
     /* Dialog for instances where just need to inform the user about something*/
     AlertDialog(
-        onDismissRequest = { },
+        onDismissRequest = { onDismiss()},
         text = { Text(text = message, textAlign = TextAlign.Center) },
         confirmButton = {
             TextButton(
                 onClick = {onDismiss()}
             ) {
                 Text("Dismiss")
+            }
+        })
+}
+
+
+@Composable
+fun RefreshDialog(
+    message: String,
+    refresh: () -> Unit,
+    onDismiss: () -> Unit
+){
+    /* Dialog for instances where couldn't retrieve the information so can refresh to try again*/
+    AlertDialog(
+        onDismissRequest = { onDismiss()},
+        text = { Text(text = message, textAlign = TextAlign.Center) },
+        dismissButton = {
+            TextButton(
+                onClick = {onDismiss()}
+            ) {
+                Text("Dismiss")
+            }      
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {refresh()}
+            ) {
+                Text("Refresh")
             }
         })
 }
@@ -94,6 +121,23 @@ fun PreviewMessageDialog(){
                 message = stringResource(id = R.string.invalid_email_password),
                 onDismiss = {}
             )
+        }
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Dark Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "Light Mode")
+@Composable
+fun PreviewRefreshDialog(){
+    CharTrackerTheme {
+        Surface {
+            RefreshDialog(message = "Failed to retrieve characters.", refresh = { /**/ }) {
+                
+            }
         }
     }
 }

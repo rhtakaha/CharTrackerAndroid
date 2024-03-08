@@ -11,6 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import com.chartracker.R
 import com.chartracker.ui.components.ReAuthDialog
+import com.chartracker.ui.components.RefreshDialog
 
 class DialogsTest {
     @get:Rule
@@ -25,6 +26,29 @@ class DialogsTest {
 
         composeTestRule
             .onNodeWithText("Invalid email or password!")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Dismiss")
+            .assertHasClickAction()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun refreshDialogTest(){
+        composeTestRule.setContent {
+            RefreshDialog(message = "Failed to retrieve characters.", refresh = { /**/ }) {
+
+            }
+        }
+
+        composeTestRule
+            .onNodeWithText("Failed to retrieve characters.")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Refresh")
+            .assertHasClickAction()
             .assertIsDisplayed()
 
         composeTestRule

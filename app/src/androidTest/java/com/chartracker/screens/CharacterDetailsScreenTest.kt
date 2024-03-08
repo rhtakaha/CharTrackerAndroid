@@ -34,6 +34,9 @@ class CharacterDetailsScreenTest {
         composeTestRule.setContent {
             CharacterDetailsScreen(
                 character = character,
+                failedGetCharacter = false,
+                resetFailedGetCharacter = {},
+                refresh = {},
                 alliesList = null,
                 enemiesList = null,
                 neutralList = null,

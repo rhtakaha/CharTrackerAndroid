@@ -40,10 +40,10 @@
           <timeTargetWasSelectedWithDropDown value="2024-02-21T02:00:13.059160500Z" />
         </State>
       </entry>
-      <entry key="messageDialogTest()">
+      <entry key="reAuthDialogTest()">
         <State />
       </entry>
-      <entry key="reAuthDialogTest()">
+      <entry key="refreshDialogTest()">
         <State />
       </entry>
     </value>
