@@ -1,9 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.kapt")
     id("com.google.gms.google-services")
-    id("androidx.navigation.safeargs.kotlin")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -30,7 +29,6 @@ android {
         }
     }
     buildFeatures {
-        dataBinding = true
         compose = true
     }
     compileOptions {
@@ -51,19 +49,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    val nav_version = "2.7.5"
-
-
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation("com.google.android.material:material:1.11.0")
 
     //Compose
     implementation ("androidx.compose.runtime:runtime")
@@ -82,7 +68,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     val lifecycleVersion = "2.7.0"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
@@ -96,13 +82,8 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.11.1")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
 
-
-
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-
     // Kotlin Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
     //Firebase
     // "When using the BoM, don't specify versions in Firebase dependencies"
@@ -119,11 +100,6 @@ dependencies {
     implementation("androidx.credentials:credentials:1.3.0-alpha01")
 
     //Glide for showing images
-    implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-    kapt("com.github.bumptech.glide:compiler:4.14.2")
-
-
-    //TODO need to add all dependencies for Firebase as we go
-    // (cloud storage and auth for sure later)
+    ksp("com.github.bumptech.glide:ksp:4.14.2")
 }

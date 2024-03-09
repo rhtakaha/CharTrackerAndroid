@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="AddCharacterScreenTest">
+        <State />
+      </entry>
       <entry key="AddStoryScreenTest">
         <State>
           <targetSelectedWithDropDown>
@@ -39,9 +42,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-03-09T00:20:31.791122200Z" />
         </State>
-      </entry>
-      <entry key="reAuthDialogTest()">
-        <State />
       </entry>
       <entry key="refreshDialogTest()">
         <State />
