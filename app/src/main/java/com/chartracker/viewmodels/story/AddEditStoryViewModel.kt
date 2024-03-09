@@ -26,10 +26,6 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     val story: MutableState<StoryEntity>
         get() = _story
 
-    private fun updateStory(newStory: StoryEntity){
-        _story.value = newStory
-    }
-
     /*navigate back to stories event*/
     private val _navToStories = mutableStateOf(false)
     val navToStories: MutableState<Boolean>
@@ -108,9 +104,13 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             }
             // if both were null it would be that there started with and ended with no image
         }
-        if(!db.updateStory(storyId, updatedStory) && localImageURI != null){
+        val succeeded = db.updateStory(storyId, updatedStory)
+        if(!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(updatedStory.imageFilename.value!!)
+            return false
+        }else if (!succeeded){
+            // if just failed
             return false
         }
         return true
@@ -130,9 +130,13 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
 
         }
         Log.i(tag, "Creation of new story initiated")
-        if (!db.createStory(newStory) && localImageURI != null){
+        val succeeded = db.createStory(newStory)
+        if (!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(newStory.imageFilename.value!!)
+            return false
+        }else if (!succeeded){
+            // if just failed
             return false
         }
         return true
@@ -141,7 +145,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     /* function which gets the story given the id*/
     private fun getStory(storyId: String){
         viewModelScope.launch {
-            updateStory(db.getStoryFromId(storyId))
+            _story.value = db.getStoryFromId(storyId)
             originalFilename = story.value.imageFilename.value
         }
     }

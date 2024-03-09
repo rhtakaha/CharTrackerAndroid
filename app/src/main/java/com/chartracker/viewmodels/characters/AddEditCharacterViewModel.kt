@@ -24,23 +24,9 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     val character: MutableState<CharacterEntity>
         get() = _character
 
-    private fun updateLocalCharacter(new: CharacterEntity){
-        _character.value = new
-    }
-
     private var _charactersStringList: MutableList<String> = mutableListOf()
     val charactersStringList: List<String>
         get() = _charactersStringList
-
-    /* function to update the list of all the character names (as Strings)
-        which we will pass to edit/add Character*/
-    private suspend fun updateCharsStringList(){
-        val characters = db.getCharacters(storyId)
-        _charactersStringList.clear()
-        for (character in characters){
-            character.name.value.let { _charactersStringList.add(it) }
-        }
-    }
 
     private val alliesList = mutableListOf<String>()
     private val enemiesList = mutableListOf<String>()
@@ -55,6 +41,24 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         _readyToNavToCharacters.value = false
     }
 
+    /*upload error event*/
+    private val _uploadError = mutableStateOf(false)
+    val uploadError: MutableState<Boolean>
+        get() = _uploadError
+
+    fun resetUploadError(){
+        _uploadError.value = false
+    }
+
+    /*retrieval error event*/
+    private val _retrievalError = mutableStateOf(false)
+    val retrievalError: MutableState<Boolean>
+        get() = _retrievalError
+
+    fun resetRetrievalError(){
+        _retrievalError.value = false
+    }
+
     init {
         viewModelScope.launch {
             updateCharsStringList()
@@ -64,11 +68,35 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         }
     }
 
+    /* function to update the list of all the character names (as Strings)
+        which we will pass to edit/add Character*/
+    private suspend fun updateCharsStringList(){
+        val characters = db.getCharacters(storyId)
+        if (characters != null){
+            _charactersStringList.clear()
+            for (character in characters){
+                character.name.value.let { _charactersStringList.add(it) }
+            }
+        }else{
+            _retrievalError.value = true
+        }
+
+    }
+
     private suspend fun getCharacter(charName: String){
         charId = db.getCharacterId(storyId, charName)
-        updateLocalCharacter(db.getCharacter(storyId, charName))
-        originalFilename = character.value.imageFilename.value
-        _charactersStringList = _charactersStringList.filter { name -> name != charName }.toMutableList()
+        if (charId != ""){
+            _character.value = db.getCharacter(storyId, charName)
+            if (_character.value.name.value != ""){
+                originalFilename = character.value.imageFilename.value
+                _charactersStringList = _charactersStringList.filter { name -> name != charName }.toMutableList()
+            }else{
+                _retrievalError.value = true
+            }
+        }else{
+            _retrievalError.value = true
+        }
+
 
     }
 
@@ -86,40 +114,64 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         }
         viewModelScope.launch {
             if (charId == null){
-                addCharacter(storyId, newCharacter, localImageURI)
+                if (!addCharacter(storyId, newCharacter, localImageURI)){
+                    _uploadError.value = true
+                }else{
+                    _readyToNavToCharacters.value = true
+                }
             }else{
-                updateCharacter(newCharacter, localImageURI, charId!!)
+                if (!updateCharacter(newCharacter, localImageURI, charId!!)){
+                    _uploadError.value = true
+                }else{
+                    _readyToNavToCharacters.value = true
+                }
             }
-            _readyToNavToCharacters.value = true
         }
     }
 
-    private suspend fun addCharacter(storyId: String, newCharacter: CharacterEntity, localImageURI: Uri?){
+    private suspend fun addCharacter(storyId: String, newCharacter: CharacterEntity, localImageURI: Uri?): Boolean{
         Log.i(tag, "Creation of new char initiated")
         if (localImageURI != null){
             // adding an image
-            newCharacter.imageFilename.value = getCharacterFilename(newCharacter.name.value,
-                storyTitle
-            )
-            db.addImage(newCharacter.imageFilename.value!!, localImageURI)
-            db.addImageDownloadUrlToCharacter(newCharacter, newCharacter.imageFilename.value!!)
+            newCharacter.imageFilename.value = getCharacterFilename(newCharacter.name.value, storyTitle)
+            val imageUrl = db.addImage(newCharacter.imageFilename.value!!, localImageURI)
+            if (imageUrl != ""){
+                newCharacter.imagePublicUrl.value = imageUrl
+            }else{
+                return false
+            }
+
         }
-        db.createCharacter(storyId, newCharacter)
+        val succeeded = db.createCharacter(storyId, newCharacter)
+        if (!succeeded && localImageURI != null){
+            //failed and uploaded the image
+            db.deleteImage(newCharacter.imageFilename.value!!)
+            return false
+        }else if (!succeeded){
+            // if just failed
+            return false
+        }
+        return true
+
     }
 
-    private suspend fun updateCharacter(updatedCharacter: CharacterEntity, localImageURI: Uri?, charId: String){
+    private suspend fun updateCharacter(updatedCharacter: CharacterEntity, localImageURI: Uri?, charId: String): Boolean{
         Log.i("EditCharVM", "starting to update character")
         if (localImageURI != null){
             if (!localImageURI.toString().startsWith("https://firebasestorage.googleapis.com")){
                 // if this was NOT the original image
                 // trying to add a new image
-                //if adding a new image be sure to delete the original too (if it had one)
                 updatedCharacter.imageFilename.value = getCharacterFilename(updatedCharacter.name.value, storyTitle)
-                db.addImage(updatedCharacter.imageFilename.value!!, localImageURI)
-                db.addImageDownloadUrlToCharacter(updatedCharacter, updatedCharacter.imageFilename.value!!)
 
-                //if adding a new image be sure to delete the original too (if it had one)
-                originalFilename?.let { it1 -> db.deleteImage(it1) }
+                val imageUrl = db.addImage(updatedCharacter.imageFilename.value!!, localImageURI)
+                if (imageUrl != ""){
+                    updatedCharacter.imagePublicUrl.value = imageUrl
+
+                    //if adding a new image be sure to delete the original too (if it had one)
+                    originalFilename?.let { it1 -> db.deleteImage(it1) }
+                }else{
+                    return false
+                }
             }
             // if this was just the existing image don't do anything
 
@@ -135,7 +187,17 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             }
             // if both were null it would be that there started with and ended with no image
         }
-        db.updateCharacter(storyId, charId, updatedCharacter)
+
+        val succeeded = db.updateCharacter(storyId, charId, updatedCharacter)
+        if (!succeeded && localImageURI != null){
+            //failed and uploaded the image
+            db.deleteImage(updatedCharacter.imageFilename.value!!)
+            return false
+        }else if (!succeeded){
+            // if just failed
+            return false
+        }
+        return true
     }
 
     fun submitCharacterDelete(){
@@ -176,8 +238,6 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             neutralList.remove(charName)
         }
     }
-
-
 }
 
 /* time ensures that filenames are unique:

@@ -44,16 +44,6 @@ class DatabaseAccess {
         }
     }
 
-    suspend fun addImageDownloadUrlToCharacter(character: CharacterEntity, filename: String){
-        storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename").downloadUrl.addOnSuccessListener {url ->
-            character.imagePublicUrl.value = url.toString()
-            Log.i(tag, "got the public url for the image: $url")
-        }.addOnFailureListener {
-            // Handle any errors
-            Log.i(tag, "failed to get public url for image: $it")
-        }.await()
-    }
-
     fun getImageRef(filename: String): StorageReference{
         return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
     }
@@ -163,7 +153,8 @@ class DatabaseAccess {
             .await()
     }
 
-    fun updateCharacter(storyId: String, charId: String, character: CharacterEntity){
+    suspend fun updateCharacter(storyId: String, charId: String, character: CharacterEntity): Boolean{
+        var ret = true
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -172,7 +163,12 @@ class DatabaseAccess {
             .document(charId)
             .set(character.toHashMap())
             .addOnSuccessListener { Log.d(tag, "Character successfully updated!") }
-            .addOnFailureListener { e -> Log.w(tag, "Error updating character", e) }
+            .addOnFailureListener { e ->
+                ret = false
+                Log.w(tag, "Error updating character", e)
+            }
+            .await()
+        return ret
     }
 
     suspend fun getCharacterId(storyId: String, charName: String): String{
@@ -286,7 +282,8 @@ class DatabaseAccess {
     }
 
     /* creates a character document in the given story*/
-    fun createCharacter(storyId: String, character: CharacterEntity){
+    suspend fun createCharacter(storyId: String, character: CharacterEntity): Boolean{
+        var ret  = true
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
@@ -298,7 +295,10 @@ class DatabaseAccess {
             }
             .addOnFailureListener { e ->
                 Log.w(tag, "Error adding document", e)
+                ret = false
             }
+            .await()
+        return ret
     }
 
     //TODO figure out how best to handle the characters subcollection
@@ -418,9 +418,9 @@ class DatabaseAccess {
     }
 
     /*given the document ID of the story return the list of characters*/
-    suspend fun getCharacters(storyId: String): MutableList<CharacterEntity>{
+    suspend fun getCharacters(storyId: String): MutableList<CharacterEntity>?{
         Log.i(tag, "Start get characters")
-        val characters = mutableListOf<CharacterEntity>()
+        var characters: MutableList<CharacterEntity>? = mutableListOf()
         // Source can be CACHE, SERVER, or DEFAULT.
         val source = Source.DEFAULT
 
@@ -433,7 +433,7 @@ class DatabaseAccess {
             .get(source)
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    characters.add(buildCharacterFromDocumentSnapshot(document))
+                    characters?.add(buildCharacterFromDocumentSnapshot(document))
 //                    characters.add(document.toObject<CharacterEntity>())
                     Log.i(tag, "${document.id} => ${document.data}")
                 }
@@ -442,6 +442,7 @@ class DatabaseAccess {
             }
             .addOnFailureListener { exception ->
                 Log.d(tag, "Error getting documents: ", exception)
+                characters = null
             }
             .await()
 

@@ -1,6 +1,5 @@
 package com.chartracker.viewmodels.characters
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -39,16 +38,10 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
                 getStory()
                 if (_story.value.name.value != ""){
                     getCharacters()
-                    if (_characters.value.isEmpty()){
-                        Log.d("chars", "at characters")
-                        _failedGetCharacters.value = true
-                    }
                 }else{
-                    Log.d("chars", "at story")
                     _failedGetCharacters.value = true
                 }
             }else{
-                Log.d("chars", "at id")
                 _failedGetCharacters.value = true
             }
         }
@@ -63,7 +56,12 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     }
 
     suspend fun getCharacters(){
-            _characters.value = db.getCharacters(storyId)
+        val temp = db.getCharacters(storyId)
+        if (temp != null){
+            _characters.value = temp
+        }else{
+            _failedGetCharacters.value = true
+        }
 
     }
 

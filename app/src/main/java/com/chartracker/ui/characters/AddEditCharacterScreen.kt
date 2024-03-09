@@ -47,6 +47,7 @@ import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.ChipGroupRow
+import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.characters.AddEditCharacterViewModel
@@ -77,6 +78,10 @@ fun AddEditCharacterScreen(
         updateNeutrals = { name, selected -> addEditCharacterViewModel.neutralsUpdated(name, selected) },
         submitCharacter = {character: CharacterEntity, localUri: Uri? -> addEditCharacterViewModel.submitCharacter(character, localUri)},
         deleteCharacter = { addEditCharacterViewModel.submitCharacterDelete() },
+        uploadError = addEditCharacterViewModel.uploadError.value,
+        resetUploadError = { addEditCharacterViewModel.resetUploadError() },
+        retrievalError = addEditCharacterViewModel.retrievalError.value,
+        resetRetrievalError = { addEditCharacterViewModel.resetRetrievalError() },
         readyToNavToCharacters = addEditCharacterViewModel.readyToNavToCharacters.value,
         navToCharacters = navToCharacters,
         resetNavToCharacters = { addEditCharacterViewModel.resetReadyToNavToCharacters() },
@@ -96,6 +101,10 @@ fun AddEditCharacterScreen(
     updateNeutrals: (String, Boolean) -> Unit,
     submitCharacter: (CharacterEntity, Uri?) -> Unit,
     deleteCharacter: () -> Unit,
+    uploadError: Boolean,
+    resetUploadError: () -> Unit,
+    retrievalError: Boolean,
+    resetRetrievalError: () -> Unit,
     readyToNavToCharacters: Boolean,
     navToCharacters: () -> Unit,
     resetNavToCharacters: () -> Unit,
@@ -259,6 +268,18 @@ fun AddEditCharacterScreen(
             )
 
         }
+        if (uploadError){
+            MessageDialog(
+                message = stringResource(id = R.string.char_upload_error),
+                onDismiss = {resetUploadError()}
+            )
+        }
+        if (retrievalError){
+            MessageDialog(
+                message = stringResource(id = R.string.char_retrieval_error),
+                onDismiss = {resetRetrievalError()}
+            )
+        }
     }
 }
 
@@ -285,6 +306,10 @@ fun PreviewAddCharacterScreen(){
                 updateNeutrals = {_, _ ->},
                 submitCharacter = {_, _ ->},
                 deleteCharacter = {},
+                uploadError = false,
+                resetUploadError = {},
+                retrievalError = false,
+                resetRetrievalError = {},
                 readyToNavToCharacters = false,
                 navToCharacters = {},
                 resetNavToCharacters = { /*TODO*/ },
