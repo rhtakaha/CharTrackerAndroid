@@ -131,24 +131,28 @@ fun SignInScreen(
 
         }
         if (missingEmail) {
+            // for password reset where no email entered
             MessageDialog(
                 message = stringResource(id = R.string.missing_email),
                 onDismiss = { missingEmail = false }
             )
         }
         if (missingEmailOrPassword) {
+            // for sign in missing a field
             MessageDialog(
                 message = stringResource(id = R.string.missing_email_password),
                 onDismiss = { missingEmailOrPassword = false }
             )
         }
         if (invalidCredentials) {
+            // for sign in credentials failing
             MessageDialog(
                 message = stringResource(id = R.string.invalid_email_password),
                 onDismiss = { resetInvalidCredentials() }
             )
         }
         if (emailSent) {
+            // when a password reset is invoked on an email
             MessageDialog(
                 message = stringResource(id = R.string.password_reset_email_sent),
                 onDismiss = { resetEmailSent() }
@@ -171,20 +175,22 @@ fun PreviewSignInScreen(){
         Surface {
             var email by remember { mutableStateOf("") }
             var password by remember { mutableStateOf("") }
+            var invalidCredentials by remember { mutableStateOf(false) }
+            var emailSent by remember { mutableStateOf(false) }
             SignInScreen(
                 email = email,
                 onEmailType = {newInput -> email = newInput},
                 password = password,
                 onPasswordType = {newInput -> password = newInput},
                 onSignInClick = { _, _ -> },
-                onSignUpClick = { /*TODO*/ },
+                onSignUpClick = { /**/ },
                 signedIn = false,
                 resetSignedIn = {},
-                invalidCredentials = false,
-                resetInvalidCredentials = {},
+                invalidCredentials = invalidCredentials,
+                resetInvalidCredentials = {invalidCredentials = !invalidCredentials},
                 navToStories = {},
-                emailSent = false,
-                resetEmailSent = {},
+                emailSent = emailSent,
+                resetEmailSent = {emailSent = !emailSent},
                 onPasswordResetClick = {}
             )
         }
