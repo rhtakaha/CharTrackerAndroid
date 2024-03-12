@@ -163,6 +163,7 @@ fun PreviewSignUpScreen(){
             var email by remember { mutableStateOf("") }
             var password1 by remember { mutableStateOf("") }
             var password2 by remember { mutableStateOf("") }
+            var signUpErrorMessage: Any? by remember { mutableStateOf(null) }
             SignUpScreen(
                 email = email,
                 onEmailType = {newInput -> email = newInput} ,
@@ -173,8 +174,8 @@ fun PreviewSignUpScreen(){
                 onSignUpClick = { _, _ ->},
                 signedIn = false,
                 resetSignedIn = {},
-                signUpErrorMessage = null,
-                resetSignUpErrorMessage = {},
+                signUpErrorMessage = signUpErrorMessage,
+                resetSignUpErrorMessage = {signUpErrorMessage  = null},
                 navToVerifyEmail = {},
                 onBackNav = {}
             )

@@ -98,7 +98,7 @@
     <string name="invalid_email_password">Invalid email or password!</string>
     <string name="password_reset_email_sent">Password reset email was sent to the email if it matches a user. Please wait a moment for it to arrive.</string>
     <string name="malformed_email_message">Malformed email</string>
-    <string name="user_collision_message">User with this email already exists!</string>
+    <string name="user_collision_message">User with this email already exists! Please login or use a different email.</string>
     <string name="fail_user_reload_message">Error with account!</string>
     <string name="email_sent">Email sent!</string>
     <string name="not_verified">Email not yet verified. Please try again in a moment.</string>
