@@ -24,7 +24,7 @@
           <timeTargetWasSelectedWithDropDown value="2024-03-09T00:20:31.791122200Z" />
         </State>
       </entry>
-      <entry key="emailSentTest()">
+      <entry key="failedGetStoriesTest()">
         <State />
       </entry>
       <entry key="passwordUpdateSuccessTest()">

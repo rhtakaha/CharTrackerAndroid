@@ -1,5 +1,6 @@
 package com.chartracker.screens
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -16,6 +17,7 @@ import org.junit.Test
 class StoriesScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
+    private val failedGetStories =  mutableStateOf(false)
 
     @Before
     fun setupStoriesScreen(){
@@ -29,7 +31,6 @@ class StoriesScreenTest {
                 StoryEntity(name = "Batman"),
                 StoryEntity(name = "Game of Thrones"),
                 StoryEntity(name = "The Chronicles of Narnia"),
-
                 StoryEntity(name = "Really Really Really Really Long Ahh Title Just to see how it looks"),
                 StoryEntity(name = "The Cthulhu Mythos"),
 
@@ -37,8 +38,8 @@ class StoriesScreenTest {
             StoriesScreen(
                 stories = stories,
                 refreshStories = {},
-                failedGetStories = false,
-                resetFailedGetStories = {},
+                failedGetStories = failedGetStories.value,
+                resetFailedGetStories = {failedGetStories.value = false},
                 navToAddStory = { /**/ },
                 navToCharacters = {},
                 navToSettings = { /**/ }) {
@@ -112,5 +113,15 @@ class StoriesScreenTest {
             .onNodeWithContentDescription("Add a new story")
             .assertIsDisplayed()
             .assertHasClickAction()
+    }
+
+    @Test
+    fun failedGetStoriesTest(){
+        // activate snackbar
+        failedGetStories.value = true
+
+        composeTestRule
+            .onNodeWithText("Issue getting stories. Refresh to try again.")
+            .assertIsDisplayed()
     }
 }
