@@ -5,7 +5,7 @@
       <entry key="EmailVerifyScreenTest">
         <State />
       </entry>
-      <entry key="SignUpScreenTest">
+      <entry key="SettingsScreenTest">
         <State />
       </entry>
       <entry key="app">
@@ -27,10 +27,10 @@
       <entry key="emailSentTest()">
         <State />
       </entry>
-      <entry key="failedReloadTest()">
+      <entry key="passwordUpdateSuccessTest()">
         <State />
       </entry>
-      <entry key="screenContentsTest()">
+      <entry key="updateEmailVerificationSentTest()">
         <State />
       </entry>
     </value>
