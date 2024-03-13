@@ -216,8 +216,7 @@ fun PreviewAddStoryScreen(){
                 readyToNavToStories = false,
                 navToStories = {},
                 startImage = null,
-                resetNavToStories = { /*TODO*/ }) {
-                
+                resetNavToStories = { /**/ }) {
             }
         }
     }

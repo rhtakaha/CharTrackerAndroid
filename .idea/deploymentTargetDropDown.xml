@@ -2,10 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="EmailVerifyScreenTest">
+      <entry key="AddStoryScreenTest">
         <State />
       </entry>
-      <entry key="SettingsScreenTest">
+      <entry key="EditStoryScreenTest">
         <State />
       </entry>
       <entry key="app">
@@ -27,10 +27,10 @@
       <entry key="failedGetStoriesTest()">
         <State />
       </entry>
-      <entry key="passwordUpdateSuccessTest()">
+      <entry key="uploadErrorTest()">
         <State />
       </entry>
-      <entry key="updateEmailVerificationSentTest()">
+      <entry key="uploadErrorTest() (1)">
         <State />
       </entry>
     </value>
