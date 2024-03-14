@@ -1,5 +1,6 @@
 package com.chartracker.screens
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -16,6 +17,7 @@ import org.junit.Test
 class CharacterDetailsScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
+    private val failedGetCharacter =  mutableStateOf(false)
 
     @Before
     fun setupCharactersScreen(){
@@ -34,8 +36,8 @@ class CharacterDetailsScreenTest {
         composeTestRule.setContent {
             CharacterDetailsScreen(
                 character = character,
-                failedGetCharacter = false,
-                resetFailedGetCharacter = {},
+                failedGetCharacter = failedGetCharacter.value,
+                resetFailedGetCharacter = {failedGetCharacter.value = false},
                 refresh = {},
                 alliesList = null,
                 enemiesList = null,
@@ -115,6 +117,16 @@ class CharacterDetailsScreenTest {
             .assertIsDisplayed()
         composeTestRule
             .onNodeWithText("Former Lieutenant of the first Dark Lord (Morgoth). After Morgoth's fall in the First Age, Sauron feigned repentance and then hid in Middle Earth to continue his master's plans")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun failedGetCharacterTest(){
+        // activate snackbar
+        failedGetCharacter.value = true
+
+        composeTestRule
+            .onNodeWithText("Issue getting the character. Return to try again.")
             .assertIsDisplayed()
     }
 }

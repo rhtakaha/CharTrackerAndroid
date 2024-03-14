@@ -5,6 +5,9 @@
       <entry key="AddStoryScreenTest">
         <State />
       </entry>
+      <entry key="CharacterDetailsScreenTest">
+        <State />
+      </entry>
       <entry key="EditStoryScreenTest">
         <State />
       </entry>
@@ -24,13 +27,10 @@
           <timeTargetWasSelectedWithDropDown value="2024-03-09T00:20:31.791122200Z" />
         </State>
       </entry>
+      <entry key="failedGetCharacterTest()">
+        <State />
+      </entry>
       <entry key="failedGetCharactersTest()">
-        <State />
-      </entry>
-      <entry key="uploadErrorTest()">
-        <State />
-      </entry>
-      <entry key="uploadErrorTest() (1)">
         <State />
       </entry>
     </value>
