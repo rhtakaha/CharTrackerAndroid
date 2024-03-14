@@ -2,13 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AddStoryScreenTest">
-        <State />
-      </entry>
       <entry key="CharacterDetailsScreenTest">
-        <State />
-      </entry>
-      <entry key="EditStoryScreenTest">
         <State />
       </entry>
       <entry key="app">
@@ -30,7 +24,13 @@
       <entry key="failedGetCharacterTest()">
         <State />
       </entry>
-      <entry key="failedGetCharactersTest()">
+      <entry key="retrievalErrorTest()">
+        <State />
+      </entry>
+      <entry key="uploadErrorTest()">
+        <State />
+      </entry>
+      <entry key="uploadErrorTest() (1)">
         <State />
       </entry>
     </value>

@@ -1,5 +1,6 @@
 package com.chartracker.screens
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -21,6 +22,7 @@ import org.junit.Test
 class AddCharacterScreenTest{
     @get: Rule
     val composeTestRule = createComposeRule()
+    private val uploadError =  mutableStateOf(false)
 
     @Before
     fun setupAddScreen(){
@@ -35,8 +37,8 @@ class AddCharacterScreenTest{
                 updateNeutrals = {_, _ ->},
                 submitCharacter = {_, _ ->},
                 deleteCharacter = { /**/ },
-                uploadError = false,
-                resetUploadError = {},
+                uploadError = uploadError.value,
+                resetUploadError = {uploadError.value = false},
                 retrievalError = false,
                 resetRetrievalError = {},
                 readyToNavToCharacters = false,
@@ -260,11 +262,23 @@ class AddCharacterScreenTest{
             .onAllNodesWithText("Sauron")
             .assertCountEquals(4)
     }
+
+    @Test
+    fun uploadErrorTest(){
+        // activate snackbar
+        uploadError.value = true
+
+        composeTestRule
+            .onNodeWithText("Error uploading character!")
+            .assertIsDisplayed()
+    }
 }
 
 class EditCharacterScreenTest{
     @get: Rule
     val composeTestRule = createComposeRule()
+    private val uploadError =  mutableStateOf(false)
+    private val retrievalError =  mutableStateOf(false)
 
     @Before
     fun setupEditScreen(){
@@ -286,10 +300,10 @@ class EditCharacterScreenTest{
                 updateNeutrals = {_, _ ->},
                 submitCharacter = {_, _ ->},
                 deleteCharacter = { /**/ },
-                uploadError = false,
-                resetUploadError = {},
-                retrievalError = false,
-                resetRetrievalError = {},
+                uploadError = uploadError.value,
+                resetUploadError = {uploadError.value = false},
+                retrievalError = retrievalError.value,
+                resetRetrievalError = {retrievalError.value = false},
                 readyToNavToCharacters = false,
                 navToCharacters = { /**/ },
                 resetNavToCharacters = { /**/ },
@@ -515,6 +529,26 @@ class EditCharacterScreenTest{
 
         composeTestRule
             .onNodeWithText("King of Gondor and Arnor")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun uploadErrorTest(){
+        // activate snackbar
+        uploadError.value = true
+
+        composeTestRule
+            .onNodeWithText("Error uploading character!")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun retrievalErrorTest(){
+        // activate snackbar
+        retrievalError.value = true
+
+        composeTestRule
+            .onNodeWithText("Error retrieving character data!")
             .assertIsDisplayed()
     }
 }
