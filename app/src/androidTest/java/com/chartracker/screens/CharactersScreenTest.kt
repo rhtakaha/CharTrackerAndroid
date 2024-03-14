@@ -1,5 +1,6 @@
 package com.chartracker.screens
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -17,6 +18,7 @@ import org.junit.Test
 class CharactersScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
+    private val failedGetCharacters =  mutableStateOf(false)
 
     @Before
     fun setupCharactersScreen(){
@@ -41,8 +43,8 @@ class CharactersScreenTest {
                 imageFilename = "LotR")
             CharactersScreen(
                 characters = characters,
-                failedGetCharacters = false,
-                resetFailedGetCharacters = {},
+                failedGetCharacters = failedGetCharacters.value,
+                resetFailedGetCharacters = {failedGetCharacters.value = false},
                 refreshCharacters = {},
                 story = story,
                 navToAddCharacter = { /**/ },
@@ -140,6 +142,16 @@ class CharactersScreenTest {
         composeTestRule
             .onNodeWithText("Legolas")
             .assertHasClickAction()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun failedGetCharactersTest(){
+        // activate snackbar
+        failedGetCharacters.value = true
+
+        composeTestRule
+            .onNodeWithText("Issue getting characters. Refresh to try again.")
             .assertIsDisplayed()
     }
 }
