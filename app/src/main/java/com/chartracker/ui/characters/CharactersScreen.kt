@@ -15,6 +15,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +31,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.StoryEntity
@@ -38,6 +41,7 @@ import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.characters.CharactersViewModel
 import com.chartracker.viewmodels.characters.CharactersViewModelFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Composable
@@ -71,7 +75,7 @@ fun CharactersScreen(
         onBackNav = onBackNav)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun CharactersScreen(
     characters: List<CharacterEntity>,
@@ -85,9 +89,12 @@ fun CharactersScreen(
     navToSettings: () -> Unit,
     onBackNav: () -> Unit,
 ){
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val refreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(refreshing, { refreshCharacters() })
     Scaffold(
+        snackbarHost ={ SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CharTrackerTopBar(
                 title =  story.name.value,
@@ -133,6 +140,7 @@ fun CharactersScreen(
                 onDismiss = { resetFailedGetCharacters() }
             )
         }
+        ConnectivityStatus(scope, snackbarHostState)
     }
 }
 

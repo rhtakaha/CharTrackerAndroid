@@ -23,12 +23,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
+import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
@@ -51,6 +55,7 @@ import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.story.AddEditStoryViewModel
 import com.chartracker.viewmodels.story.AddEditStoryViewModelFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 fun AddEditStoryScreen(
@@ -73,7 +78,7 @@ fun AddEditStoryScreen(
         onBackNav = onBackNav)
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun AddEditStoryScreen(
     story: StoryEntity,
@@ -88,6 +93,8 @@ fun AddEditStoryScreen(
     startImage: Uri?,
     onBackNav: () -> Unit
 ){
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     if (readyToNavToStories){
         resetNavToStories()
         navToStories()
@@ -98,7 +105,9 @@ fun AddEditStoryScreen(
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
         localUri.value = it
     }
-    Scaffold(topBar = {
+    Scaffold(
+        snackbarHost ={ SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
         CharTrackerTopBar(onBackNav=onBackNav, actionButtons = {
             IconButton(onClick = {
                 if (story.name.value != "") {
@@ -190,6 +199,7 @@ fun AddEditStoryScreen(
                 onDismiss = {resetUploadError()}
             )
         }
+        ConnectivityStatus(scope, snackbarHostState)
     }
 
 }

@@ -31,12 +31,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.EntityHolderList
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.story.StoriesViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,7 +62,7 @@ fun StoriesScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun StoriesScreen(
     stories: List<StoryEntity>,
@@ -117,6 +119,7 @@ fun StoriesScreen(
                 }
             }
         }
+        ConnectivityStatus(scope, snackbarHostState)
     }
 }
 

@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,11 +25,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.auth.SignInViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 fun SignInScreen(
@@ -53,6 +58,7 @@ fun SignInScreen(
 }
 
 /* for previewing*/
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SignInScreen(
     email: String,
@@ -70,6 +76,8 @@ fun SignInScreen(
     navToStories: () -> Unit,
     onPasswordResetClick: (String) -> Unit,
 ){
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var missingEmailOrPassword by remember {
         mutableStateOf(false)
     }
@@ -81,7 +89,9 @@ fun SignInScreen(
         resetSignedIn()
         navToStories()
     }
-    Scaffold { paddingValue ->
+    Scaffold(
+        snackbarHost ={ SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -158,6 +168,7 @@ fun SignInScreen(
                 onDismiss = { resetEmailSent() }
             )
         }
+        ConnectivityStatus(scope, snackbarHostState)
     }
 }
 

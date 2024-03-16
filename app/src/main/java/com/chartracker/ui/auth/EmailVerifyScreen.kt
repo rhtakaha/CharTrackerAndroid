@@ -22,12 +22,14 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chartracker.ConnectivityStatus
 import com.chartracker.ui.components.TextAndContentHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.viewmodels.auth.EmailVerifyViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,6 +52,7 @@ fun EmailVerifyScreen(
         onBackNav= onBackNav)
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun EmailVerifyScreen(
     email: String,
@@ -116,6 +119,7 @@ fun EmailVerifyScreen(
                 }
             }
         }
+        ConnectivityStatus(scope, snackbarHostState)
     }
 }
 
