@@ -16,6 +16,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private val tag = "AddEditStoryVM"
     private val db = DatabaseAccess()
     private var originalFilename: String? = null
+    private lateinit var originalStoryTitle: String
     init {
         if (storyId != null) {
             getStory(storyId= storyId)
@@ -44,27 +45,48 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
         _uploadError.value = false
     }
 
+    /*duplicate title error event*/
+    private val _duplicateTitleError = mutableStateOf(false)
+    val duplicateTitleError: MutableState<Boolean>
+        get() = _duplicateTitleError
+
+    fun resetDuplicateTitleError(){
+        _duplicateTitleError.value = false
+    }
+
     /*function that calls a database access method to create the story in Firebase
         also calls navigation*/
     fun submitStory(newStory: StoryEntity, localImageURI: Uri?){
         viewModelScope.launch {
             if (storyId == null) {
-                if (!addStory(newStory, localImageURI)){
-                    _uploadError.value = true
-                }else{
-                    _navToStories.value = true
-                }
+                addStory(newStory, localImageURI)
             }else{
-                if(!updateStory(storyId, newStory, localImageURI)){
-                    _uploadError.value = true
-                }else{
-                    _navToStories.value = true
-                }
+                updateStory(storyId, newStory, localImageURI)
             }
         }
     }
 
-    private suspend fun updateStory(storyId: String, updatedStory: StoryEntity, localImageURI: Uri?): Boolean{
+    private suspend fun updateStory(storyId: String, updatedStory: StoryEntity, localImageURI: Uri?){
+        var currentTitles: MutableList<String>? = null
+        if (originalStoryTitle != updatedStory.name.value){
+            // if the title was changed then need to check to make sure it is valid
+            currentTitles = db.getCurrentTitles()
+            if (currentTitles == null){
+                // if we could not get the current titles
+                _uploadError.value = true
+                return
+            }
+            Log.d(tag, "updated title: ${updatedStory.name.value} Current titles: $currentTitles")
+            if (updatedStory.name.value in currentTitles){
+                _duplicateTitleError.value = true
+                return
+            }
+
+            // add this title to currentTitles
+            currentTitles.add(updatedStory.name.value)
+            //remove the title which is being replaced
+            currentTitles.remove(originalStoryTitle)
+        }
         Log.i(tag, "starting to update story")
 
         if (localImageURI != null){
@@ -86,7 +108,8 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                     }
                 }else{
                     // if something went wrong with image upload
-                    return false
+                    _uploadError.value = true
+                    return
                 }
             }
             // if this was just the existing image don't do anything
@@ -104,19 +127,35 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             }
             // if both were null it would be that there started with and ended with no image
         }
-        val succeeded = db.updateStory(storyId, updatedStory)
+        val succeeded = db.updateStory(storyId, updatedStory, currentTitles)
         if(!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(updatedStory.imageFilename.value!!)
-            return false
+            _uploadError.value = true
+            return
         }else if (!succeeded){
             // if just failed
-            return false
+            _uploadError.value = true
+            return
         }
-        return true
+        _navToStories.value = true
     }
 
-    private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?): Boolean{
+    private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?){
+        val currentTitles = db.getCurrentTitles()
+        if (currentTitles == null){
+            // if we could not get the current titles
+            _uploadError.value = true
+            return
+        }
+
+        if (newStory.name.value in currentTitles){
+            _duplicateTitleError.value = true
+            return
+        }
+
+        // add this title to currentTitles
+        currentTitles.add(newStory.name.value)
         if (localImageURI != null) {
             // if we are adding an image
             newStory.imageFilename.value = getStoryFilename(newStory.name.value)
@@ -125,36 +164,45 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                 newStory.imagePublicUrl.value = imageUrl
             }else{
                 // if something went wrong with image upload
-                return false
+                _uploadError.value = true
+                return
             }
 
         }
         Log.i(tag, "Creation of new story initiated")
-        val succeeded = db.createStory(newStory)
+        val succeeded = db.createStory(newStory, currentTitles)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(newStory.imageFilename.value!!)
-            return false
+            _uploadError.value = true
+            return
         }else if (!succeeded){
             // if just failed
-            return false
+            _uploadError.value = true
+            return
         }
-        return true
+        _navToStories.value = true
     }
 
     /* function which gets the story given the id*/
     private fun getStory(storyId: String){
+
         viewModelScope.launch {
-            _story.value = db.getStoryFromId(storyId)
+            Log.d(tag, "storyID: $storyId")
+            val t = db.getStoryFromId(storyId)
+            _story.value = t
             originalFilename = story.value.imageFilename.value
+            originalStoryTitle = story.value.name.value
         }
     }
 
     fun submitStoryDelete(){
         viewModelScope.launch {
             Log.i(tag, "starting to delete story")
+            val currentTitles = db.getCurrentTitles() ?: return@launch
+
             if (storyId != null) {
-                db.deleteStory(storyId)
+                db.deleteStory(storyId, currentTitles.filter { title -> title != originalStoryTitle })
             }
             // if it has an image delete that too
             story.value.imageFilename.value?.let { db.deleteImage(it) }

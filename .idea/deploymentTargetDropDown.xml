@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="CharacterDetailsScreenTest">
+      <entry key="AddStoryScreenTest">
+        <State />
+      </entry>
+      <entry key="EditStoryScreenTest">
         <State />
       </entry>
       <entry key="app">
@@ -20,9 +23,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-03-09T00:20:31.791122200Z" />
         </State>
-      </entry>
-      <entry key="failedGetCharacterTest()">
-        <State />
       </entry>
       <entry key="retrievalErrorTest()">
         <State />

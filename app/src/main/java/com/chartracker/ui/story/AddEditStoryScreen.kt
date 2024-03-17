@@ -71,6 +71,8 @@ fun AddEditStoryScreen(
         deleteStory = { addEditStoryViewModel.submitStoryDelete() },
         uploadError = addEditStoryViewModel.uploadError.value,
         resetUploadError = { addEditStoryViewModel.resetUploadError() },
+        duplicateTitleError = addEditStoryViewModel.duplicateTitleError.value,
+        resetDuplicateTitleError = { addEditStoryViewModel.resetDuplicateTitleError() },
         readyToNavToStories = addEditStoryViewModel.navToStories.value,
         navToStories = navToStories,
         resetNavToStories = {addEditStoryViewModel.resetNavToStories()},
@@ -87,6 +89,8 @@ fun AddEditStoryScreen(
     deleteStory: () -> Unit,
     uploadError: Boolean,
     resetUploadError: () -> Unit,
+    duplicateTitleError: Boolean,
+    resetDuplicateTitleError: () -> Unit,
     readyToNavToStories: Boolean,
     navToStories: () -> Unit,
     resetNavToStories: () -> Unit,
@@ -196,7 +200,13 @@ fun AddEditStoryScreen(
         if (uploadError){
             MessageDialog(
                 message = stringResource(id = R.string.story_upload_error),
-                onDismiss = {resetUploadError()}
+                onDismiss = { resetUploadError() }
+            )
+        }
+        if (duplicateTitleError){
+            MessageDialog(
+                message = stringResource(id = R.string.duplicate_title_error),
+                onDismiss = { resetDuplicateTitleError() }
             )
         }
         ConnectivityStatus(scope, snackbarHostState)
@@ -223,6 +233,8 @@ fun PreviewAddStoryScreen(){
                 deleteStory = {},
                 uploadError = false,
                 resetUploadError = {},
+                duplicateTitleError = false,
+                resetDuplicateTitleError = {},
                 readyToNavToStories = false,
                 navToStories = {},
                 startImage = null,

@@ -9,7 +9,6 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 
@@ -44,9 +43,9 @@ class DatabaseAccess {
         }
     }
 
-    fun getImageRef(filename: String): StorageReference{
-        return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
-    }
+//    fun getImageRef(filename: String): StorageReference{
+//        return storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
+//    }
 
     /* function for adding an image into cloud storage
     * input: String filename WITHOUT EXTENSION and local imageUri*/
@@ -74,15 +73,75 @@ class DatabaseAccess {
         return downloadUrl
     }
 
-    /*creates a new user in Firebase*/
-    fun createUser(user: UserEntity){
-        auth.currentUser?.let {
-            db.collection("users")
-                .document(it.uid)
-                .set(user)
-                .addOnSuccessListener { Log.d(tag, "Successfully made the user document") }
-                .addOnFailureListener { e -> Log.w(tag, "Error writing user document", e) }
+    /*creates a new user in Firebase
+    * this includes the overall user
+    *               AND
+    * the story titles document in the stories collection used to ensure unique titles*/
+    suspend fun createUser(user: UserEntity): Boolean{
+        var ret = true
+
+        // batched operation so atomic
+        db.runBatch {batch ->
+
+            //create user
+            batch.set(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid),
+                user
+            )
+
+            // create titles document
+            batch.set(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document("titles"),
+                hashMapOf("titles" to listOf<String>())
+                )
+
+        }.addOnSuccessListener {
+
+        }.addOnFailureListener{e ->
+            ret = false
+            Log.w(tag, "Error setting up user", e)
         }
+            .await()
+
+//        db.collection("users")
+//            .document(auth.currentUser!!.uid)
+//            .set(user)
+//            .addOnSuccessListener {
+//                Log.d(tag, "Successfully made the user document")
+//            }
+//            .addOnFailureListener { e ->
+//                ret = false
+//                Log.w(tag, "Error writing user document", e)
+//            }.await()
+
+        return ret
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    suspend fun getCurrentTitles(): MutableList<String>?{
+        var titles: MutableList<String>? = mutableListOf()
+
+        //getting every document in the story subcollection
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
+            .get()
+            .addOnSuccessListener { result ->
+                val titlesDoc = result.documents.filter { documentSnapshot -> documentSnapshot.id == "titles" }[0]
+                titles = titlesDoc.get("titles") as MutableList<String>?
+                Log.i(tag, "success")
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d(tag, "Error getting documents: ", exception)
+                titles = null
+            }
+            .await()
+        return titles
     }
 
 
@@ -230,30 +289,30 @@ class DatabaseAccess {
             )
     }
 
-    suspend fun getCharacterFromId(storyId: String, charId: String): CharacterEntity{
-        var character = CharacterEntity()
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .document(storyId)
-            .collection("characters")
-            .document(charId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null){
-                    character = buildCharacterFromDocumentSnapshot(document)
-//                    character = document.toObject<CharacterEntity>()!!
-                    Log.w(tag, "Successfully retrieved the character ")
-                }else{
-                    Log.w(tag, "Error: could not find the character ")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w(tag, "Error getting character: ", exception)
-            }
-            .await()
-        return character
-    }
+//    suspend fun getCharacterFromId(storyId: String, charId: String): CharacterEntity{
+//        var character = CharacterEntity()
+//        db.collection("users")
+//            .document(auth.currentUser!!.uid)
+//            .collection("stories")
+//            .document(storyId)
+//            .collection("characters")
+//            .document(charId)
+//            .get()
+//            .addOnSuccessListener { document ->
+//                if (document != null){
+//                    character = buildCharacterFromDocumentSnapshot(document)
+////                    character = document.toObject<CharacterEntity>()!!
+//                    Log.w(tag, "Successfully retrieved the character ")
+//                }else{
+//                    Log.w(tag, "Error: could not find the character ")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.w(tag, "Error getting character: ", exception)
+//            }
+//            .await()
+//        return character
+//    }
 
     suspend fun getCharacter(storyId: String, charName: String): CharacterEntity{
         Log.i(tag, "getting character with charName: $charName")
@@ -306,14 +365,41 @@ class DatabaseAccess {
     //  2) can try the cloud function as in the documentation (no part of the spark plan)
     /*more complex because Story can (will) have a subcollection and cannot easily delete them together
     * it isn't recommended to do the deletion on mobile clients either so just going to delete the story doc which should work for now*/
-    fun deleteStory(storyId: String){
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .document(storyId)
-            .delete()
-            .addOnSuccessListener { Log.d(tag, "Story successfully deleted!") }
-            .addOnFailureListener { e -> Log.w(tag, "Error deleting story", e) }
+    fun deleteStory(storyId: String, currentTitles: List<String>){
+        // batched operation so atomic
+        db.runBatch {batch ->
+
+            //delete story
+            batch.delete(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(storyId)
+            )
+
+
+            // update titles document by removing the title
+            batch.update(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document("titles"),
+                "titles",
+                currentTitles
+            )
+
+        }.addOnSuccessListener {
+            Log.d(tag, "Story successfully deleted!")
+        }.addOnFailureListener{e ->
+            Log.w(tag, "Error deleting story", e)
+        }
+//        db.collection("users")
+//            .document(auth.currentUser!!.uid)
+//            .collection("stories")
+//            .document(storyId)
+//            .delete()
+//            .addOnSuccessListener { Log.d(tag, "Story successfully deleted!") }
+//            .addOnFailureListener { e -> Log.w(tag, "Error deleting story", e) }
     }
 
     //TODO figure out how best to handle the stories and characters subcollection
@@ -349,19 +435,55 @@ class DatabaseAccess {
     }
 
     /*update the document associated with the given Id with the given StoryEntity*/
-    suspend fun updateStory(storyId: String, story: StoryEntity): Boolean{
+    suspend fun updateStory(storyId: String, story: StoryEntity, currentTitles: List<String>?): Boolean{
         var ret = true
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .document(storyId)
-            .set(story.toHashMap())
-            .addOnSuccessListener { Log.d(tag, "Story successfully updated!") }
-            .addOnFailureListener { e ->
-                Log.w(tag, "Error updating story", e)
+        if (currentTitles == null){
+            // if no name change then no need to update titles doc
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .collection("stories")
+                .document(storyId)
+                .set(story.toHashMap())
+                .addOnSuccessListener { Log.d(tag, "Story successfully updated!") }
+                .addOnFailureListener { e ->
+                    Log.w(tag, "Error updating story", e)
+                    ret = false
+                }
+                .await()
+        }else{
+            // if the name changed then need to update titles
+            // batched operation so atomic
+            db.runBatch {batch ->
+
+                //update story
+                batch.set(
+                    db.collection("users")
+                        .document(auth.currentUser!!.uid)
+                        .collection("stories")
+                        .document(storyId),
+                    story.toHashMap()
+                )
+
+
+                // update titles document by adding the new title
+                batch.update(
+                    db.collection("users")
+                        .document(auth.currentUser!!.uid)
+                        .collection("stories")
+                        .document("titles"),
+                    "titles",
+                    currentTitles
+                )
+
+            }.addOnSuccessListener {
+
+            }.addOnFailureListener{e ->
                 ret = false
+                Log.w(tag, "Error updating story and titles", e)
             }
-            .await()
+                .await()
+        }
+
         return ret
     }
 
@@ -394,28 +516,28 @@ class DatabaseAccess {
     }
 
 
-    suspend fun getStory(storyTitle: String): StoryEntity{
-        var story = StoryEntity()
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .whereEqualTo("name", storyTitle)
-            .get()
-            .addOnSuccessListener { document ->
-                if (!document.isEmpty){
-                    story = buildStoryFromDocumentSnapshot(document.documents[0])
-//                    story = document.documents[0].toObject()!!
-                    Log.w(tag, "Successfully retrieved the document ")
-                }else{
-                    Log.w(tag, "Error: could not find the document ")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w(tag, "Error getting documents: ", exception)
-            }
-            .await()
-        return story
-    }
+//    suspend fun getStory(storyTitle: String): StoryEntity{
+//        var story = StoryEntity()
+//        db.collection("users")
+//            .document(auth.currentUser!!.uid)
+//            .collection("stories")
+//            .whereEqualTo("name", storyTitle)
+//            .get()
+//            .addOnSuccessListener { document ->
+//                if (!document.isEmpty){
+//                    story = buildStoryFromDocumentSnapshot(document.documents[0])
+////                    story = document.documents[0].toObject()!!
+//                    Log.w(tag, "Successfully retrieved the document ")
+//                }else{
+//                    Log.w(tag, "Error: could not find the document ")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.w(tag, "Error getting documents: ", exception)
+//            }
+//            .await()
+//        return story
+//    }
 
     /*given the document ID of the story return the list of characters*/
     suspend fun getCharacters(storyId: String): MutableList<CharacterEntity>?{
@@ -451,21 +573,55 @@ class DatabaseAccess {
     }
 
     /*creates a new story in Firebase*/
-    suspend fun createStory(story: StoryEntity): Boolean{
+    suspend fun createStory(story: StoryEntity, currentTitles: List<String>): Boolean{
         var ret = true
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .add(story.toHashMap())
-            .addOnSuccessListener { documentReference ->
-                Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(tag, "Error adding document", e)
-                ret = false
-            }
+
+        // batched operation so atomic
+        db.runBatch {batch ->
+
+            //create story
+            batch.set(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(),
+                story.toHashMap()
+            )
+
+
+            // update titles document by adding the new title
+            batch.update(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document("titles"),
+                "titles",
+                currentTitles
+            )
+
+        }.addOnSuccessListener {
+
+        }.addOnFailureListener{e ->
+            ret = false
+            Log.w(tag, "Error creating story", e)
+        }
             .await()
+
         return ret
+//        var ret = true
+//        db.collection("users")
+//            .document(auth.currentUser!!.uid)
+//            .collection("stories")
+//            .add(story.toHashMap())
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w(tag, "Error adding document", e)
+//                ret = false
+//            }
+//            .await()
+//        return ret
     }
 
     suspend fun getStories(): MutableList<StoryEntity>? {
@@ -480,9 +636,11 @@ class DatabaseAccess {
             .get(source)
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    Log.i(tag, "document: ${document.data}")
-                    stories?.add(buildStoryFromDocumentSnapshot(document))
-                    Log.i(tag, "${document.id} => ${document.data}")
+                    if (document.id != "titles") {
+                        Log.i(tag, "document: ${document.data}")
+                        stories?.add(buildStoryFromDocumentSnapshot(document))
+                        Log.i(tag, "${document.id} => ${document.data}")
+                    }
                 }
                 Log.i(tag, "success")
 
