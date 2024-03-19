@@ -18,7 +18,9 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     private val tag = "AddEditCharVM"
     private val db = DatabaseAccess()
     private var originalFilename: String? = null
+    private lateinit var originalCharacterName: String
     private var charId: String? = null
+    private var currentNames: MutableList<String>? = null
 
     private val _character = mutableStateOf(CharacterEntity())
     val character: MutableState<CharacterEntity>
@@ -59,9 +61,22 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         _retrievalError.value = false
     }
 
+    /*duplicate name error event*/
+    private val _duplicateNameError = mutableStateOf(false)
+    val duplicateNameError: MutableState<Boolean>
+        get() = _duplicateNameError
+
+    fun resetDuplicateNameError(){
+        _duplicateNameError.value = false
+    }
+
     init {
         viewModelScope.launch {
             updateCharsStringList()
+            currentNames = db.getCurrentNames(storyId)
+            if (currentNames == null){
+                _retrievalError.value = true
+            }
             if (charName != null){
                 getCharacter(charName)
             }
@@ -88,8 +103,10 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         if (charId != ""){
             _character.value = db.getCharacter(storyId, charName)
             if (_character.value.name.value != ""){
+                originalCharacterName = character.value.name.value
                 originalFilename = character.value.imageFilename.value
                 _charactersStringList = _charactersStringList.filter { name -> name != charName }.toMutableList()
+
             }else{
                 _retrievalError.value = true
             }
@@ -114,23 +131,30 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         }
         viewModelScope.launch {
             if (charId == null){
-                if (!addCharacter(storyId, newCharacter, localImageURI)){
-                    _uploadError.value = true
-                }else{
-                    _readyToNavToCharacters.value = true
-                }
+                addCharacter(storyId, newCharacter, localImageURI)
             }else{
-                if (!updateCharacter(newCharacter, localImageURI, charId!!)){
-                    _uploadError.value = true
-                }else{
-                    _readyToNavToCharacters.value = true
-                }
+                updateCharacter(newCharacter, localImageURI, charId!!)
             }
         }
     }
 
-    private suspend fun addCharacter(storyId: String, newCharacter: CharacterEntity, localImageURI: Uri?): Boolean{
+    private suspend fun addCharacter(storyId: String, newCharacter: CharacterEntity, localImageURI: Uri?){
         Log.i(tag, "Creation of new char initiated")
+        if (currentNames == null){
+            // if we could not get the current names
+            Log.d(tag, "null current names")
+            _uploadError.value = true
+            return
+        }
+
+        if (newCharacter.name.value in currentNames!!){
+            _duplicateNameError.value = true
+            return
+        }
+
+        // add the new name to the list
+        currentNames!!.add(newCharacter.name.value)
+
         if (localImageURI != null){
             // adding an image
             newCharacter.imageFilename.value = getCharacterFilename(newCharacter.name.value, storyTitle)
@@ -138,25 +162,47 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             if (imageUrl != ""){
                 newCharacter.imagePublicUrl.value = imageUrl
             }else{
-                return false
+                _uploadError.value = true
+                return
             }
 
         }
-        val succeeded = db.createCharacter(storyId, newCharacter)
+        val succeeded = db.createCharacter(storyId, newCharacter, currentNames!!)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(newCharacter.imageFilename.value!!)
-            return false
+            _uploadError.value = true
+            return
         }else if (!succeeded){
             // if just failed
-            return false
+            _uploadError.value = true
+            return
         }
-        return true
-
+        _readyToNavToCharacters.value = true
     }
 
-    private suspend fun updateCharacter(updatedCharacter: CharacterEntity, localImageURI: Uri?, charId: String): Boolean{
+    private suspend fun updateCharacter(updatedCharacter: CharacterEntity, localImageURI: Uri?, charId: String){
         Log.i("EditCharVM", "starting to update character")
+        if (updatedCharacter.name.value != originalCharacterName){
+            // if the name was changed have to make sure it is valid
+            if (currentNames == null){
+                // if we could not get the current names
+                _uploadError.value = true
+                return
+            }
+
+            if (updatedCharacter.name.value in currentNames!!){
+                _duplicateNameError.value = true
+                return
+            }
+
+            // add the new name to the list
+            currentNames!!.add(updatedCharacter.name.value)
+            // remove the name which is being replaced
+            currentNames!!.remove(originalCharacterName)
+        }
+
+
         if (localImageURI != null){
             if (!localImageURI.toString().startsWith("https://firebasestorage.googleapis.com")){
                 // if this was NOT the original image
@@ -170,7 +216,8 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
                     //if adding a new image be sure to delete the original too (if it had one)
                     originalFilename?.let { it1 -> db.deleteImage(it1) }
                 }else{
-                    return false
+                    _uploadError.value = true
+                    return
                 }
             }
             // if this was just the existing image don't do anything
@@ -188,22 +235,24 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             // if both were null it would be that there started with and ended with no image
         }
 
-        val succeeded = db.updateCharacter(storyId, charId, updatedCharacter)
+        val succeeded = db.updateCharacter(storyId, charId, updatedCharacter, currentNames)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(updatedCharacter.imageFilename.value!!)
-            return false
+            _uploadError.value = true
+            return
         }else if (!succeeded){
             // if just failed
-            return false
+            _uploadError.value = true
+            return
         }
-        return true
+        _readyToNavToCharacters.value = true
     }
 
     fun submitCharacterDelete(){
         CoroutineScope(Dispatchers.IO).launch {
             Log.i(tag, "starting to delete character")
-            charId?.let { db.deleteCharacter(storyId, it, character.value.name.value) }
+            charId?.let { db.deleteCharacter(storyId, it, currentNames!!.filter { name -> name != originalCharacterName }) }
             character.value.imageFilename.value?.let { db.deleteImage(it) }
         }
         _readyToNavToCharacters.value = true

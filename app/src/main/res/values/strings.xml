@@ -116,4 +116,5 @@
     <string name="char_retrieval_error">Error retrieving character data!</string>
     <string name="no_network_connection">No network connection!</string>
     <string name="duplicate_title_error">Duplicate title! Ensure each title is unique.</string>
+    <string name="duplicate_name_error">Duplicate name! Ensure each name in each story is unique.</string>
 </resources>

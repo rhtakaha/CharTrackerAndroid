@@ -4,12 +4,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
@@ -23,6 +27,7 @@ class AddCharacterScreenTest{
     @get: Rule
     val composeTestRule = createComposeRule()
     private val uploadError =  mutableStateOf(false)
+    private val duplicateNameError =  mutableStateOf(false)
 
     @Before
     fun setupAddScreen(){
@@ -41,6 +46,8 @@ class AddCharacterScreenTest{
                 resetUploadError = {uploadError.value = false},
                 retrievalError = false,
                 resetRetrievalError = {},
+                duplicateNameError = duplicateNameError.value,
+                resetDuplicateNameError = {duplicateNameError.value = false},
                 readyToNavToCharacters = false,
                 navToCharacters = { /**/ },
                 resetNavToCharacters = { /**/ },
@@ -272,6 +279,38 @@ class AddCharacterScreenTest{
             .onNodeWithText("Error uploading character!")
             .assertIsDisplayed()
     }
+    @Test
+    fun duplicateNameErrorTest(){
+        // activate the dialog directly
+        duplicateNameError.value = true
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Duplicate name! Ensure each name in each story is unique.")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasClickAction()
+                        and
+                        hasText("Dismiss")
+            )
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Duplicate name! Ensure each name in each story is unique.")
+            )
+            .assertDoesNotExist()
+    }
 }
 
 class EditCharacterScreenTest{
@@ -279,6 +318,7 @@ class EditCharacterScreenTest{
     val composeTestRule = createComposeRule()
     private val uploadError =  mutableStateOf(false)
     private val retrievalError =  mutableStateOf(false)
+    private val duplicateNameError =  mutableStateOf(false)
 
     @Before
     fun setupEditScreen(){
@@ -304,6 +344,8 @@ class EditCharacterScreenTest{
                 resetUploadError = {uploadError.value = false},
                 retrievalError = retrievalError.value,
                 resetRetrievalError = {retrievalError.value = false},
+                duplicateNameError = duplicateNameError.value,
+                resetDuplicateNameError = {duplicateNameError.value = false},
                 readyToNavToCharacters = false,
                 navToCharacters = { /**/ },
                 resetNavToCharacters = { /**/ },
@@ -550,5 +592,38 @@ class EditCharacterScreenTest{
         composeTestRule
             .onNodeWithText("Error retrieving character data!")
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun duplicateNameErrorTest(){
+        // activate the dialog directly
+        duplicateNameError.value = true
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Duplicate name! Ensure each name in each story is unique.")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasClickAction()
+                        and
+                        hasText("Dismiss")
+            )
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Duplicate name! Ensure each name in each story is unique.")
+            )
+            .assertDoesNotExist()
     }
 }

@@ -192,19 +192,19 @@ fun CharacterDetailsScreen(
                     body = character.faction.value
                 )
             }
-            if (alliesList != null){
+            if (!alliesList.isNullOrEmpty()){
                 TextAndContentHolder(
                     title = R.string.allies,
                     body = alliesList
                 )
             }
-            if (enemiesList != null){
+            if (!enemiesList.isNullOrEmpty()){
                 TextAndContentHolder(
                     title = R.string.enemies,
                     body = enemiesList
                 )
             }
-            if (neutralList != null){
+            if (!neutralList.isNullOrEmpty()){
                 TextAndContentHolder(
                     title = R.string.neutral,
                     body = neutralList

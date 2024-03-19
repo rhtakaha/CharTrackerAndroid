@@ -87,6 +87,8 @@ fun AddEditCharacterScreen(
         resetUploadError = { addEditCharacterViewModel.resetUploadError() },
         retrievalError = addEditCharacterViewModel.retrievalError.value,
         resetRetrievalError = { addEditCharacterViewModel.resetRetrievalError() },
+        duplicateNameError = addEditCharacterViewModel.duplicateNameError.value,
+        resetDuplicateNameError = { addEditCharacterViewModel.resetDuplicateNameError()},
         readyToNavToCharacters = addEditCharacterViewModel.readyToNavToCharacters.value,
         navToCharacters = navToCharacters,
         resetNavToCharacters = { addEditCharacterViewModel.resetReadyToNavToCharacters() },
@@ -110,6 +112,8 @@ fun AddEditCharacterScreen(
     resetUploadError: () -> Unit,
     retrievalError: Boolean,
     resetRetrievalError: () -> Unit,
+    duplicateNameError: Boolean,
+    resetDuplicateNameError: () -> Unit,
     readyToNavToCharacters: Boolean,
     navToCharacters: () -> Unit,
     resetNavToCharacters: () -> Unit,
@@ -289,6 +293,12 @@ fun AddEditCharacterScreen(
                 onDismiss = {resetRetrievalError()}
             )
         }
+        if (duplicateNameError){
+            MessageDialog(
+                message = stringResource(id = R.string.duplicate_name_error),
+                onDismiss = {resetDuplicateNameError()}
+            )
+        }
         ConnectivityStatus(scope, snackbarHostState)
     }
 }
@@ -320,6 +330,8 @@ fun PreviewAddCharacterScreen(){
                 resetUploadError = {},
                 retrievalError = false,
                 resetRetrievalError = {},
+                duplicateNameError = false,
+                resetDuplicateNameError = {},
                 readyToNavToCharacters = false,
                 navToCharacters = {},
                 resetNavToCharacters = { /*TODO*/ },

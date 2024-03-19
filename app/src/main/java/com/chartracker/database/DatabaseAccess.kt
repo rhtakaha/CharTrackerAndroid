@@ -4,7 +4,6 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
@@ -121,6 +120,7 @@ class DatabaseAccess {
         return ret
     }
 
+    /* function to get all the in use titles*/
     @Suppress("UNCHECKED_CAST")
     suspend fun getCurrentTitles(): MutableList<String>?{
         var titles: MutableList<String>? = mutableListOf()
@@ -144,89 +144,187 @@ class DatabaseAccess {
         return titles
     }
 
+    /* function to get all the in use names for the given title*/
+    @Suppress("UNCHECKED_CAST")
+    suspend fun getCurrentNames(storyId: String): MutableList<String>?{
+        var names: MutableList<String>? = mutableListOf()
 
-    /* first queries for characters with a relationship with the to be deleted character
-    *   modifies those characters to remove the to be deleted character AND deletes the character ATOMICALLY*/
-    suspend fun deleteCharacter(storyId: String, charId: String, charName: String){
+        //getting every document in the character subcollection
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
             .document(storyId)
             .collection("characters")
-            .where(Filter.or(
-                Filter.arrayContains("allies", charName),
-                Filter.arrayContains("enemies", charName),
-                Filter.arrayContains("neutral", charName)
-            ))
             .get()
-            .addOnSuccessListener { documents ->
-                db.runBatch { batch ->
-                    //query for and update all characters that have this character as an ally/enemy/neutral
-                    for( document in documents){
-                        // remove the deleted character from the allies and update
-                        document.data["allies"]
-                        var a = document.data["allies"]
-                        if (a is List<*>) {
-                            a = a.filter { it != charName }
-                        }
-                        //only bother with the operation if it does something
-                        if (a != document.data["allies"]){
-                            batch.update(document.reference, "allies", a)
-                        }
+            .addOnSuccessListener { result ->
+                val titlesDoc = result.documents.filter { documentSnapshot -> documentSnapshot.id == "names" }[0]
+                names = titlesDoc.get("names") as MutableList<String>?
+                Log.i(tag, "success")
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d(tag, "Error getting documents: ", exception)
+                names = null
+            }
+            .await()
+        return names
+    }
 
 
-                        // remove the deleted character from the enemies and update
-                        var e = document.data["enemies"]
-                        if (e is List<*>) {
-                            e = e.filter { it != charName }
-                        }
-                        //only bother with the operation if it does something
-                        if (e != document.data["enemies"]) {
-                            batch.update(document.reference, "enemies", e)
-                        }
+    /* first queries for characters with a relationship with the to be deleted character
+    *   modifies those characters to remove the to be deleted character AND deletes the character ATOMICALLY*/
+    /* rather than querying through all the related characters and fixing them now just going to leave them be
+    * once that document which has this deleted character listed as ally/enemy/neutral gets read
+    *   THEN it can be updated by checking against the list of names*/
+    fun deleteCharacter(storyId: String, charId: String, currentNames: List<String>){
+        db.runBatch {batch ->
 
-                        // remove the deleted character from the neutral and update
-                        var n = document.data["neutral"]
-                        if (n is List<*>) {
-                            n = n.filter { it != charName }
-                        }
-                        //only bother with the operation if it does something
-                        if (n != document.data["neutral"]){
-                            batch.update(document.reference, "neutral", n)
-                        }
-                    }
+            //delete character
+            batch.delete(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(storyId)
+                    .collection("characters")
+                    .document(charId)
+            )
 
-                    // delete this character
-                    batch.delete(db.collection("users")
+            // update names document by removing the name
+            batch.update(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(storyId)
+                    .collection("characters")
+                    .document("names"),
+                "names",
+                currentNames
+            )
+
+        }.addOnSuccessListener {
+            Log.d(tag, "Story successfully deleted!")
+        }.addOnFailureListener{e ->
+            Log.w(tag, "Error deleting story", e)
+        }
+//        db.collection("users")
+//            .document(auth.currentUser!!.uid)
+//            .collection("stories")
+//            .document(storyId)
+//            .collection("characters")
+//            .where(Filter.or(
+//                Filter.arrayContains("allies", charName),
+//                Filter.arrayContains("enemies", charName),
+//                Filter.arrayContains("neutral", charName)
+//            ))
+//            .get()
+//            .addOnSuccessListener { documents ->
+//                db.runBatch { batch ->
+//                    //query for and update all characters that have this character as an ally/enemy/neutral
+//                    for( document in documents){
+//                        // remove the deleted character from the allies and update
+//                        document.data["allies"]
+//                        var a = document.data["allies"]
+//                        if (a is List<*>) {
+//                            a = a.filter { it != charName }
+//                        }
+//                        //only bother with the operation if it does something
+//                        if (a != document.data["allies"]){
+//                            batch.update(document.reference, "allies", a)
+//                        }
+//
+//
+//                        // remove the deleted character from the enemies and update
+//                        var e = document.data["enemies"]
+//                        if (e is List<*>) {
+//                            e = e.filter { it != charName }
+//                        }
+//                        //only bother with the operation if it does something
+//                        if (e != document.data["enemies"]) {
+//                            batch.update(document.reference, "enemies", e)
+//                        }
+//
+//                        // remove the deleted character from the neutral and update
+//                        var n = document.data["neutral"]
+//                        if (n is List<*>) {
+//                            n = n.filter { it != charName }
+//                        }
+//                        //only bother with the operation if it does something
+//                        if (n != document.data["neutral"]){
+//                            batch.update(document.reference, "neutral", n)
+//                        }
+//                    }
+//
+//                    // delete this character
+//                    batch.delete(db.collection("users")
+//                        .document(auth.currentUser!!.uid)
+//                        .collection("stories")
+//                        .document(storyId)
+//                        .collection("characters")
+//                        .document(charId))
+//
+//                }.addOnCompleteListener { Log.d(tag, "batch success!") }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.w(tag, "Error querying related characters: ", exception)
+//            }
+//            .await()
+    }
+
+
+    suspend fun updateCharacter(storyId: String, charId: String, updatedCharacter: CharacterEntity, currentNames: List<String>?): Boolean{
+        var ret = true
+        if (currentNames == null){
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .collection("stories")
+                .document(storyId)
+                .collection("characters")
+                .document(charId)
+                .set(updatedCharacter.toHashMap())
+                .addOnSuccessListener { Log.d(tag, "Character successfully updated!") }
+                .addOnFailureListener { e ->
+                    ret = false
+                    Log.w(tag, "Error updating character", e)
+                }
+                .await()
+        }else{
+            // if the name changed then need to update names
+            // batched operation so atomic
+            db.runBatch {batch ->
+
+                //update character
+                batch.set(
+                    db.collection("users")
                         .document(auth.currentUser!!.uid)
                         .collection("stories")
                         .document(storyId)
                         .collection("characters")
-                        .document(charId))
+                        .document(charId),
+                    updatedCharacter.toHashMap()
+                )
 
-                }.addOnCompleteListener { Log.d(tag, "batch success!") }
-            }
-            .addOnFailureListener { exception ->
-                Log.w(tag, "Error querying related characters: ", exception)
-            }
-            .await()
-    }
 
-    suspend fun updateCharacter(storyId: String, charId: String, character: CharacterEntity): Boolean{
-        var ret = true
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .document(storyId)
-            .collection("characters")
-            .document(charId)
-            .set(character.toHashMap())
-            .addOnSuccessListener { Log.d(tag, "Character successfully updated!") }
-            .addOnFailureListener { e ->
+                // update names document by adding the new name
+                batch.update(
+                    db.collection("users")
+                        .document(auth.currentUser!!.uid)
+                        .collection("stories")
+                        .document(storyId)
+                        .collection("characters")
+                        .document("names"),
+                    "names",
+                    currentNames
+                )
+
+            }.addOnSuccessListener {
+
+            }.addOnFailureListener{e ->
                 ret = false
-                Log.w(tag, "Error updating character", e)
+                Log.w(tag, "Error updating character and names", e)
             }
-            .await()
+                .await()
+        }
+
         return ret
     }
 
@@ -341,23 +439,62 @@ class DatabaseAccess {
     }
 
     /* creates a character document in the given story*/
-    suspend fun createCharacter(storyId: String, character: CharacterEntity): Boolean{
-        var ret  = true
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .document(storyId)
-            .collection("characters")
-            .add(character.toHashMap())
-            .addOnSuccessListener { documentReference ->
-                Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(tag, "Error adding document", e)
-                ret = false
-            }
+    suspend fun createCharacter(storyId: String, character: CharacterEntity, currentNames: List<String>): Boolean{
+        var ret = true
+
+        // batched operation so atomic
+        db.runBatch {batch ->
+
+            //create character
+            batch.set(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(storyId)
+                    .collection("characters")
+                    .document(),
+                character.toHashMap()
+            )
+
+
+            // update names document by adding the new name
+            batch.update(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(storyId)
+                    .collection("characters")
+                    .document("names"),
+                "names",
+                currentNames
+            )
+
+        }.addOnSuccessListener {
+
+        }.addOnFailureListener{e ->
+            ret = false
+            Log.w(tag, "Error creating character", e)
+        }
             .await()
+
         return ret
+
+//        var ret  = true
+//        db.collection("users")
+//            .document(auth.currentUser!!.uid)
+//            .collection("stories")
+//            .document(storyId)
+//            .collection("characters")
+//            .add(character.toHashMap())
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w(tag, "Error adding document", e)
+//                ret = false
+//            }
+//            .await()
+//        return ret
     }
 
     //TODO figure out how best to handle the characters subcollection
@@ -555,9 +692,11 @@ class DatabaseAccess {
             .get(source)
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    characters?.add(buildCharacterFromDocumentSnapshot(document))
-//                    characters.add(document.toObject<CharacterEntity>())
-                    Log.i(tag, "${document.id} => ${document.data}")
+                    if (document.id != "names") {
+                        characters?.add(buildCharacterFromDocumentSnapshot(document))
+                        Log.i(tag, "${document.id} => ${document.data}")
+                    }
+
                 }
                 Log.i(tag, "success")
 
@@ -579,13 +718,24 @@ class DatabaseAccess {
         // batched operation so atomic
         db.runBatch {batch ->
 
+            // reference to the new story being created
+            val storyRef = db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .collection("stories")
+                .document()
+
             //create story
             batch.set(
-                db.collection("users")
-                    .document(auth.currentUser!!.uid)
-                    .collection("stories")
-                    .document(),
+                storyRef,
                 story.toHashMap()
+            )
+
+            // created the names document for the characters of this story
+            batch.set(
+                storyRef
+                    .collection("characters")
+                    .document("names"),
+                hashMapOf("names" to listOf("names"))
             )
 
 
@@ -608,20 +758,6 @@ class DatabaseAccess {
             .await()
 
         return ret
-//        var ret = true
-//        db.collection("users")
-//            .document(auth.currentUser!!.uid)
-//            .collection("stories")
-//            .add(story.toHashMap())
-//            .addOnSuccessListener { documentReference ->
-//                Log.d(tag, "DocumentSnapshot written with ID: ${documentReference.id}")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.w(tag, "Error adding document", e)
-//                ret = false
-//            }
-//            .await()
-//        return ret
     }
 
     suspend fun getStories(): MutableList<StoryEntity>? {
