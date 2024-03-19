@@ -72,30 +72,15 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
 
     init {
         viewModelScope.launch {
-            updateCharsStringList()
             currentNames = db.getCurrentNames(storyId)
             if (currentNames == null){
                 _retrievalError.value = true
+                return@launch
             }
             if (charName != null){
                 getCharacter(charName)
             }
         }
-    }
-
-    /* function to update the list of all the character names (as Strings)
-        which we will pass to edit/add Character*/
-    private suspend fun updateCharsStringList(){
-        val characters = db.getCharacters(storyId)
-        if (characters != null){
-            _charactersStringList.clear()
-            for (character in characters){
-                character.name.value.let { _charactersStringList.add(it) }
-            }
-        }else{
-            _retrievalError.value = true
-        }
-
     }
 
     private suspend fun getCharacter(charName: String){
@@ -105,7 +90,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             if (_character.value.name.value != ""){
                 originalCharacterName = character.value.name.value
                 originalFilename = character.value.imageFilename.value
-                _charactersStringList = _charactersStringList.filter { name -> name != charName }.toMutableList()
+                _charactersStringList = currentNames!!.filter { name -> name != charName }.toMutableList()
 
             }else{
                 _retrievalError.value = true
