@@ -346,10 +346,12 @@ class DatabaseAccess {
         db.collection("users")
             .document(auth.currentUser!!.uid)
             .collection("stories")
+            .document("titles")
             .get()
             .addOnSuccessListener { result ->
-                val titlesDoc = result.documents.filter { documentSnapshot -> documentSnapshot.id == "titles" }[0]
-                titles = titlesDoc.get("titles") as MutableList<String>?
+                titles = result.get("titles") as MutableList<String>?
+//                val titlesDoc = result.documents.filter { documentSnapshot -> documentSnapshot.id == "titles" }[0]
+//                titles = titlesDoc.get("titles") as MutableList<String>?
                 Log.i(tag, "success")
 
             }
@@ -606,10 +608,12 @@ class DatabaseAccess {
             .collection("stories")
             .document(storyId)
             .collection("characters")
+            .document("names")
             .get()
             .addOnSuccessListener { result ->
-                val titlesDoc = result.documents.filter { documentSnapshot -> documentSnapshot.id == "names" }[0]
-                names = titlesDoc.get("names") as MutableList<String>?
+                names = result.get("names") as MutableList<String>?
+//                val titlesDoc = result.documents.filter { documentSnapshot -> documentSnapshot.id == "names" }[0]
+//                names = titlesDoc.get("names") as MutableList<String>?
                 Log.i(tag, "success")
 
             }

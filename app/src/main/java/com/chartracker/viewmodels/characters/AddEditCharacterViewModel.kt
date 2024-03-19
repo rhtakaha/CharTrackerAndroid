@@ -140,13 +140,6 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
 
     private suspend fun addCharacter(storyId: String, newCharacter: CharacterEntity, localImageURI: Uri?){
         Log.i(tag, "Creation of new char initiated")
-        if (currentNames == null){
-            // if we could not get the current names
-            Log.d(tag, "null current names")
-            _uploadError.value = true
-            return
-        }
-
         if (newCharacter.name.value in currentNames!!){
             _duplicateNameError.value = true
             return
@@ -185,12 +178,6 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         Log.i("EditCharVM", "starting to update character")
         if (updatedCharacter.name.value != originalCharacterName){
             // if the name was changed have to make sure it is valid
-            if (currentNames == null){
-                // if we could not get the current names
-                _uploadError.value = true
-                return
-            }
-
             if (updatedCharacter.name.value in currentNames!!){
                 _duplicateNameError.value = true
                 return
@@ -201,7 +188,6 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             // remove the name which is being replaced
             currentNames!!.remove(originalCharacterName)
         }
-
 
         if (localImageURI != null){
             if (!localImageURI.toString().startsWith("https://firebasestorage.googleapis.com")){
