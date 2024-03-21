@@ -9,10 +9,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Date
 
 class AddEditCharacterViewModel(private val storyId: String, private val storyTitle: String, charName: String?): ViewModel() {
     private val tag = "AddEditCharVM"
@@ -105,6 +107,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     /*function that calls a database access method to create the character in Firebase
         also calls navigation*/
     fun submitCharacter(newCharacter: CharacterEntity, localImageURI: Uri?){
+        newCharacter.accessDate.value = Timestamp(Date())
         if (alliesList.size > 0){
             newCharacter.allies.value = alliesList
         }

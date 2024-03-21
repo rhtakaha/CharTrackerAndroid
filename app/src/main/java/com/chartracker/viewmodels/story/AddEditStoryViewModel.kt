@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.StoryEntity
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Date
 
 class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     private val tag = "AddEditStoryVM"
@@ -66,7 +68,9 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
     /*function that calls a database access method to create the story in Firebase
         also calls navigation*/
     fun submitStory(newStory: StoryEntity, localImageURI: Uri?){
+
         viewModelScope.launch {
+            newStory.accessDate.value = Timestamp(Date())
             if (storyId == null) {
                 addStory(newStory, localImageURI)
             }else{

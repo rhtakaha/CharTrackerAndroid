@@ -2,6 +2,7 @@ package com.chartracker.database
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.google.firebase.Timestamp
 
 /* File holding the entities in the database*/
 
@@ -13,6 +14,7 @@ open class DatabaseEntity(
     val name: MutableState<String> = mutableStateOf(name)
     val imageFilename: MutableState<String?> = mutableStateOf(imageFilename)
     val imagePublicUrl: MutableState<String?> = mutableStateOf(imagePublicUrl)
+    val accessDate: MutableState<Timestamp> = mutableStateOf(Timestamp(java.util.Date()))
 }
 
 class StoryEntity(
@@ -27,14 +29,15 @@ class StoryEntity(
     val type: MutableState<String> = mutableStateOf(type)
     val author: MutableState<String> = mutableStateOf(author)
 
-    fun toHashMap(): HashMap<String, String?>{
+    fun toHashMap(): HashMap<String, Any?>{
         return hashMapOf(
             "name" to name.value,
             "genre" to genre.value,
             "type" to type.value,
             "author" to author.value,
             "imageFilename" to imageFilename.value,
-            "imagePublicUrl" to imagePublicUrl.value
+            "imagePublicUrl" to imagePublicUrl.value,
+            "accessDate" to accessDate.value
         )
     }
 }
@@ -94,7 +97,8 @@ class CharacterEntity(
             "enemies" to enemies.value,
             "neutral" to neutral.value,
             "imageFilename" to imageFilename.value,
-            "imagePublicUrl" to imagePublicUrl.value
+            "imagePublicUrl" to imagePublicUrl.value,
+            "accessDate" to accessDate.value
         )
     }
 }

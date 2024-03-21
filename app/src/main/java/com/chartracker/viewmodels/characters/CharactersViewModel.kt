@@ -74,11 +74,11 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     }
 
     fun charactersRecentSort(){
-        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
+        _characters.value = _characters.value.sortedBy { character -> character.accessDate.value }.reversed()
     }
 
     fun charactersReverseRecentSort(){
-        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
+        _characters.value = _characters.value.sortedBy { character -> character.accessDate.value }
     }
 }
 

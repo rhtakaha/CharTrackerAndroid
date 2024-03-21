@@ -50,10 +50,10 @@ class StoriesViewModel : ViewModel(){
     }
 
     fun storiesRecentSort(){
-        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
+        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.accessDate.value }.reversed()
     }
 
     fun storiesReverseRecentSort(){
-        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
+        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.accessDate.value }
     }
 }
