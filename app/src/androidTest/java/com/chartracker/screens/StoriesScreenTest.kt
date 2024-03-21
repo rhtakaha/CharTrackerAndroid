@@ -38,6 +38,10 @@ class StoriesScreenTest {
             StoriesScreen(
                 stories = stories,
                 refreshStories = {},
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {},
                 failedGetStories = failedGetStories.value,
                 resetFailedGetStories = {failedGetStories.value = false},
                 navToAddStory = { /**/ },

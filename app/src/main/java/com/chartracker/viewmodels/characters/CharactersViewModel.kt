@@ -58,18 +58,28 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     suspend fun getCharacters(){
         val temp = db.getCharacters(storyId)
         if (temp != null){
-            _characters.value = temp
+            _characters.value = temp.sortedBy { character -> character.name.value }
         }else{
             _failedGetCharacters.value = true
         }
 
     }
 
-//    fun getCharacters(){
-//        viewModelScope.launch {
-//            _characters.value = db.getCharacters(storyId)
-//        }
-//    }
+    fun charactersAlphaSort(){
+        _characters.value = _characters.value.sortedBy { character -> character.name.value }
+    }
+
+    fun charactersReverseAlphaSort(){
+        _characters.value = _characters.value.sortedBy { character -> character.name.value }.reversed()
+    }
+
+    fun charactersRecentSort(){
+        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
+    }
+
+    fun charactersReverseRecentSort(){
+        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
+    }
 }
 
 class CharactersViewModelFactory(private val storyTitle: String) :

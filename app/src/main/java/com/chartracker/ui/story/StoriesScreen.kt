@@ -53,6 +53,10 @@ fun StoriesScreen(
     StoriesScreen(
         stories = stories,
         refreshStories = { storiesViewModel.getStories() },
+        alphaSort = { storiesViewModel.storiesAlphaSort() },
+        reverseAlphaSort = { storiesViewModel.storiesReverseAlphaSort() },
+        recentSort = { storiesViewModel.storiesRecentSort() },
+        reverseRecentSort = { storiesViewModel.storiesReverseRecentSort() },
         failedGetStories = storiesViewModel.failedGetStories.value,
         resetFailedGetStories = { storiesViewModel.resetFailedGetStories() },
         navToAddStory= navToAddStory,
@@ -67,6 +71,10 @@ fun StoriesScreen(
 fun StoriesScreen(
     stories: List<StoryEntity>,
     refreshStories: () -> Unit,
+    alphaSort: () -> Unit,
+    reverseAlphaSort: () -> Unit,
+    recentSort: () -> Unit,
+    reverseRecentSort: () -> Unit,
     failedGetStories: Boolean,
     resetFailedGetStories: () -> Unit,
     navToAddStory: () -> Unit,
@@ -105,6 +113,10 @@ fun StoriesScreen(
             EntityHolderList(
                 entities = stories,
                 onClick = navToCharacters,
+                alphaSort = alphaSort,
+                reverseAlphaSort = reverseAlphaSort,
+                recentSort = recentSort,
+                reverseRecentSort = reverseRecentSort,
                 modifier = Modifier
                     .semantics { contentDescription = "Stories Screen" })
 
@@ -144,6 +156,10 @@ fun PreviewStoriesScreen(){
             StoriesScreen(
                 stories = stories,
                 refreshStories = {},
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {},
                 failedGetStories = false,
                 resetFailedGetStories = {},
                 navToAddStory = { /*TODO*/ },

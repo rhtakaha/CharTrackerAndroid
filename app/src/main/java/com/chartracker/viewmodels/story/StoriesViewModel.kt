@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class StoriesViewModel : ViewModel(){
     private val _stories = MutableStateFlow<List<StoryEntity>>(emptyList())
     val stories: StateFlow<List<StoryEntity>> = _stories.asStateFlow()
-    val db = DatabaseAccess()
+    private val db = DatabaseAccess()
 
     /* event for failing to get stories*/
     private val _failedGetStories = mutableStateOf(false)
@@ -36,8 +36,24 @@ class StoriesViewModel : ViewModel(){
             if (temp == null){
                 _failedGetStories.value = true
             }else{
-                _stories.value = temp
+                _stories.value = temp.sortedBy { storyEntity -> storyEntity.name.value }
             }
         }
+    }
+
+    fun storiesAlphaSort(){
+        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.name.value }
+    }
+
+    fun storiesReverseAlphaSort(){
+        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.name.value }.reversed()
+    }
+
+    fun storiesRecentSort(){
+        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
+    }
+
+    fun storiesReverseRecentSort(){
+        /*TODO AFTER IMPLEMENTED DATES IN THE DOCS*/
     }
 }

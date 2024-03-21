@@ -43,6 +43,10 @@ class CharactersScreenTest {
                 imageFilename = "LotR")
             CharactersScreen(
                 characters = characters,
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {},
                 failedGetCharacters = failedGetCharacters.value,
                 resetFailedGetCharacters = {failedGetCharacters.value = false},
                 refreshCharacters = {},

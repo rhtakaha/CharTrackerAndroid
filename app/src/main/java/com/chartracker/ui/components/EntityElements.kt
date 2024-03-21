@@ -158,6 +158,10 @@ fun EntityHolderList(
     modifier: Modifier=Modifier,
     onClick: (String) -> Unit,
     story: StoryEntity?=null,
+    alphaSort: () -> Unit,
+    reverseAlphaSort: () -> Unit,
+    recentSort: () -> Unit,
+    reverseRecentSort: () -> Unit,
     ){
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -167,23 +171,29 @@ fun EntityHolderList(
         }
     }
     Box(modifier= modifier.fillMaxSize()) {
-        LazyColumn(
-            contentPadding = PaddingValues(4.dp),
-            state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            if (story != null) {
-                item {
-                    StoryDetails(story = story)
+        Column(horizontalAlignment = Alignment.End) {
+            SortingMenu(
+                alphaSort = alphaSort,
+                reverseAlphaSort = reverseAlphaSort,
+                recentSort = recentSort,
+                reverseRecentSort = reverseRecentSort)
+            LazyColumn(
+                contentPadding = PaddingValues(4.dp),
+                state = lazyListState,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (story != null) {
+                    item {
+                        StoryDetails(story = story)
+                    }
                 }
-            }
-            items(entities) { entity ->
-                EntityHolder(
-                    imageUrl = entity.imagePublicUrl.value,
-                    entityName = entity.name.value,
-                    onClick = onClick
-                )
+                items(entities) { entity ->
+                    EntityHolder(
+                        imageUrl = entity.imagePublicUrl.value,
+                        entityName = entity.name.value,
+                        onClick = onClick
+                    )
+                }
             }
         }
         if (showScrollToTopButton) {
@@ -287,7 +297,11 @@ fun PreviewEntityHolderListWithStoryDetails(){
         type = "Book/Film")
     CharTrackerTheme {
         Surface {
-            EntityHolderList(entities = characters, onClick = {}, story = story)
+            EntityHolderList(entities = characters, onClick = {}, story = story,
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {})
         }
     }
 }
@@ -303,7 +317,11 @@ fun PreviewEntityHolderList(){
     val stories = listOf(StoryEntity(name="Lord of the Rings", imagePublicUrl = ""), StoryEntity(name = "Batman"))
     CharTrackerTheme {
         Surface {
-            EntityHolderList(entities = stories, onClick = {})
+            EntityHolderList(entities = stories, onClick = {},
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {})
         }
     }
 }

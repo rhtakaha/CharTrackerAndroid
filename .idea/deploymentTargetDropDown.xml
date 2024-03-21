@@ -2,10 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AddStoryScreenTest">
+      <entry key="EditStoryScreenTest">
         <State />
       </entry>
-      <entry key="EditStoryScreenTest">
+      <entry key="MenuTest">
         <State />
       </entry>
       <entry key="app">
@@ -30,7 +30,7 @@
       <entry key="duplicateNameErrorTest() (1)">
         <State />
       </entry>
-      <entry key="uploadErrorTest() (1)">
+      <entry key="sortingMenuContentTest()">
         <State />
       </entry>
     </value>

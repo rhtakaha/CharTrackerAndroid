@@ -65,7 +65,11 @@ class EntityElementsTest {
         )
 
         composeTestRule.setContent {
-            EntityHolderList(entities = characters, onClick = {})
+            EntityHolderList(entities = characters, onClick = {},
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {})
         }
 
         composeTestRule
@@ -111,7 +115,11 @@ class EntityElementsTest {
             EntityHolderList(
                 entities = characters,
                 onClick = {},
-                story = story
+                story = story,
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {}
             )
         }
 
@@ -163,7 +171,11 @@ class EntityElementsTest {
         )
 
         composeTestRule.setContent {
-            EntityHolderList(entities = stories, onClick = {})
+            EntityHolderList(entities = stories, onClick = {},
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {})
         }
 
         composeTestRule

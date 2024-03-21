@@ -117,4 +117,9 @@
     <string name="no_network_connection">No network connection!</string>
     <string name="duplicate_title_error">Duplicate title! Ensure each title is unique.</string>
     <string name="duplicate_name_error">Duplicate name! Ensure each name in each story is unique.</string>
+    <string name="alphabetical">Alphabetical</string>
+    <string name="reverse_alphabetical">Reverse Alphabetical</string>
+    <string name="recent">Most Recent</string>
+    <string name="reverse_recent">Least Recent</string>
+    <string name="sorting_menu_desc">Opens menu for sorting options</string>
 </resources>

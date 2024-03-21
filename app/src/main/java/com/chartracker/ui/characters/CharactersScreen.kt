@@ -59,6 +59,10 @@ fun CharactersScreen(
     val scope = rememberCoroutineScope()
     CharactersScreen(
         characters = characters,
+        alphaSort = { charactersViewModel.charactersAlphaSort() },
+        reverseAlphaSort = { charactersViewModel.charactersReverseAlphaSort() },
+        recentSort = { charactersViewModel.charactersRecentSort() },
+        reverseRecentSort = { charactersViewModel.charactersReverseRecentSort() },
         failedGetCharacters = charactersViewModel.failedGetCharacters.value,
         resetFailedGetCharacters = { charactersViewModel.resetFailedGetCharacters() },
         refreshCharacters = {
@@ -79,6 +83,10 @@ fun CharactersScreen(
 @Composable
 fun CharactersScreen(
     characters: List<CharacterEntity>,
+    alphaSort: () -> Unit,
+    reverseAlphaSort: () -> Unit,
+    recentSort: () -> Unit,
+    reverseRecentSort: () -> Unit,
     failedGetCharacters: Boolean,
     resetFailedGetCharacters: () -> Unit,
     refreshCharacters: () -> Unit,
@@ -128,6 +136,10 @@ fun CharactersScreen(
                 entities = characters,
                 story = story,
                 onClick = navToCharacterDetails,
+                alphaSort = alphaSort,
+                reverseAlphaSort = reverseAlphaSort,
+                recentSort = recentSort,
+                reverseRecentSort = reverseRecentSort,
                 modifier = Modifier
                     .semantics { contentDescription = "Characters Screen" }
             )
@@ -163,6 +175,10 @@ fun PreviewCharactersScreen(){
         Surface {
             CharactersScreen(
                 characters = characters,
+                alphaSort = {},
+                reverseAlphaSort = {},
+                recentSort = {},
+                reverseRecentSort = {},
                 failedGetCharacters = false,
                 resetFailedGetCharacters = {},
                 refreshCharacters = {},
