@@ -289,3 +289,91 @@ class StoryDB : StoryDBInterface {
         )
     }
 }
+
+class MockStoryDB: StoryDBInterface{
+    /* mocked create story
+    * returns true if the story title is "title"
+    * else returns false*/
+    override suspend fun createStory(story: StoryEntity, currentTitles: List<String>): Boolean {
+        return story.name.value == "title"
+    }
+
+    /*mocked get stories
+    this always returns a list of stories*/
+    override suspend fun getStories(): MutableList<StoryEntity> {
+        return mutableListOf(
+            StoryEntity(
+                name = "Lord of the Rings",
+                genre = "Fantasy",
+                author = "JRR Tolkien"
+            ),
+            StoryEntity(
+                name = "Dune",
+                genre = "Sci-Fi",
+                author = "Frank Herbert"
+            ),
+            StoryEntity(
+                name = "Star Wars",
+                genre = "Sci-Fi",
+                author = "George Lucas"
+            )
+        )
+    }
+    /*mocked get stories
+    * this always returns null*/
+    fun getStoriesNull(): MutableList<StoryEntity>? {
+        return null
+    }
+
+    /* mocked get story id
+    * returns "id" if the story title is "title"
+    * else returns ""*/
+    override suspend fun getStoryId(storyTitle: String): String {
+        if (storyTitle == "title"){
+            return "id"
+        }
+        return ""
+    }
+
+    /* mocked get story from id
+    * returns Dune story if story id is "id"
+    * else returns empty story*/
+    override suspend fun getStoryFromId(storyId: String): StoryEntity {
+        if (storyId == "id"){
+            StoryEntity(
+                name = "Dune",
+                genre = "Sci-Fi",
+                author = "Frank Herbert"
+            )
+        }
+        return StoryEntity()
+    }
+
+    /* mocked update story
+    * returns true if story id is "id"
+    * else returns false*/
+    override suspend fun updateStory(
+        storyId: String,
+        story: StoryEntity,
+        currentTitles: List<String>?
+    ): Boolean {
+        return storyId == "id"
+    }
+
+    override fun deleteStory(storyId: String, currentTitles: List<String>) {
+        return
+    }
+
+    /*mocked get current titles
+    this always returns a list of titles (strings)*/
+    override suspend fun getCurrentTitles(): MutableList<String> {
+        return mutableListOf("Lord of the Rings", "Dune", "Star Wars")
+    }
+
+    /*mocked get current titles
+    * this always returns null*/
+    fun getCurrentTitlesNull(): MutableList<StoryEntity>? {
+        return null
+    }
+
+}

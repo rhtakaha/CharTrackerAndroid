@@ -9,7 +9,7 @@ import com.google.firebase.Timestamp
 open class DatabaseEntity(
     name: String = "",
     imageFilename: String? = null,
-    imagePublicUrl: String? = null
+    imagePublicUrl: String? = null,
 ){
     val name: MutableState<String> = mutableStateOf(name)
     val imageFilename: MutableState<String?> = mutableStateOf(imageFilename)
