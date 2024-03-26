@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
+import com.chartracker.database.StoryDB
 import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     private val _characters = MutableStateFlow<List<CharacterEntity>>(emptyList())
     val characters: StateFlow<List<CharacterEntity>> = _characters.asStateFlow()
     private val db = DatabaseAccess()
+    private val storyDB = StoryDB()
     lateinit var storyId: String
     private val _story = MutableStateFlow(StoryEntity())
     val story: StateFlow<StoryEntity> = _story.asStateFlow()
@@ -48,11 +50,11 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     }
 
     private suspend fun getStoryId(){
-        storyId = db.getStoryId(storyTitle)
+        storyId = storyDB.getStoryId(storyTitle)
     }
 
     private suspend fun getStory(){
-        _story.value = db.getStoryFromId(storyId)
+        _story.value = storyDB.getStoryFromId(storyId)
     }
 
     suspend fun getCharacters(){

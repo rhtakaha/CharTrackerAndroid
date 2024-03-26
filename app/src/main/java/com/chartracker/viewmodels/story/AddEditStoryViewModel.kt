@@ -8,13 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.DatabaseAccess
+import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
-class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
+class AddEditStoryViewModel(private val storyId: String?, private val storyDB: StoryDBInterface): ViewModel() {
     private val tag = "AddEditStoryVM"
     private val db = DatabaseAccess()
     private var originalFilename: String? = null
@@ -57,7 +58,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             getStory(storyId= storyId)
         }
         viewModelScope.launch {
-            currentTitles = db.getCurrentTitles()
+            currentTitles = storyDB.getCurrentTitles()
             if (currentTitles == null){
                 // if we could not get the current titles
                 _uploadError.value = true
@@ -132,7 +133,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             }
             // if both were null it would be that there started with and ended with no image
         }
-        val succeeded = db.updateStory(storyId, updatedStory, currentTitles)
+        val succeeded = storyDB.updateStory(storyId, updatedStory, currentTitles)
         if(!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(updatedStory.imageFilename.value!!)
@@ -168,7 +169,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
 
         }
         Log.i(tag, "Creation of new story initiated")
-        val succeeded = db.createStory(newStory, currentTitles!!)
+        val succeeded = storyDB.createStory(newStory, currentTitles!!)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
             db.deleteImage(newStory.imageFilename.value!!)
@@ -187,7 +188,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
 
         viewModelScope.launch {
             Log.d(tag, "storyID: $storyId")
-            val t = db.getStoryFromId(storyId)
+            val t = storyDB.getStoryFromId(storyId)
             _story.value = t
             originalFilename = story.value.imageFilename.value
             originalStoryTitle = story.value.name.value
@@ -199,7 +200,7 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
             Log.i(tag, "starting to delete story")
 
             if (storyId != null) {
-                db.deleteStory(storyId, currentTitles!!.filter { title -> title != originalStoryTitle })
+                storyDB.deleteStory(storyId, currentTitles!!.filter { title -> title != originalStoryTitle })
             }
             // if it has an image delete that too
             story.value.imageFilename.value?.let { db.deleteImage(it) }
@@ -215,8 +216,8 @@ class AddEditStoryViewModel(private val storyId: String?): ViewModel() {
                     (which would have created two images with the same name)*/
 fun getStoryFilename(title: String) = "story_${title}_${Calendar.getInstance().time}"
 
-class AddEditStoryViewModelFactory(private val storyId: String?) :
+class AddEditStoryViewModelFactory(private val storyId: String?, private val storyDB: StoryDBInterface) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = AddEditStoryViewModel(storyId) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = AddEditStoryViewModel(storyId, storyDB) as T
 }

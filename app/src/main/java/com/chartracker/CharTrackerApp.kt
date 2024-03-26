@@ -10,6 +10,7 @@ import com.chartracker.ui.auth.SignUpScreen
 import com.chartracker.ui.theme.CharTrackerTheme
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.chartracker.database.StoryDB
 import com.chartracker.ui.auth.EmailVerifyScreen
 import com.chartracker.ui.auth.SettingsScreen
 import com.chartracker.ui.characters.AddEditCharacterScreen
@@ -55,7 +56,7 @@ fun CharTrackerNavHost(
             navBackStackEntry ->
             val userEmail = navBackStackEntry.arguments?.getString(EmailVerify.userEmailArg) ?: ""
             EmailVerifyScreen(
-                navToUpdateEmail = { /*TODO*/ },
+                navToUpdateEmail = { /**/ },
                 navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 userEmail = userEmail,
                 onBackNav = {navController.navigateUp()})
@@ -76,7 +77,8 @@ fun CharTrackerNavHost(
             AddEditStoryScreen(
                 navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 onBackNav = {navController.navigateUp()},
-                storyId = storyId
+                storyId = storyId,
+                storyDB = StoryDB()
                 )
         }
         composable(
