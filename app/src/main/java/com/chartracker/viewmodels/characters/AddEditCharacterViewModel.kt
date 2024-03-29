@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
+import com.chartracker.database.ImageDBInterface
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
-class AddEditCharacterViewModel(private val storyId: String, private val storyTitle: String, charName: String?): ViewModel() {
+class AddEditCharacterViewModel(private val storyId: String, private val storyTitle: String, charName: String?, private val imageDB: ImageDBInterface): ViewModel() {
     private val tag = "AddEditCharVM"
     private val db = DatabaseAccess()
     private var originalFilename: String? = null
@@ -139,7 +140,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         if (localImageURI != null){
             // adding an image
             newCharacter.imageFilename.value = getCharacterFilename(newCharacter.name.value, storyTitle)
-            val imageUrl = db.addImage(newCharacter.imageFilename.value!!, localImageURI)
+            val imageUrl = imageDB.addImage(newCharacter.imageFilename.value!!, localImageURI)
             if (imageUrl != ""){
                 newCharacter.imagePublicUrl.value = imageUrl
             }else{
@@ -151,7 +152,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         val succeeded = db.createCharacter(storyId, newCharacter, currentNames!!)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
-            db.deleteImage(newCharacter.imageFilename.value!!)
+            imageDB.deleteImage(newCharacter.imageFilename.value!!)
             _uploadError.value = true
             return
         }else if (!succeeded){
@@ -183,12 +184,12 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
                 // trying to add a new image
                 updatedCharacter.imageFilename.value = getCharacterFilename(updatedCharacter.name.value, storyTitle)
 
-                val imageUrl = db.addImage(updatedCharacter.imageFilename.value!!, localImageURI)
+                val imageUrl = imageDB.addImage(updatedCharacter.imageFilename.value!!, localImageURI)
                 if (imageUrl != ""){
                     updatedCharacter.imagePublicUrl.value = imageUrl
 
                     //if adding a new image be sure to delete the original too (if it had one)
-                    originalFilename?.let { it1 -> db.deleteImage(it1) }
+                    originalFilename?.let { it1 -> imageDB.deleteImage(it1) }
                 }else{
                     _uploadError.value = true
                     return
@@ -202,7 +203,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
                 // if there is no file in new version (due to localImageURI == null)
                 //                  AND
                 // the old version had one then we are deleting the current
-                db.deleteImage(originalFilename!!)
+                imageDB.deleteImage(originalFilename!!)
                 updatedCharacter.imageFilename.value = null
                 updatedCharacter.imagePublicUrl.value = null
             }
@@ -212,7 +213,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         val succeeded = db.updateCharacter(storyId, charId, updatedCharacter, currentNames)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
-            db.deleteImage(updatedCharacter.imageFilename.value!!)
+            imageDB.deleteImage(updatedCharacter.imageFilename.value!!)
             _uploadError.value = true
             return
         }else if (!succeeded){
@@ -227,7 +228,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
         CoroutineScope(Dispatchers.IO).launch {
             Log.i(tag, "starting to delete character")
             charId?.let { db.deleteCharacter(storyId, it, currentNames!!.filter { name -> name != originalCharacterName }) }
-            character.value.imageFilename.value?.let { db.deleteImage(it) }
+            character.value.imageFilename.value?.let { imageDB.deleteImage(it) }
         }
         _readyToNavToCharacters.value = true
     }
@@ -270,9 +271,9 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
                     (which would have created two images with the same name)*/
 fun getCharacterFilename(name: String, title: String) = "char_${name}_story_${title}_${Calendar.getInstance().time}"
 
-class AddEditCharacterViewModelFactory(private val storyId: String, private val storyTitle: String, private val charName: String?) :
+class AddEditCharacterViewModelFactory(private val storyId: String, private val storyTitle: String, private val charName: String?, private val imageDB: ImageDBInterface) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        AddEditCharacterViewModel(storyId, storyTitle, charName) as T
+        AddEditCharacterViewModel(storyId, storyTitle, charName, imageDB) as T
 }

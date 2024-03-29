@@ -1,6 +1,5 @@
 package com.chartracker.database
 
-import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -27,45 +26,6 @@ class DatabaseAccess {
 
         db.firestoreSettings = firestoreSettings {
             isPersistenceEnabled = false
-        }
-    }
-
-    /*****************************************    IMAGE  ******************************************/
-    /* function for adding an image into cloud storage
-    * input: String filename WITHOUT EXTENSION and local imageUri*/
-    suspend fun addImage(filename: String, imageURI: Uri): String{
-        var downloadUrl = ""
-        // make a reference to where the file will be
-        val storageRef = storage.reference
-        val imageRef = storageRef.child("users/${auth.currentUser!!.uid}/images/$filename")
-
-        try{
-            downloadUrl = imageRef.putFile(imageURI)
-                .continueWithTask { uploadTask ->
-                    if (!uploadTask.isSuccessful) {
-                        throw uploadTask.exception!!
-                    }
-                    return@continueWithTask imageRef.downloadUrl
-                }
-                .await()
-                .toString()
-        }catch (e: Exception){
-            // if it is still an empty string it knows an error occurred
-        }
-
-        //TODO probably add associated Toast or something to let users know they are waiting for the upload
-        return downloadUrl
-    }
-
-    //TODO maybe add exponential backoff to retry this since if this fails we have floating images in storage which is not good
-    fun deleteImage(filename: String){
-        val imageRef = storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
-        imageRef.delete().addOnSuccessListener {
-            // File deleted successfully
-            Log.d(tag, "successfully deleted the image")
-        }.addOnFailureListener {
-            // Uh-oh, an error occurred!
-            Log.d(tag, "error deleting the image")
         }
     }
 

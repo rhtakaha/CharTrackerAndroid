@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.chartracker.database.DatabaseAccess
+import com.chartracker.database.ImageDBInterface
 import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
 import com.google.firebase.Timestamp
@@ -15,9 +15,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
-class AddEditStoryViewModel(private val storyId: String?, private val storyDB: StoryDBInterface): ViewModel() {
+class AddEditStoryViewModel(private val storyId: String?, private val storyDB: StoryDBInterface, private val imageDB: ImageDBInterface): ViewModel() {
     private val tag = "AddEditStoryVM"
-    private val db = DatabaseAccess()
     private var originalFilename: String? = null
     private lateinit var originalStoryTitle: String
     private var currentTitles: MutableList<String>? = null
@@ -102,7 +101,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                 // no matter what adding the new image
                 updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
                 Log.i(tag, "adding new image to story with new filename: ${updatedStory.imageFilename.value}")
-                val imageUrl = db.addImage(updatedStory.imageFilename.value!!, localImageURI)
+                val imageUrl = imageDB.addImage(updatedStory.imageFilename.value!!, localImageURI)
                 if(imageUrl != ""){
                     updatedStory.imagePublicUrl.value = imageUrl
 
@@ -110,7 +109,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                     originalFilename?.let {
                             it1 ->
                         Log.i(tag, "deleting original story image with original filename: $it1")
-                        db.deleteImage(it1)
+                        imageDB.deleteImage(it1)
                     }
                 }else{
                     // if something went wrong with image upload
@@ -127,7 +126,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                 //                  AND
                 // the old version had one then we are deleting the current
                 Log.i(tag, "deleting original story image with original filename: $originalFilename")
-                db.deleteImage(originalFilename!!)
+                imageDB.deleteImage(originalFilename!!)
                 updatedStory.imageFilename.value = null
                 updatedStory.imagePublicUrl.value = null
             }
@@ -136,7 +135,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
         val succeeded = storyDB.updateStory(storyId, updatedStory, currentTitles)
         if(!succeeded && localImageURI != null){
             //failed and uploaded the image
-            db.deleteImage(updatedStory.imageFilename.value!!)
+            imageDB.deleteImage(updatedStory.imageFilename.value!!)
             _uploadError.value = true
             return
         }else if (!succeeded){
@@ -158,7 +157,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
         if (localImageURI != null) {
             // if we are adding an image
             newStory.imageFilename.value = getStoryFilename(newStory.name.value)
-            val imageUrl = db.addImage(newStory.imageFilename.value!!, localImageURI)
+            val imageUrl = imageDB.addImage(newStory.imageFilename.value!!, localImageURI)
             if (imageUrl != ""){
                 newStory.imagePublicUrl.value = imageUrl
             }else{
@@ -172,7 +171,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
         val succeeded = storyDB.createStory(newStory, currentTitles!!)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
-            db.deleteImage(newStory.imageFilename.value!!)
+            imageDB.deleteImage(newStory.imageFilename.value!!)
             _uploadError.value = true
             return
         }else if (!succeeded){
@@ -203,7 +202,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                 storyDB.deleteStory(storyId, currentTitles!!.filter { title -> title != originalStoryTitle })
             }
             // if it has an image delete that too
-            story.value.imageFilename.value?.let { db.deleteImage(it) }
+            story.value.imageFilename.value?.let { imageDB.deleteImage(it) }
             _navToStories.value = true
         }
     }
@@ -216,8 +215,8 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                     (which would have created two images with the same name)*/
 fun getStoryFilename(title: String) = "story_${title}_${Calendar.getInstance().time}"
 
-class AddEditStoryViewModelFactory(private val storyId: String?, private val storyDB: StoryDBInterface) :
+class AddEditStoryViewModelFactory(private val storyId: String?, private val storyDB: StoryDBInterface, private val imageDB: ImageDBInterface) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = AddEditStoryViewModel(storyId, storyDB) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = AddEditStoryViewModel(storyId, storyDB, imageDB) as T
 }

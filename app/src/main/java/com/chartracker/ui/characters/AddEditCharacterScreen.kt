@@ -49,6 +49,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.CharacterEntity
+import com.chartracker.database.ImageDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.ChipGroupRow
 import com.chartracker.ui.components.MessageDialog
@@ -63,6 +64,7 @@ fun AddEditCharacterScreen(
     storyId: String,
     storyTitle: String,
     charName: String?,
+    imageDB: ImageDBInterface,
     navToCharacters: () -> Unit,
     onBackNav: () -> Unit,
     addEditCharacterViewModel: AddEditCharacterViewModel =
@@ -70,7 +72,8 @@ fun AddEditCharacterScreen(
             factory = AddEditCharacterViewModelFactory(
                 storyId = storyId,
                 storyTitle = storyTitle,
-                charName = charName
+                charName = charName,
+                imageDB = imageDB
             )
         )
 ){
