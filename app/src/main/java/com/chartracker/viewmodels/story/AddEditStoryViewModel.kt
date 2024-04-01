@@ -187,8 +187,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
 
         viewModelScope.launch {
             Log.d(tag, "storyID: $storyId")
-            val t = storyDB.getStoryFromId(storyId)
-            _story.value = t
+            _story.value = storyDB.getStoryFromId(storyId)
             originalFilename = story.value.imageFilename.value
             originalStoryTitle = story.value.name.value
         }
