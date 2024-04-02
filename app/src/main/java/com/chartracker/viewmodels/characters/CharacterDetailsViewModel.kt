@@ -1,6 +1,5 @@
 package com.chartracker.viewmodels.characters
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseAccess
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CharacterDetailsViewModel(private val storyId: String, private val charName: String): ViewModel() {
     private val db = DatabaseAccess()
@@ -72,7 +72,7 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         if (allies != null){
             updatedAllies = allies.subtract(allies.subtract(currentNames!!.toSet())).toList()
             character.value.allies.value = updatedAllies
-            Log.d("details", "allies changed")
+            Timber.tag("details").d("allies changed")
         }
 
         val enemies = character.value.enemies.value
@@ -80,7 +80,7 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         if (enemies != null){
             updatedEnemies = enemies.subtract(enemies.subtract(currentNames!!.toSet())).toList()
             character.value.enemies.value = updatedEnemies
-            Log.d("details", "enemies changed")
+            Timber.tag("details").d("enemies changed")
         }
 
         val neutrals = character.value.neutral.value
@@ -88,7 +88,7 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         if (neutrals != null){
             updatedNeutrals = neutrals.subtract(neutrals.subtract(currentNames!!.toSet())).toList()
             character.value.neutral.value = updatedNeutrals
-            Log.d("details", "neutrals changed")
+            Timber.tag("details").d("neutrals changed")
         }
 
 

@@ -1,6 +1,5 @@
 package com.chartracker.viewmodels.auth
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SignUpViewModel: ViewModel(){
     private val tag = "SignUpVM"
@@ -68,7 +68,7 @@ class SignUpViewModel: ViewModel(){
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign in success
-                    Log.d(tag, "createUserWithEmail:success")
+                    Timber.tag(tag).d("createUserWithEmail:success")
                     CoroutineScope(Dispatchers.IO).launch {
                         //try and set up their document here, TODO mitigate failure -do again later?
                         db.createUser(UserEntity(auth.currentUser?.email))
@@ -80,7 +80,7 @@ class SignUpViewModel: ViewModel(){
                 } else {
                     // If sign in fails, display a message to the user.
                     val exception = task.exception
-                    Log.w(tag, "createUserWithEmail:failure", exception)
+                    Timber.tag(tag).w(exception, "createUserWithEmail:failure")
                     _signUpErrorMessage.value = when(exception){
                         is FirebaseAuthWeakPasswordException -> exception.message.toString()
                         is FirebaseAuthInvalidCredentialsException -> R.string.malformed_email_message

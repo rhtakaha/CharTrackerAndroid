@@ -2,9 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="MenuTest">
-        <State />
-      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -20,12 +17,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-03-09T00:20:31.791122200Z" />
         </State>
-      </entry>
-      <entry key="duplicateNameErrorTest()">
-        <State />
-      </entry>
-      <entry key="duplicateNameErrorTest() (1)">
-        <State />
       </entry>
       <entry key="sortingMenuContentTest()">
         <State />

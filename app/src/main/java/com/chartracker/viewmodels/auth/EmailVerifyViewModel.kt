@@ -1,12 +1,12 @@
 package com.chartracker.viewmodels.auth
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 
 class EmailVerifyViewModel : ViewModel(){
     private val tag = "EmailVerifyVM"
@@ -40,10 +40,10 @@ class EmailVerifyViewModel : ViewModel(){
         user!!.sendEmailVerification()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(tag, "Email sent.")
+                    Timber.tag(tag).d("Email sent.")
                     _emailSent.value = true
                 }else{
-                    Log.w(tag, "Email failed to send!", task.exception)
+                    Timber.tag(tag).w(task.exception, "Email failed to send!")
                 }
             }
     }
@@ -52,7 +52,7 @@ class EmailVerifyViewModel : ViewModel(){
     fun isEmailVerified(): Boolean{
         return try {
             user!!.reload()
-            Log.i(tag, "Is email verified? ${user.isEmailVerified}")
+            Timber.tag(tag).i("Is email verified? %s", user.isEmailVerified)
             user.isEmailVerified
         }catch (e: Exception){
             if (e is FirebaseAuthInvalidUserException){

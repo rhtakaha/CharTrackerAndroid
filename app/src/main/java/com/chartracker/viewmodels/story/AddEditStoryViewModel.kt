@@ -1,7 +1,6 @@
 package com.chartracker.viewmodels.story
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,6 +11,7 @@ import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
 
@@ -92,7 +92,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
             //remove the title which is being replaced
             currentTitles!!.remove(originalStoryTitle)
         }
-        Log.i(tag, "starting to update story")
+        Timber.tag(tag).i("starting to update story")
 
         if (localImageURI != null){
             if (!localImageURI.toString().startsWith("https://firebasestorage.googleapis.com")){
@@ -100,7 +100,8 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                 // trying to add a new image
                 // no matter what adding the new image
                 updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
-                Log.i(tag, "adding new image to story with new filename: ${updatedStory.imageFilename.value}")
+                Timber.tag(tag)
+                    .i("adding new image to story with new filename: %s", updatedStory.imageFilename.value)
                 val imageUrl = imageDB.addImage(updatedStory.imageFilename.value!!, localImageURI)
                 if(imageUrl != ""){
                     updatedStory.imagePublicUrl.value = imageUrl
@@ -108,7 +109,8 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                     //if adding a new image be sure to delete the original too (if it had one)
                     originalFilename?.let {
                             it1 ->
-                        Log.i(tag, "deleting original story image with original filename: $it1")
+                        Timber.tag(tag)
+                            .i("deleting original story image with original filename: %s", it1)
                         imageDB.deleteImage(it1)
                     }
                 }else{
@@ -125,7 +127,8 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                 // if there is no file in new version (due to localImageURI == null)
                 //                  AND
                 // the old version had one then we are deleting the current
-                Log.i(tag, "deleting original story image with original filename: $originalFilename")
+                Timber.tag(tag)
+                    .i("deleting original story image with original filename: %s", originalFilename)
                 imageDB.deleteImage(originalFilename!!)
                 updatedStory.imageFilename.value = null
                 updatedStory.imagePublicUrl.value = null
@@ -167,7 +170,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
             }
 
         }
-        Log.i(tag, "Creation of new story initiated")
+        Timber.tag(tag).i("Creation of new story initiated")
         val succeeded = storyDB.createStory(newStory, currentTitles!!)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
@@ -186,7 +189,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
     private fun getStory(storyId: String){
 
         viewModelScope.launch {
-            Log.d(tag, "storyID: $storyId")
+            Timber.tag(tag).d("storyID: %s", storyId)
             _story.value = storyDB.getStoryFromId(storyId)
             originalFilename = story.value.imageFilename.value
             originalStoryTitle = story.value.name.value
@@ -195,7 +198,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
 
     fun submitStoryDelete(){
         viewModelScope.launch {
-            Log.i(tag, "starting to delete story")
+            Timber.tag(tag).i("starting to delete story")
 
             if (storyId != null) {
                 storyDB.deleteStory(storyId, currentTitles!!.filter { title -> title != originalStoryTitle })

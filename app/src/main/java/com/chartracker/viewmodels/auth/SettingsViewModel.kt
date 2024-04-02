@@ -1,6 +1,5 @@
 package com.chartracker.viewmodels.auth
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SettingsViewModel : ViewModel(){
     private val tag = "SettingsViewModel"
@@ -106,7 +106,7 @@ class SettingsViewModel : ViewModel(){
                     _updateEmailVerificationSent.value = true
                 }else{
                     //no exceptions listed in documentation
-                    Log.d(tag, "failed to update email", task.exception)
+                    Timber.tag(tag).d(task.exception, "failed to update email")
                     if (task.exception is FirebaseAuthInvalidUserException){
                         _invalidUser.value = true
                     }
@@ -147,7 +147,7 @@ class SettingsViewModel : ViewModel(){
                         // need to delete user data as well but probably will need to use cloud functions LATER
                         DatabaseAccess().deleteUserData(userUID)
                     }
-                    Log.d(tag, "User account deleted.")
+                    Timber.tag(tag).d("User account deleted.")
                     _readyToNavToSignIn.value = true
                 } else{
                     if (task.exception is FirebaseAuthRecentLoginRequiredException){
@@ -162,12 +162,11 @@ class SettingsViewModel : ViewModel(){
     }
 
     fun reAuthUser(password: String){
-        Log.i(tag, "email: ${user.email} password: $password")
         val credential = EmailAuthProvider.getCredential(user.email!!, password)
         user.reauthenticate(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(tag, "User re-authenticated.")
+                    Timber.tag(tag).d("User re-authenticated.")
                 } else {
                     if (task.exception is FirebaseAuthInvalidUserException ||
                         task.exception is FirebaseAuthInvalidCredentialsException){

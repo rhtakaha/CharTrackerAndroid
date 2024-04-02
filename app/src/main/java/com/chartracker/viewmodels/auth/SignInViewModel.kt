@@ -1,6 +1,5 @@
 package com.chartracker.viewmodels.auth
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 
 class SignInViewModel() : ViewModel(){
     private val tag = "SignInVM"
@@ -68,7 +68,7 @@ class SignInViewModel() : ViewModel(){
             .addOnCompleteListener { task ->
                 _emailSent.value = true
                 if (task.isSuccessful) {
-                    Log.d(tag, "Email sent.")
+                    Timber.tag(tag).d("Email sent.")
                 }else{
                     //if the email was not a valid user
                     // Don't say anything to protect vs email enumeration attacks
@@ -77,20 +77,19 @@ class SignInViewModel() : ViewModel(){
     }
 
     fun signInWithEmailPassword(email: String, password: String){
-        Log.d(tag, "email: $email password: $password")
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(tag, "signInWithEmail:success")
+                    Timber.tag(tag).d("signInWithEmail:success")
 
                     //check if their email is verified
                     if (auth.currentUser!!.isEmailVerified){
                         // go to their stories page
-                        Log.d(tag, "email verified!")
+                        Timber.tag(tag).d("email verified!")
                     }else{
                         // if their email is unverified
-                        Log.d(tag, "email unverified")
+                        Timber.tag(tag).d("email unverified")
                     }
                     //event for navigating out
                     _signedIn.value = true

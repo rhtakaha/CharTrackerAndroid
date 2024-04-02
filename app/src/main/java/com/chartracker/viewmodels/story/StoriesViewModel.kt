@@ -1,6 +1,5 @@
 package com.chartracker.viewmodels.story
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class StoriesViewModel : ViewModel(){
     private val _stories = MutableStateFlow<List<StoryEntity>>(emptyList())
@@ -30,7 +30,7 @@ class StoriesViewModel : ViewModel(){
         getStories()
     }
     fun getStories(){
-        Log.i("StoriesVM", "getting stories")
+        Timber.tag("StoriesVM").i("getting stories")
         viewModelScope.launch {
             val temp = storyDB.getStories()
             if (temp == null){

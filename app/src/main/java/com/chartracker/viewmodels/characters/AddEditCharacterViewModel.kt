@@ -1,7 +1,6 @@
 package com.chartracker.viewmodels.characters
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,6 +13,7 @@ import com.google.firebase.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
 
@@ -128,7 +128,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     }
 
     private suspend fun addCharacter(storyId: String, newCharacter: CharacterEntity, localImageURI: Uri?){
-        Log.i(tag, "Creation of new char initiated")
+        Timber.tag(tag).i("Creation of new char initiated")
         if (newCharacter.name.value in currentNames!!){
             _duplicateNameError.value = true
             return
@@ -164,7 +164,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     }
 
     private suspend fun updateCharacter(updatedCharacter: CharacterEntity, localImageURI: Uri?, charId: String){
-        Log.i("EditCharVM", "starting to update character")
+        Timber.tag("EditCharVM").i("starting to update character")
         if (updatedCharacter.name.value != originalCharacterName){
             // if the name was changed have to make sure it is valid
             if (updatedCharacter.name.value in currentNames!!){
@@ -226,7 +226,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
 
     fun submitCharacterDelete(){
         CoroutineScope(Dispatchers.IO).launch {
-            Log.i(tag, "starting to delete character")
+            Timber.tag(tag).i("starting to delete character")
             charId?.let { db.deleteCharacter(storyId, it, currentNames!!.filter { name -> name != originalCharacterName }) }
             character.value.imageFilename.value?.let { imageDB.deleteImage(it) }
         }

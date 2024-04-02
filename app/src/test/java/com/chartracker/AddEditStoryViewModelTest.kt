@@ -6,6 +6,7 @@ import com.chartracker.database.MockStoryDB
 import com.chartracker.database.StoryEntity
 import com.chartracker.viewmodels.story.AddEditStoryViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -19,11 +20,6 @@ class AddEditStoryViewModelTest {
     @ExperimentalCoroutinesApi
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
-
-//    @Before
-//    fun setupViewModel()= runTest {
-//        viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
-//    }
 
     @ExperimentalCoroutinesApi
     @Test
@@ -42,10 +38,14 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_getStoryNullTest() = runTest {
+    fun addEditStoryViewModel_updateStoryNullTest() = runTest {
         viewmodel = AddEditStoryViewModel("incorrect", mockStoryDB, mockImageDB)
-        viewmodel.submitStory(StoryEntity("title"), Uri.EMPTY)
-        assert(!viewmodel.uploadError.value)
+        viewmodel.submitStory(StoryEntity("title"), null)
+
+        //allows for the internal coroutines to run
+        advanceUntilIdle()
+
+        assert(viewmodel.uploadError.value)
     }
 
 }
