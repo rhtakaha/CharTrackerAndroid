@@ -1,11 +1,11 @@
 package com.chartracker.database
 
 import android.net.Uri
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 interface ImageDBInterface {
     suspend fun addImage(filename: String, imageURI: Uri): String
@@ -49,20 +49,20 @@ class ImageDB : ImageDBInterface {
         val imageRef = storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
         imageRef.delete().addOnSuccessListener {
             // File deleted successfully
-            Log.d(tag, "successfully deleted the image")
+            Timber.tag(tag).d("successfully deleted the image")
         }.addOnFailureListener {
             // Uh-oh, an error occurred!
-            Log.d(tag, "error deleting the image")
+            Timber.tag(tag).d("error deleting the image")
         }
     }
 }
 
 class MockImageDB: ImageDBInterface{
     /* mocked add image
-    * returns "downloadUrl" if the filname is "filename
+    * returns "downloadUrl" if the imageUri (string) is "fileUri"
     * else returns ""*/
     override suspend fun addImage(filename: String, imageURI: Uri): String {
-        if (filename == "filename"){
+        if (imageURI.toString() == "fileUri"){
             return "downloadUrl"
         }
         return ""
