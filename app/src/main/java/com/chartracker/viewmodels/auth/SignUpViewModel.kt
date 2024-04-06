@@ -61,7 +61,7 @@ class SignUpViewModel(private val userDB: UserDBInterface): ViewModel(){
             if (output is String || output is Int){
                 // if it is an error message
                 _signUpErrorMessage.value = output
-            }else if (output == true){
+            }else{
                 //event for navigating out
                 _signedIn.value = true
             }

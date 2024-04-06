@@ -5,6 +5,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -261,14 +264,31 @@ class StoryDB : StoryDBInterface {
             .collection("stories")
             .document("titles")
             .get()
-            .addOnSuccessListener { result ->
-                titles = result.get("titles") as MutableList<String>?
-                Timber.tag(tag).i("success")
-
-            }
-            .addOnFailureListener { exception ->
-                Timber.tag(tag).d(exception, "Error getting documents: ")
-                titles = null
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    if(!task.result.exists()){
+                        CoroutineScope(Dispatchers.IO).launch {
+                            db.collection("users")
+                                .document(auth.currentUser!!.uid)
+                                .collection("stories")
+                                .document("titles")
+                                .set(hashMapOf("titles" to listOf<String>()))
+                                .addOnSuccessListener {
+                                    titles = mutableListOf()
+                                }
+                                .addOnFailureListener {
+                                    titles = null
+                                }
+                                .await()
+                        }
+                    }else{
+                        titles = task.result.get("titles") as MutableList<String>?
+                    }
+                    Timber.tag(tag).i("success")
+                }else{
+                    Timber.tag(tag).d(task.exception, "Error getting documents: ")
+                    titles = null
+                }
             }
             .await()
         return titles
