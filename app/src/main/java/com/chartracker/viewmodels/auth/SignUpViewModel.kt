@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.chartracker.R
-import com.chartracker.database.DatabaseAccess
+import com.chartracker.database.UserDB
 import com.chartracker.database.UserEntity
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -19,7 +19,7 @@ import timber.log.Timber
 class SignUpViewModel: ViewModel(){
     private val tag = "SignUpVM"
     val auth = Firebase.auth
-    private val db = DatabaseAccess()
+    private val db = UserDB()
 
     private val _email = mutableStateOf("")
     val email: MutableState<String>

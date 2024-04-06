@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chartracker.database.DatabaseAccess
+import com.chartracker.database.UserDB
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -145,7 +145,7 @@ class SettingsViewModel : ViewModel(){
 
                     viewModelScope.launch {
                         // need to delete user data as well but probably will need to use cloud functions LATER
-                        DatabaseAccess().deleteUserData(userUID)
+                        UserDB().deleteUserData(userUID)
                     }
                     Timber.tag(tag).d("User account deleted.")
                     _readyToNavToSignIn.value = true

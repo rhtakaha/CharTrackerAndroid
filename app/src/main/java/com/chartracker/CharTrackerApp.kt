@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chartracker.database.CharacterDB
 import com.chartracker.database.ImageDB
 import com.chartracker.database.StoryDB
+import com.chartracker.database.UserDB
 import com.chartracker.ui.auth.EmailVerifyScreen
 import com.chartracker.ui.auth.SettingsScreen
 import com.chartracker.ui.characters.AddEditCharacterScreen
@@ -42,6 +43,7 @@ fun CharTrackerNavHost(
     NavHost(navController = navController, startDestination = SignIn.route) {
         composable(route = SignIn.route){
             SignInScreen(
+                userDB = UserDB(),
                 navToSignUp = { navController.navigateSingleTopTo(SignUp.route) },
                 navToStories = {navController.navigateSingleTopTo(Stories.route)})
         }

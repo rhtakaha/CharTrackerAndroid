@@ -3,16 +3,12 @@ package com.chartracker.viewmodels.auth
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import timber.log.Timber
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.chartracker.database.UserDBInterface
+import kotlinx.coroutines.launch
 
-class SignInViewModel() : ViewModel(){
-    private val tag = "SignInVM"
-    val auth = Firebase.auth
-
+class SignInViewModel(private val userDB: UserDBInterface) : ViewModel(){
     private val _email = mutableStateOf("")
     val email: MutableState<String>
         get() = _email
@@ -57,52 +53,29 @@ class SignInViewModel() : ViewModel(){
     }
 
     init {
-        _signedIn.value = auth.currentUser != null
-
-        //ONLY FOR TESTING
-//        DatabaseAccess().enableEmulatorTesting()
+        _signedIn.value = userDB.isSignedIn()
     }
 
     fun sendPasswordResetEmail(email: String){
-        auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { task ->
-                _emailSent.value = true
-                if (task.isSuccessful) {
-                    Timber.tag(tag).d("Email sent.")
-                }else{
-                    //if the email was not a valid user
-                    // Don't say anything to protect vs email enumeration attacks
-                }
-            }
+        viewModelScope.launch {
+            _emailSent.value = userDB.sendPasswordResetEmail(email)
+        }
     }
 
     fun signInWithEmailPassword(email: String, password: String){
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Timber.tag(tag).d("signInWithEmail:success")
-
-                    //check if their email is verified
-                    if (auth.currentUser!!.isEmailVerified){
-                        // go to their stories page
-                        Timber.tag(tag).d("email verified!")
-                    }else{
-                        // if their email is unverified
-                        Timber.tag(tag).d("email unverified")
-                    }
-                    //event for navigating out
-                    _signedIn.value = true
-
-                } else {
-                    // If sign in fails, display a message to the user.
-                    if (task.exception is FirebaseAuthInvalidUserException ||
-                        task.exception is FirebaseAuthInvalidCredentialsException){
-                        //email and/or password is incorrect
-                        //not differentiating to protect vs email enumeration attacks
-                        _invalidCredentials.value = true
-                    }
-                }
+        viewModelScope.launch {
+            if (!userDB.signInWithEmailPassword(email, password)){
+                _invalidCredentials.value = true
+            }else{
+                _signedIn.value = true
             }
+        }
     }
+}
+
+class SignInViewModelFactory(private val userDB: UserDBInterface) :
+    ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        SignInViewModel(userDB) as T
 }

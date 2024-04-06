@@ -27,17 +27,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
+import com.chartracker.database.UserDBInterface
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.auth.SignInViewModel
+import com.chartracker.viewmodels.auth.SignInViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 fun SignInScreen(
+    userDB: UserDBInterface,
     navToSignUp: () -> Unit,
     navToStories: () -> Unit,
-    signInViewModel: SignInViewModel = viewModel()
+    signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(userDB = userDB))
 ){
     SignInScreen(
         email = signInViewModel.email.value,
