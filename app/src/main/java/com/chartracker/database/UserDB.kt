@@ -1,12 +1,18 @@
 package com.chartracker.database
 
+import com.chartracker.R
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -18,6 +24,8 @@ interface UserDBInterface {
     suspend fun sendPasswordResetEmail(email: String): Boolean
 
     suspend fun signInWithEmailPassword(email: String, password: String): Boolean
+
+    suspend fun signUpUserWithEmailPassword(email: String, password: String): Any?
 
     /*creates a new user in Firebase
     * this includes the overall user
@@ -97,6 +105,39 @@ class UserDB : UserDBInterface {
                         //email and/or password is incorrect
                         //not differentiating to protect vs email enumeration attacks
                         ret = false
+                    }
+                }
+            }
+            .await()
+        return ret
+    }
+
+    /*
+    * signing up user with email and password
+    * return true means it worked
+    * return false means it technically worked, but could not setup the account in db
+    * return string or string resource means sign up failed*/
+    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any?{
+        var ret: Any? = null
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success
+                    Timber.tag(tag).d("createUserWithEmail:success")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        //try and set up their document here, TODO mitigate failure -do again later?
+                        ret = createUser(UserEntity(auth.currentUser?.email))
+
+                    }
+                } else {
+                    // If sign in fails, display a message to the user.
+                    val exception = task.exception
+                    Timber.tag(tag).w(exception, "createUserWithEmail:failure")
+                    ret = when(exception){
+                        is FirebaseAuthWeakPasswordException -> exception.message.toString()
+                        is FirebaseAuthInvalidCredentialsException -> R.string.malformed_email_message
+                        is FirebaseAuthUserCollisionException -> R.string.user_collision_message
+                        else -> null
                     }
                 }
             }

@@ -28,17 +28,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ConnectivityStatus
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
+import com.chartracker.database.UserDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.viewmodels.auth.SignUpViewModel
+import com.chartracker.viewmodels.auth.SignupViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 fun SignUpScreen(
+    userDB: UserDBInterface,
     navToEmailVerify: (String) -> Unit,
     onBackNav: () -> Unit,
-    signUpViewModel: SignUpViewModel = viewModel()
+    signUpViewModel: SignUpViewModel = viewModel(factory = SignupViewModelFactory(userDB = userDB))
 ){
     SignUpScreen(
         email = signUpViewModel.email.value,

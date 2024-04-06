@@ -3,23 +3,15 @@ package com.chartracker.viewmodels.auth
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.chartracker.R
-import com.chartracker.database.UserDB
-import com.chartracker.database.UserEntity
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.chartracker.database.UserDBInterface
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
-class SignUpViewModel: ViewModel(){
-    private val tag = "SignUpVM"
+class SignUpViewModel(private val userDB: UserDBInterface): ViewModel(){
     val auth = Firebase.auth
-    private val db = UserDB()
 
     private val _email = mutableStateOf("")
     val email: MutableState<String>
@@ -64,31 +56,23 @@ class SignUpViewModel: ViewModel(){
     }
 
     fun signUpUserWithEmailPassword(email: String, password: String){
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Sign in success
-                    Timber.tag(tag).d("createUserWithEmail:success")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        //try and set up their document here, TODO mitigate failure -do again later?
-                        db.createUser(UserEntity(auth.currentUser?.email))
-
-                    }
-
-                    //event for navigating out
-                    _signedIn.value = true
-                } else {
-                    // If sign in fails, display a message to the user.
-                    val exception = task.exception
-                    Timber.tag(tag).w(exception, "createUserWithEmail:failure")
-                    _signUpErrorMessage.value = when(exception){
-                        is FirebaseAuthWeakPasswordException -> exception.message.toString()
-                        is FirebaseAuthInvalidCredentialsException -> R.string.malformed_email_message
-                        is FirebaseAuthUserCollisionException -> R.string.user_collision_message
-                        else -> null
-                    }
-                }
+        viewModelScope.launch{
+            val output = userDB.signUpUserWithEmailPassword(email, password)
+            if (output is String || output is Int){
+                // if it is an error message
+                _signUpErrorMessage.value = output
+            }else if (output == true){
+                //event for navigating out
+                _signedIn.value = true
             }
+        }
     }
 
+}
+
+class SignupViewModelFactory(private val userDB: UserDBInterface) :
+    ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        SignUpViewModel(userDB) as T
 }

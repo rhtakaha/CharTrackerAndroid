@@ -49,6 +49,7 @@ fun CharTrackerNavHost(
         }
         composable(route = SignUp.route){
             SignUpScreen(
+                userDB = UserDB(),
                 navToEmailVerify = {email -> navController.navigateSingleTopToNoReturn("${EmailVerify.route}/$email") },
                 onBackNav = {navController.navigateUp()}
             )
