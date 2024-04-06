@@ -315,11 +315,6 @@ class MockStoryDB: StoryDBInterface{
             )
         )
     }
-    /*mocked get stories
-    * this always returns null*/
-    fun getStoriesNull(): MutableList<StoryEntity>? {
-        return null
-    }
 
     /* mocked get story id
     * returns "id" if the story title is "title"
@@ -365,11 +360,4 @@ class MockStoryDB: StoryDBInterface{
     override suspend fun getCurrentTitles(): MutableList<String> {
         return mutableListOf("Lord of the Rings", "Dune", "Star Wars")
     }
-
-    /*mocked get current titles
-    * this always returns null*/
-    fun getCurrentTitlesNull(): MutableList<StoryEntity>? {
-        return null
-    }
-
 }
