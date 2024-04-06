@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
+import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
@@ -52,7 +53,13 @@ fun CharactersScreen(
     navToSettings: () -> Unit,
     onBackNav: () -> Unit,
     storyTitle: String,
-    charactersViewModel: CharactersViewModel = viewModel(factory = CharactersViewModelFactory(storyTitle = storyTitle))
+    characterDB: CharacterDBInterface,
+    charactersViewModel: CharactersViewModel = viewModel(
+        factory = CharactersViewModelFactory(
+            storyTitle = storyTitle,
+            characterDB = characterDB
+        )
+    )
 ){
     val characters by charactersViewModel.characters.collectAsStateWithLifecycle()
     val story by charactersViewModel.story.collectAsStateWithLifecycle()

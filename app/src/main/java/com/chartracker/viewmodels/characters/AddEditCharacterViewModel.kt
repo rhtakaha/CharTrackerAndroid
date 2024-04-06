@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
-import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.ImageDBInterface
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.CoroutineScope
@@ -17,9 +17,15 @@ import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
 
-class AddEditCharacterViewModel(private val storyId: String, private val storyTitle: String, charName: String?, private val imageDB: ImageDBInterface): ViewModel() {
+class AddEditCharacterViewModel(
+    private val storyId: String,
+    private val storyTitle: String,
+    charName: String?,
+    private val imageDB: ImageDBInterface,
+    private val characterDB: CharacterDBInterface
+    ) : ViewModel() {
+
     private val tag = "AddEditCharVM"
-    private val db = DatabaseAccess()
     private var originalFilename: String? = null
     private lateinit var originalCharacterName: String
     private var charId: String? = null
@@ -75,7 +81,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
 
     init {
         viewModelScope.launch {
-            currentNames = db.getCurrentNames(storyId)
+            currentNames = characterDB.getCurrentNames(storyId)
             if (currentNames == null){
                 _retrievalError.value = true
                 return@launch
@@ -87,9 +93,9 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     }
 
     private suspend fun getCharacter(charName: String){
-        charId = db.getCharacterId(storyId, charName)
+        charId = characterDB.getCharacterId(storyId, charName)
         if (charId != ""){
-            _character.value = db.getCharacter(storyId, charName)
+            _character.value = characterDB.getCharacter(storyId, charName)
             if (_character.value.name.value != ""){
                 originalCharacterName = character.value.name.value
                 originalFilename = character.value.imageFilename.value
@@ -149,7 +155,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             }
 
         }
-        val succeeded = db.createCharacter(storyId, newCharacter, currentNames!!)
+        val succeeded = characterDB.createCharacter(storyId, newCharacter, currentNames!!)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
             imageDB.deleteImage(newCharacter.imageFilename.value!!)
@@ -210,7 +216,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
             // if both were null it would be that there started with and ended with no image
         }
 
-        val succeeded = db.updateCharacter(storyId, charId, updatedCharacter, currentNames)
+        val succeeded = characterDB.updateCharacter(storyId, charId, updatedCharacter, currentNames)
         if (!succeeded && localImageURI != null){
             //failed and uploaded the image
             imageDB.deleteImage(updatedCharacter.imageFilename.value!!)
@@ -227,7 +233,7 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
     fun submitCharacterDelete(){
         CoroutineScope(Dispatchers.IO).launch {
             Timber.tag(tag).i("starting to delete character")
-            charId?.let { db.deleteCharacter(storyId, it, currentNames!!.filter { name -> name != originalCharacterName }) }
+            charId?.let { characterDB.deleteCharacter(storyId, it, currentNames!!.filter { name -> name != originalCharacterName }) }
             character.value.imageFilename.value?.let { imageDB.deleteImage(it) }
         }
         _readyToNavToCharacters.value = true
@@ -271,9 +277,14 @@ class AddEditCharacterViewModel(private val storyId: String, private val storyTi
                     (which would have created two images with the same name)*/
 fun getCharacterFilename(name: String, title: String) = "char_${name}_story_${title}_${Calendar.getInstance().time}"
 
-class AddEditCharacterViewModelFactory(private val storyId: String, private val storyTitle: String, private val charName: String?, private val imageDB: ImageDBInterface) :
+class AddEditCharacterViewModelFactory(
+    private val storyId: String,
+    private val storyTitle: String,
+    private val charName: String?,
+    private val imageDB: ImageDBInterface,
+    private val characterDB: CharacterDBInterface) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        AddEditCharacterViewModel(storyId, storyTitle, charName, imageDB) as T
+        AddEditCharacterViewModel(storyId, storyTitle, charName, imageDB, characterDB) as T
 }

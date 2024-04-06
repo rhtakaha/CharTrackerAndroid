@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
-import com.chartracker.database.DatabaseAccess
 import com.chartracker.database.StoryDB
 import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,10 +14,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CharactersViewModel(private val storyTitle: String): ViewModel() {
+class CharactersViewModel(private val storyTitle: String, private val characterDB: CharacterDBInterface): ViewModel() {
     private val _characters = MutableStateFlow<List<CharacterEntity>>(emptyList())
     val characters: StateFlow<List<CharacterEntity>> = _characters.asStateFlow()
-    private val db = DatabaseAccess()
     private val storyDB = StoryDB()
     lateinit var storyId: String
     private val _story = MutableStateFlow(StoryEntity())
@@ -58,7 +57,7 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     }
 
     suspend fun getCharacters(){
-        val temp = db.getCharacters(storyId)
+        val temp = characterDB.getCharacters(storyId)
         if (temp != null){
             _characters.value = temp.sortedBy { character -> character.name.value }
         }else{
@@ -84,9 +83,9 @@ class CharactersViewModel(private val storyTitle: String): ViewModel() {
     }
 }
 
-class CharactersViewModelFactory(private val storyTitle: String) :
+class CharactersViewModelFactory(private val storyTitle: String, private val characterDB: CharacterDBInterface) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        CharactersViewModel(storyTitle) as T
+        CharactersViewModel(storyTitle, characterDB) as T
 }

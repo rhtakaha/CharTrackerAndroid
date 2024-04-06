@@ -1,12 +1,12 @@
 package com.chartracker.database
 
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 interface StoryDBInterface {
     /*creates a new story in Firebase*/
@@ -77,7 +77,7 @@ class StoryDB : StoryDBInterface {
 
         }.addOnFailureListener{e ->
             ret = false
-            Log.w(tag, "Error creating story", e)
+            Timber.tag(tag).w(e, "Error creating story")
         }
             .await()
 
@@ -97,25 +97,22 @@ class StoryDB : StoryDBInterface {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     if (document.id != "titles") {
-                        Log.i(tag, "document: ${document.data}")
                         stories?.add(buildStoryFromDocumentSnapshot(document))
-                        Log.i(tag, "${document.id} => ${document.data}")
                     }
                 }
-                Log.i(tag, "success")
+                Timber.tag(tag).i("success")
 
             }
             .addOnFailureListener { exception ->
-                Log.d(tag, "Error getting documents: ", exception)
+                Timber.tag(tag).d(exception, "Error getting documents: ")
                 stories = null
             }.await()
 
-        Log.i(tag, "returning!")
+        Timber.tag(tag).i("returning!")
         return stories
     }
 
     override suspend fun getStoryId(storyTitle: String): String{
-        Log.w(tag, "stared retrieving the story document ID")
         var story = ""
         db.collection("users")
             .document(auth.currentUser!!.uid)
@@ -125,13 +122,13 @@ class StoryDB : StoryDBInterface {
             .addOnSuccessListener { document ->
                 if (!document.isEmpty){
                     story = document.documents[0].id
-                    Log.w(tag, "Successfully retrieved the document ID")
+                    Timber.tag(tag).w("Successfully retrieved the document ID")
                 }else{
-                    Log.w(tag, "Error: could not find the document ID")
+                    Timber.tag(tag).w("Error: could not find the document ID")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w(tag, "Error getting documents: ", exception)
+                Timber.tag(tag).w(exception, "Error getting documents: ")
             }
             .await()
         return story
@@ -139,7 +136,6 @@ class StoryDB : StoryDBInterface {
 
     /*Document ID to story*/
     override suspend fun getStoryFromId(storyId: String): StoryEntity{
-        Log.i(tag, "Start getting story from Id")
         var story = StoryEntity()
         db.collection("users")
             .document(auth.currentUser!!.uid)
@@ -152,13 +148,13 @@ class StoryDB : StoryDBInterface {
                         story = buildStoryFromDocumentSnapshot(document)
                     }
 
-                    Log.w(tag, "Successfully retrieved the story from the given ID ")
+                    Timber.tag(tag).w("Successfully retrieved the story from the given ID ")
                 }else{
-                    Log.w(tag, "Error: could not find the story from the given ID ")
+                    Timber.tag(tag).w("Error: could not find the story from the given ID ")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w(tag, "Error getting story from the given ID: ", exception)
+                Timber.tag(tag).w(exception, "Error getting story from the given ID: ")
             }
             .await()
         return story
@@ -174,9 +170,9 @@ class StoryDB : StoryDBInterface {
                 .collection("stories")
                 .document(storyId)
                 .set(story.toHashMap())
-                .addOnSuccessListener { Log.d(tag, "Story successfully updated!") }
+                .addOnSuccessListener { Timber.tag(tag).d("Story successfully updated!") }
                 .addOnFailureListener { e ->
-                    Log.w(tag, "Error updating story", e)
+                    Timber.tag(tag).w(e, "Error updating story")
                     ret = false
                 }
                 .await()
@@ -209,7 +205,7 @@ class StoryDB : StoryDBInterface {
 
             }.addOnFailureListener{e ->
                 ret = false
-                Log.w(tag, "Error updating story and titles", e)
+                Timber.tag(tag).w(e, "Error updating story and titles")
             }
                 .await()
         }
@@ -248,9 +244,9 @@ class StoryDB : StoryDBInterface {
             )
 
         }.addOnSuccessListener {
-            Log.d(tag, "Story successfully deleted!")
+            Timber.tag(tag).d("Story successfully deleted!")
         }.addOnFailureListener{e ->
-            Log.w(tag, "Error deleting story", e)
+            Timber.tag(tag).w(e, "Error deleting story")
         }
     }
 
@@ -267,11 +263,11 @@ class StoryDB : StoryDBInterface {
             .get()
             .addOnSuccessListener { result ->
                 titles = result.get("titles") as MutableList<String>?
-                Log.i(tag, "success")
+                Timber.tag(tag).i("success")
 
             }
             .addOnFailureListener { exception ->
-                Log.d(tag, "Error getting documents: ", exception)
+                Timber.tag(tag).d(exception, "Error getting documents: ")
                 titles = null
             }
             .await()

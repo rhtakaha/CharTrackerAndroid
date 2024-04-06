@@ -5,13 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
-import com.chartracker.database.DatabaseAccess
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class CharacterDetailsViewModel(private val storyId: String, private val charName: String): ViewModel() {
-    private val db = DatabaseAccess()
+class CharacterDetailsViewModel(private val storyId: String, private val charName: String, private val characterDB: CharacterDBInterface): ViewModel() {
 
     private val _character = mutableStateOf(CharacterEntity())
     val character: MutableState<CharacterEntity>
@@ -50,12 +49,12 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
 
     private suspend fun getCharacter(): Boolean{
         _character.value =
-            db.getCharacter(
+            characterDB.getCharacter(
                 storyId = storyId,
                 charName = charName
             )
 
-        currentNames = db.getCurrentNames(storyId)
+        currentNames = characterDB.getCurrentNames(storyId)
 
         return !(currentNames == null || _character.value.name.value == "")
     }
@@ -95,10 +94,10 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         if (allies != updatedAllies || enemies != updatedEnemies || neutrals != updatedNeutrals){
             // if there was a difference then update
 
-            val charId = db.getCharacterId(storyId, charName)
+            val charId = characterDB.getCharacterId(storyId, charName)
             if (charId != ""){
                 // again if it fails no need to report to the user
-                db.updateCharacter(storyId, charId, character.value, null)
+                characterDB.updateCharacter(storyId, charId, character.value, null)
             }
         }
     }
@@ -116,9 +115,9 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
     }
 }
 
-class CharacterDetailsViewModelFactory(private val storyId: String, private val charName: String) :
+class CharacterDetailsViewModelFactory(private val storyId: String, private val charName: String, private val characterDB: CharacterDBInterface) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        CharacterDetailsViewModel(storyId, charName) as T
+        CharacterDetailsViewModel(storyId, charName, characterDB) as T
 }

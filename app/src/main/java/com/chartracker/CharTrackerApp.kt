@@ -10,6 +10,7 @@ import com.chartracker.ui.auth.SignUpScreen
 import com.chartracker.ui.theme.CharTrackerTheme
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.chartracker.database.CharacterDB
 import com.chartracker.database.ImageDB
 import com.chartracker.database.StoryDB
 import com.chartracker.ui.auth.EmailVerifyScreen
@@ -96,7 +97,8 @@ fun CharTrackerNavHost(
                     navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}?$storyId")},
                     navToSettings = {navController.navigateSingleTopTo(Settings.route)},
                     onBackNav = { navController.navigateUp() },
-                    storyTitle = storyTitle
+                    storyTitle = storyTitle,
+                    characterDB = CharacterDB()
                 )
             }
         }
@@ -112,7 +114,8 @@ fun CharTrackerNavHost(
                     onBackNav = { navController.navigateUp() },
                     storyId = storyId,
                     storyTitle = storyTitle,
-                    charName = charName)
+                    charName = charName,
+                    characterDB = CharacterDB())
             }
 
         }
@@ -128,6 +131,7 @@ fun CharTrackerNavHost(
                     storyTitle = storyTitle,
                     charName = charName,
                     imageDB = ImageDB(),
+                    characterDB = CharacterDB(),
                     navToCharacters = { navController.navigateSingleTopToNoReturn("${Characters.route}/$storyTitle") },
                     onBackNav = { navController.navigateUp() }
                 )

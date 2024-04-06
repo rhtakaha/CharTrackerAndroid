@@ -34,6 +34,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
+import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.RefreshDialog
@@ -50,8 +51,14 @@ fun CharacterDetailsScreen(
     storyId: String,
     storyTitle: String,
     charName: String,
+    characterDB: CharacterDBInterface,
     characterDetailsViewModel: CharacterDetailsViewModel = viewModel(
-        factory = CharacterDetailsViewModelFactory(storyId, charName))
+        factory = CharacterDetailsViewModelFactory(
+            storyId = storyId,
+            charName = charName,
+            characterDB = characterDB
+        )
+    )
 ){
     CharacterDetailsScreen(
         character = characterDetailsViewModel.character.value,
