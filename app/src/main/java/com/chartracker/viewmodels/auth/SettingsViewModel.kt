@@ -4,7 +4,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.chartracker.database.UserDBInterface
+import kotlinx.coroutines.launch
 
 
 class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
@@ -89,19 +91,24 @@ class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
 
     //sends the user a verification email to the new email which completes the change
     fun updateUserEmail(newEmail: String){
-        if (userDB.updateUserEmail(newEmail)){
-            _updateEmailVerificationSent.value = true
-        }else{
-            _invalidUser.value = true
+        viewModelScope.launch {
+            if (userDB.updateUserEmail(newEmail)){
+                _updateEmailVerificationSent.value = true
+            }else{
+                _invalidUser.value = true
+            }
         }
+
     }
 
     fun updatePassword(newPassword: String){
-        when (val temp = userDB.updatePassword(newPassword)){
-            "success" -> _passwordUpdateSuccess.value = true
-            "invalidUser" -> _invalidUser.value = true
-            "triggerReAuth" -> _triggerReAuth.value = true
-            else -> _weakPassword.value = temp
+        viewModelScope.launch {
+            when (val temp = userDB.updatePassword(newPassword)) {
+                "success" -> _passwordUpdateSuccess.value = true
+                "invalidUser" -> _invalidUser.value = true
+                "triggerReAuth" -> _triggerReAuth.value = true
+                else -> _weakPassword.value = temp
+            }
         }
     }
 
@@ -111,16 +118,20 @@ class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
     }
 
     fun deleteUser(){
-        when (userDB.deleteUser()){
-            "navToSignIn" -> _readyToNavToSignIn.value = true
-            "triggerReAuth" -> _triggerReAuth.value = true
-            "invalidUser" -> _invalidUser.value = true
+        viewModelScope.launch {
+            when (userDB.deleteUser()) {
+                "navToSignIn" -> _readyToNavToSignIn.value = true
+                "triggerReAuth" -> _triggerReAuth.value = true
+                "invalidUser" -> _invalidUser.value = true
+            }
         }
     }
 
     fun reAuthUser(password: String){
-        if (!userDB.reAuthUser(password)){
-            _invalidUser.value = true
+        viewModelScope.launch {
+            if (!userDB.reAuthUser(password)) {
+                _invalidUser.value = true
+            }
         }
     }
 }
