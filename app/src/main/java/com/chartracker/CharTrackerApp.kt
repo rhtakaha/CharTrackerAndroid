@@ -142,6 +142,7 @@ fun CharTrackerNavHost(
         }
         composable(route= Settings.route){
             SettingsScreen(
+                userDB = UserDB(),
                 navToSignIn = { navController.navigateSingleTopToNoReturn(SignIn.route) },
                 onBackNav = { navController.navigateUp() }
             )

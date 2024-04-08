@@ -29,19 +29,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
+import com.chartracker.database.UserDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.ReAuthDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.auth.SettingsViewModel
+import com.chartracker.viewmodels.auth.SettingsViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 fun SettingsScreen(
+    userDB: UserDBInterface,
     navToSignIn: () -> Unit,
     onBackNav: () -> Unit,
-    settingsViewModel: SettingsViewModel = viewModel()
+    settingsViewModel: SettingsViewModel = viewModel(factory = SettingsViewModelFactory(userDB))
 ){
    SettingsScreen(
        updatedEmail = settingsViewModel.updatedEmail.value,

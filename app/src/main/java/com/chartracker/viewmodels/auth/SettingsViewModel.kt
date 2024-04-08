@@ -3,22 +3,11 @@ package com.chartracker.viewmodels.auth
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.chartracker.database.UserDB
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import androidx.lifecycle.ViewModelProvider
+import com.chartracker.database.UserDBInterface
 
-class SettingsViewModel : ViewModel(){
-    private val tag = "SettingsViewModel"
-    private val auth = Firebase.auth
-    private val user = Firebase.auth.currentUser!!
+
+class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
 
     private val _updatedEmail = mutableStateOf("")
     val updatedEmail: MutableState<String>
@@ -100,80 +89,45 @@ class SettingsViewModel : ViewModel(){
 
     //sends the user a verification email to the new email which completes the change
     fun updateUserEmail(newEmail: String){
-        user.verifyBeforeUpdateEmail(newEmail)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _updateEmailVerificationSent.value = true
-                }else{
-                    //no exceptions listed in documentation
-                    Timber.tag(tag).d(task.exception, "failed to update email")
-                    if (task.exception is FirebaseAuthInvalidUserException){
-                        _invalidUser.value = true
-                    }
-                }
-            }
+        if (userDB.updateUserEmail(newEmail)){
+            _updateEmailVerificationSent.value = true
+        }else{
+            _invalidUser.value = true
+        }
     }
 
     fun updatePassword(newPassword: String){
-        user.updatePassword(newPassword)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _passwordUpdateSuccess.value = true
-                }else {
-                    // If sign in fails, display a message to the user.
-                    when (task.exception){
-                        is FirebaseAuthInvalidUserException -> _invalidUser.value = true
-                        is FirebaseAuthWeakPasswordException -> _weakPassword.value = (task.exception as FirebaseAuthWeakPasswordException).message.toString()
-                        is FirebaseAuthRecentLoginRequiredException -> _triggerReAuth.value = true
-                    }
-                }
-            }
-
+        when (val temp = userDB.updatePassword(newPassword)){
+            "success" -> _passwordUpdateSuccess.value = true
+            "invalidUser" -> _invalidUser.value = true
+            "triggerReAuth" -> _triggerReAuth.value = true
+            else -> _weakPassword.value = temp
+        }
     }
 
     fun signOut(){
-        auth.signOut()
+        userDB.signOut()
         _readyToNavToSignIn.value = true
     }
 
     fun deleteUser(){
-        val user = auth.currentUser!!
-        val userUID = user.uid
-        user.delete()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-
-                    viewModelScope.launch {
-                        // need to delete user data as well but probably will need to use cloud functions LATER
-                        UserDB().deleteUserData(userUID)
-                    }
-                    Timber.tag(tag).d("User account deleted.")
-                    _readyToNavToSignIn.value = true
-                } else{
-                    if (task.exception is FirebaseAuthRecentLoginRequiredException){
-                        _triggerReAuth.value = true
-                    }else if (task.exception is FirebaseAuthInvalidUserException){
-                        _invalidUser.value = true
-                    }
-                }
-
-            }
-
+        when (userDB.deleteUser()){
+            "navToSignIn" -> _readyToNavToSignIn.value = true
+            "triggerReAuth" -> _triggerReAuth.value = true
+            "invalidUser" -> _invalidUser.value = true
+        }
     }
 
     fun reAuthUser(password: String){
-        val credential = EmailAuthProvider.getCredential(user.email!!, password)
-        user.reauthenticate(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Timber.tag(tag).d("User re-authenticated.")
-                } else {
-                    if (task.exception is FirebaseAuthInvalidUserException ||
-                        task.exception is FirebaseAuthInvalidCredentialsException){
-                        // not really the same error but second seems like it would have same outcome
-                        _invalidUser.value = true
-                    }
-                }
-            }
+        if (!userDB.reAuthUser(password)){
+            _invalidUser.value = true
+        }
     }
+}
+
+class SettingsViewModelFactory(private val userDB: UserDBInterface) :
+    ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        SettingsViewModel(userDB) as T
 }

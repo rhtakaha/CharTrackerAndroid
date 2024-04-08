@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.UserDBInterface
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SignInViewModel(private val userDB: UserDBInterface) : ViewModel(){
     private val _email = mutableStateOf("")
@@ -63,6 +64,7 @@ class SignInViewModel(private val userDB: UserDBInterface) : ViewModel(){
     }
 
     fun signInWithEmailPassword(email: String, password: String){
+        Timber.tag("SignIn").i("signing in")
         viewModelScope.launch {
             if (!userDB.signInWithEmailPassword(email, password)){
                 _invalidCredentials.value = true
