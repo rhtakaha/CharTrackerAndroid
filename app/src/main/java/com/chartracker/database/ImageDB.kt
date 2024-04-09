@@ -47,10 +47,12 @@ class ImageDB : ImageDBInterface {
     //TODO maybe add exponential backoff to retry this since if this fails we have floating images in storage which is not good
     override fun deleteImage(filename: String){
         val imageRef = storage.reference.child("users/${auth.currentUser!!.uid}/images/$filename")
-        imageRef.delete().addOnSuccessListener {
-            // File deleted successfully
-            Timber.tag(tag).d("successfully deleted the image")
-        }.addOnFailureListener {
+        try {
+            imageRef.delete().addOnSuccessListener {
+                // File deleted successfully
+                Timber.tag(tag).d("successfully deleted the image")
+            }
+        }catch (exception: Exception){
             // Uh-oh, an error occurred!
             Timber.tag(tag).d("error deleting the image")
         }
