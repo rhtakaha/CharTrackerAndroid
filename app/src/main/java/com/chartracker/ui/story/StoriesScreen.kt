@@ -33,21 +33,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
+import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.EntityHolderList
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.story.StoriesViewModel
+import com.chartracker.viewmodels.story.StoriesViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Composable
 fun StoriesScreen(
+    storyDB: StoryDBInterface,
     navToAddStory: () -> Unit,
     navToCharacters: (String) -> Unit,
     navToSettings: () -> Unit,
     onBackNav: () -> Unit,//TODO figure out if actually want to go back
-    storiesViewModel: StoriesViewModel = viewModel()
+    storiesViewModel: StoriesViewModel = viewModel(factory = StoriesViewModelFactory(storyDB))
 ){
     val stories by storiesViewModel.stories.collectAsStateWithLifecycle()
     StoriesScreen(

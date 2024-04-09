@@ -68,6 +68,7 @@ fun CharTrackerNavHost(
         }
         composable(route = Stories.route){
             StoriesScreen(
+                storyDB = StoryDB(),
                 navToAddStory = { navController.navigateSingleTopTo(AddEditStory.route) },
                 navToCharacters = { storyTitle -> navController.navigateSingleTopTo("${Characters.route}/$storyTitle") },
                 navToSettings = {navController.navigateSingleTopTo(Settings.route)},

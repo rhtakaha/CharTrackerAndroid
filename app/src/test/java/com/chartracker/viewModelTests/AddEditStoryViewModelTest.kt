@@ -1,6 +1,7 @@
-package com.chartracker
+package com.chartracker.viewModelTests
 
 import android.net.Uri
+import com.chartracker.MainDispatcherRule
 import com.chartracker.database.MockImageDB
 import com.chartracker.database.MockStoryDB
 import com.chartracker.database.StoryEntity
