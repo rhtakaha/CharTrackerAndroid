@@ -27,7 +27,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_initTest() = runTest {
+    fun initTest() = runTest {
         viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
         assert(!viewmodel.uploadError.value)
     }
@@ -35,7 +35,7 @@ class AddEditStoryViewModelTest {
     /***************************************UPDATE*************************************************/
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_updateStory_updateTest() = runTest {
+    fun updateStory_updateTest() = runTest {
         viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title"), null)
 
@@ -47,7 +47,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_updateStory_updateFailTest() = runTest {
+    fun updateStory_updateFailTest() = runTest {
         viewmodel = AddEditStoryViewModel("incorrect", mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title"), null)
 
@@ -59,7 +59,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_updateStory_titleTest() = runTest {
+    fun updateStory_titleTest() = runTest {
         viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title"), null)
 
@@ -71,7 +71,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_updateStory_duplicateTitleTest() = runTest {
+    fun updateStory_duplicateTitleTest() = runTest {
         viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("Dune"), null)
 
@@ -83,7 +83,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_updateStory_imageUploadTest() = runTest {
+    fun updateStory_imageUploadTest() = runTest {
         viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title"), Uri.parse("fileUri"))
 
@@ -95,7 +95,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_updateStory_imageUploadErrorTest() = runTest {
+    fun updateStory_imageUploadErrorTest() = runTest {
         viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title", imageFilename = "incorrect"), Uri.parse("file uri"))
 
@@ -108,7 +108,7 @@ class AddEditStoryViewModelTest {
     /****************************************ADD***************************************************/
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_addStory_createStoryTest() = runTest {
+    fun addStory_createStoryTest() = runTest {
         viewmodel = AddEditStoryViewModel(null, mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title"), null)
 
@@ -120,7 +120,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_addStory_createStoryFailTest() = runTest {
+    fun addStory_createStoryFailTest() = runTest {
         viewmodel = AddEditStoryViewModel(null, mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("not title"), null)
 
@@ -132,7 +132,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_addStory_titleTest() = runTest {
+    fun addStory_titleTest() = runTest {
         viewmodel = AddEditStoryViewModel(null, mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title"), null)
 
@@ -144,7 +144,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_addStory_duplicateTitleTest() = runTest {
+    fun addStory_duplicateTitleTest() = runTest {
         viewmodel = AddEditStoryViewModel(null, mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("Dune"), null)
 
@@ -156,7 +156,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_addStory_imageUploadTest() = runTest {
+    fun addStory_imageUploadTest() = runTest {
         viewmodel = AddEditStoryViewModel(null, mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title"), Uri.parse("fileUri"))
 
@@ -168,7 +168,7 @@ class AddEditStoryViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun addEditStoryViewModel_addStory_imageUploadErrorTest() = runTest {
+    fun addStory_imageUploadErrorTest() = runTest {
         viewmodel = AddEditStoryViewModel(null, mockStoryDB, mockImageDB)
         viewmodel.submitStory(StoryEntity("title", imageFilename = "incorrect"), Uri.parse("file uri"))
 

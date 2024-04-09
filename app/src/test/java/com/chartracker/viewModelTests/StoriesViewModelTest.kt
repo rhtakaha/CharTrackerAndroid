@@ -21,20 +21,20 @@ class StoriesViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Before
-    fun storyViewModel_setup() = runTest {
+    fun setup() = runTest {
         viewmodel = StoriesViewModel(mockStoryDB)
     }
 
     @ExperimentalCoroutinesApi
     @Test
-    fun storyViewModel_initTest() = runTest {
+    fun initTest() = runTest {
         assert(viewmodel.stories.value[0].name.value == "Dune")
         assert(viewmodel.stories.value[1].name.value == "Lord of the Rings")
         assert(viewmodel.stories.value[2].name.value == "Star Wars")
     }
 
     @Test
-    fun storyViewModel_reverseAlphaSortTest(){
+    fun reverseAlphaSortTest(){
         viewmodel.storiesReverseAlphaSort()
 
         assert(viewmodel.stories.value[2].name.value == "Dune")
@@ -43,7 +43,7 @@ class StoriesViewModelTest {
     }
 
     @Test
-    fun storyViewModel_alphaSortTest(){
+    fun alphaSortTest(){
         viewmodel.storiesAlphaSort()
 
         assert(viewmodel.stories.value[0].name.value == "Dune")

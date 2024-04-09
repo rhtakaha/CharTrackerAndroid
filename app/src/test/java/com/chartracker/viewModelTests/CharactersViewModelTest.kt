@@ -24,7 +24,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getStoryIdFailTest() = runTest {
+    fun init_getStoryIdFailTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
@@ -35,7 +35,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getStoryIdTest() = runTest {
+    fun init_getStoryIdTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
@@ -46,7 +46,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getStoryFromIdTest() = runTest {
+    fun init_getStoryFromIdTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
@@ -57,7 +57,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getStoryFromIdFailTest() = runTest {
+    fun init_getStoryFromIdFailTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "xd", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
@@ -70,7 +70,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getCharactersTest() = runTest {
+    fun init_getCharactersTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
@@ -83,7 +83,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getCharactersFailTest() = runTest {
+    fun init_getCharactersFailTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "Dune", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
@@ -94,7 +94,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getCharacters_alphaSortTest() = runTest {
+    fun init_getCharacters_alphaSortTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
@@ -109,7 +109,7 @@ class CharactersViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun charactersViewModel_init_getCharacters_reverseAlphaSortTest() = runTest {
+    fun init_getCharacters_reverseAlphaSortTest() = runTest {
         viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
