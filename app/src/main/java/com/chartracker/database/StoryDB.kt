@@ -339,24 +339,36 @@ class MockStoryDB: StoryDBInterface{
 
     /* mocked get story id
     * returns "id" if the story title is "title"
+    * returns "not" if the story title is "xd"
+    * return "Paul" if the story title is "Dune"
     * else returns ""*/
     override suspend fun getStoryId(storyTitle: String): String {
         if (storyTitle == "title"){
             return "id"
         }
+        if (storyTitle == "xd"){
+            return "not"
+        }
+        if (storyTitle == "Dune"){
+            return "Paul"
+        }
         return ""
     }
 
     /* mocked get story from id
-    * returns Dune story if story id is "id"
+    * returns Dune story if story id is "Paul"
+    * returns Lord of the Rings if story id is "id"
     * else returns empty story*/
     override suspend fun getStoryFromId(storyId: String): StoryEntity {
-        if (storyId == "id"){
-            StoryEntity(
+        if (storyId == "Paul"){
+            return StoryEntity(
                 name = "Dune",
                 genre = "Sci-Fi",
                 author = "Frank Herbert"
             )
+        }
+        if (storyId == "id"){
+            return StoryEntity(name = "Lord of the Rings")
         }
         return StoryEntity()
     }

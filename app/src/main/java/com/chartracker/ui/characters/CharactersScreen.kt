@@ -35,6 +35,7 @@ import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
+import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.EntityHolderList
@@ -53,10 +54,12 @@ fun CharactersScreen(
     navToSettings: () -> Unit,
     onBackNav: () -> Unit,
     storyTitle: String,
+    storyDB: StoryDBInterface,
     characterDB: CharacterDBInterface,
     charactersViewModel: CharactersViewModel = viewModel(
         factory = CharactersViewModelFactory(
             storyTitle = storyTitle,
+            storyDB = storyDB,
             characterDB = characterDB
         )
     )

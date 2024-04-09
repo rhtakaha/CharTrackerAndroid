@@ -7,17 +7,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
-import com.chartracker.database.StoryDB
+import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CharactersViewModel(private val storyTitle: String, private val characterDB: CharacterDBInterface): ViewModel() {
+class CharactersViewModel(private val storyTitle: String, private val storyDB: StoryDBInterface, private val characterDB: CharacterDBInterface): ViewModel() {
     private val _characters = MutableStateFlow<List<CharacterEntity>>(emptyList())
     val characters: StateFlow<List<CharacterEntity>> = _characters.asStateFlow()
-    private val storyDB = StoryDB()
     lateinit var storyId: String
     private val _story = MutableStateFlow(StoryEntity())
     val story: StateFlow<StoryEntity> = _story.asStateFlow()
@@ -34,9 +33,9 @@ class CharactersViewModel(private val storyTitle: String, private val characterD
 
     init {
         viewModelScope.launch {
-            getStoryId()
+            storyId = storyDB.getStoryId(storyTitle)
             if (storyId != ""){
-                getStory()
+                _story.value = storyDB.getStoryFromId(storyId)
                 if (_story.value.name.value != ""){
                     getCharacters()
                 }else{
@@ -46,14 +45,6 @@ class CharactersViewModel(private val storyTitle: String, private val characterD
                 _failedGetCharacters.value = true
             }
         }
-    }
-
-    private suspend fun getStoryId(){
-        storyId = storyDB.getStoryId(storyTitle)
-    }
-
-    private suspend fun getStory(){
-        _story.value = storyDB.getStoryFromId(storyId)
     }
 
     suspend fun getCharacters(){
@@ -83,9 +74,12 @@ class CharactersViewModel(private val storyTitle: String, private val characterD
     }
 }
 
-class CharactersViewModelFactory(private val storyTitle: String, private val characterDB: CharacterDBInterface) :
+class CharactersViewModelFactory(
+    private val storyTitle: String,
+    private val storyDB: StoryDBInterface,
+    private val characterDB: CharacterDBInterface) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        CharactersViewModel(storyTitle, characterDB) as T
+        CharactersViewModel(storyTitle, storyDB, characterDB) as T
 }

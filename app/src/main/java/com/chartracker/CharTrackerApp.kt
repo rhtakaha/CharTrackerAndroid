@@ -1,7 +1,7 @@
 package com.chartracker
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+//import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -9,7 +9,7 @@ import com.chartracker.ui.auth.SignInScreen
 import com.chartracker.ui.auth.SignUpScreen
 import com.chartracker.ui.theme.CharTrackerTheme
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
+//import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chartracker.database.CharacterDB
 import com.chartracker.database.ImageDB
 import com.chartracker.database.StoryDB
@@ -28,10 +28,10 @@ fun CharTrackerApp(){
         val navController = rememberNavController()
 
         //peek at top of backstack to know where we are then compare with destinations to know which it is
-        val currentBackStack by navController.currentBackStackEntryAsState()
-        val currentDestination = currentBackStack?.destination
-        val currentScreen =
-            charTrackerScreens.find { it.route == currentDestination?.route } ?: SignIn
+//        val currentBackStack by navController.currentBackStackEntryAsState()
+//        val currentDestination = currentBackStack?.destination
+//        val currentScreen =
+//            charTrackerScreens.find { it.route == currentDestination?.route } ?: SignIn
         CharTrackerNavHost(navController = navController)
     }
 }
@@ -102,6 +102,7 @@ fun CharTrackerNavHost(
                     navToSettings = {navController.navigateSingleTopTo(Settings.route)},
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle,
+                    storyDB = StoryDB(),
                     characterDB = CharacterDB()
                 )
             }
