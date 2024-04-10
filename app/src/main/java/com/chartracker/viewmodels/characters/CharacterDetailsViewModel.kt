@@ -91,12 +91,14 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         }
 
 
-        if (allies != updatedAllies || enemies != updatedEnemies || neutrals != updatedNeutrals){
+        if ((allies != updatedAllies && allies != null) ||
+            (enemies != updatedEnemies && enemies != null) ||
+            (neutrals != updatedNeutrals && neutrals != null)){
             // if there was a difference then update
 
             val charId = characterDB.getCharacterId(storyId, charName)
             if (charId != ""){
-                // again if it fails no need to report to the user
+                // again, if it fails no need to report to the user
                 characterDB.updateCharacter(storyId, charId, character.value, null)
             }
         }

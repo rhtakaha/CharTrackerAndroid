@@ -326,7 +326,15 @@ class MockCharacterDB: CharacterDBInterface{
     * else returns empty CharacterEntity*/
     override suspend fun getCharacter(storyId: String, charName: String): CharacterEntity {
         if (charName == "Frodo"){
-            return CharacterEntity(name = "Frodo", home = "Bag End", race = "Hobbit", weapons = "Sting")
+            return CharacterEntity(
+                name = "Frodo",
+                home = "Bag End",
+                race = "Hobbit",
+                weapons = "Sting",
+                allies = listOf("Sam", "Legolas", "Aragorn"),
+                enemies = listOf("Sauron", "Sauruman", "Witch King"),
+                neutral = listOf("Gollum")
+            )
         }
         if (charName == "Sam"){
             return CharacterEntity(name = "Sam", race = "Hobbit", imageFilename = "filename")
@@ -390,7 +398,7 @@ class MockCharacterDB: CharacterDBInterface{
     * else returns null*/
     override suspend fun getCurrentNames(storyId: String): MutableList<String>? {
         if (storyId == "id"){
-            return mutableListOf("Frodo", "Aragorn", "Sam")
+            return mutableListOf("Frodo", "Aragorn", "Sam", "Sauruman", "Witch King")
         }
         return null
     }
