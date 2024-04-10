@@ -322,10 +322,14 @@ class MockCharacterDB: CharacterDBInterface{
     /*
     * mocks get character
     * if charName is "Frodo" returns a Frodo CharacterEntity
+    * if charName is "Sam" returns a Sam CharacterEntity (with imageFilename = "filename")
     * else returns empty CharacterEntity*/
     override suspend fun getCharacter(storyId: String, charName: String): CharacterEntity {
         if (charName == "Frodo"){
             return CharacterEntity(name = "Frodo", home = "Bag End", race = "Hobbit", weapons = "Sting")
+        }
+        if (charName == "Sam"){
+            return CharacterEntity(name = "Sam", race = "Hobbit", imageFilename = "filename")
         }
         return CharacterEntity()
     }
@@ -348,10 +352,17 @@ class MockCharacterDB: CharacterDBInterface{
     /*
     * mocks get character id
     * if charName is "Frodo" returns "id"
+    * if charName is "Sauron" returns "DL"
     * else returns ""*/
     override suspend fun getCharacterId(storyId: String, charName: String): String {
         if (charName == "Frodo"){
             return "id"
+        }
+        if (charName == "Sam"){
+            return "potato"
+        }
+        if (charName == "Sauron"){
+            return "DL"
         }
         return ""
     }

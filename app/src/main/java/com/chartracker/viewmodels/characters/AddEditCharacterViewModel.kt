@@ -1,6 +1,7 @@
 package com.chartracker.viewmodels.characters
 
 import android.net.Uri
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -39,9 +40,14 @@ class AddEditCharacterViewModel(
     val charactersStringList: List<String>
         get() = _charactersStringList
 
-    private val alliesList = mutableListOf<String>()
-    private val enemiesList = mutableListOf<String>()
-    private val neutralList = mutableListOf<String>()
+    @VisibleForTesting
+    val alliesList = mutableListOf<String>()
+
+    @VisibleForTesting
+    val enemiesList = mutableListOf<String>()
+
+    @VisibleForTesting
+    val neutralList = mutableListOf<String>()
 
     /*navigate back to characters event*/
     private val _readyToNavToCharacters = mutableStateOf(false)
