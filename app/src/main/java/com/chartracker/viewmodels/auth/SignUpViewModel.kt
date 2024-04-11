@@ -6,12 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.chartracker.database.UserDBInterface
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(private val userDB: UserDBInterface): ViewModel(){
-    val auth = Firebase.auth
 
     private val _email = mutableStateOf("")
     val email: MutableState<String>

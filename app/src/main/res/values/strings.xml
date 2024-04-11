@@ -122,4 +122,5 @@
     <string name="recent">Most Recent</string>
     <string name="reverse_recent">Least Recent</string>
     <string name="sorting_menu_desc">Opens menu for sorting options</string>
+    <string name="unexpected_exception">Unexpected error.</string>
 </resources>

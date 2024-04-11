@@ -33,7 +33,7 @@ interface UserDBInterface {
 
     suspend fun signInWithEmailPassword(email: String, password: String): Boolean
 
-    suspend fun signUpUserWithEmailPassword(email: String, password: String): Any?
+    suspend fun signUpUserWithEmailPassword(email: String, password: String): Any
 
     suspend fun deleteUser(test: String?= null): String
 }
@@ -196,8 +196,8 @@ class UserDB : UserDBInterface {
     * return true means it worked
     * return false means it technically worked, but could not setup the account in db
     * return string or string resource means sign up failed*/
-    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any?{
-        var ret: Any? = null
+    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any{
+        var ret: Any = R.string.unexpected_exception
         try {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
@@ -218,7 +218,7 @@ class UserDB : UserDBInterface {
                 is FirebaseAuthWeakPasswordException -> exception.message.toString()
                 is FirebaseAuthInvalidCredentialsException -> R.string.malformed_email_message
                 is FirebaseAuthUserCollisionException -> R.string.user_collision_message
-                else -> null
+                else -> R.string.unexpected_exception
             }
         }
 
@@ -362,13 +362,13 @@ class MockUserDB: UserDBInterface{
     * "weak" -> "weak password"
     * "invalid" -> R.string.malformed_email_message
     * else ->  null*/
-    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any? {
+    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any {
         return when(email){
             "email" -> true
             "collide" -> R.string.user_collision_message
             "weak" -> "weak password"
             "invalid" -> R.string.malformed_email_message
-            else ->  null
+            else ->  R.string.unexpected_exception
         }
     }
 
