@@ -35,15 +35,7 @@ interface UserDBInterface {
 
     suspend fun signUpUserWithEmailPassword(email: String, password: String): Any?
 
-    /*creates a new user in Firebase
-    * this includes the overall user
-    *               AND
-    * the story titles document in the stories collection used to ensure unique titles*/
-    suspend fun createUser(user: UserEntity): Boolean
-
-    suspend fun deleteUser(): String
-
-    fun deleteUserData(userUID: String)
+    suspend fun deleteUser(test: String?= null): String
 }
 
 class UserDB : UserDBInterface {
@@ -215,7 +207,6 @@ class UserDB : UserDBInterface {
                         CoroutineScope(Dispatchers.IO).launch {
                             //try and set up their document here, TODO mitigate failure -do again later?
                             ret = createUser(UserEntity(auth.currentUser?.email))
-
                         }
                     }
                 }
@@ -238,7 +229,7 @@ class UserDB : UserDBInterface {
     * this includes the overall user
     *               AND
     * the story titles document in the stories collection used to ensure unique titles*/
-    override suspend fun createUser(user: UserEntity): Boolean{
+    private suspend fun createUser(user: UserEntity): Boolean{
         var ret = true
 
         try {
@@ -273,8 +264,9 @@ class UserDB : UserDBInterface {
     /* deletes user and their data and on success returns "navToSignIn"
     * on failure returns:
     * "invalidUser" if FirebaseAuthInvalidUserException
-    * "triggerReAuth" if FirebaseAuthRecentLoginRequiredException*/
-    override suspend fun deleteUser(): String{
+    * "triggerReAuth" if FirebaseAuthRecentLoginRequiredException
+    * (parameter is entirely for testing with no practical function)*/
+    override suspend fun deleteUser(test: String?): String{
         var ret = "navToSignIn"
         try {
             val user = auth.currentUser!!
@@ -298,18 +290,98 @@ class UserDB : UserDBInterface {
         }
 
         return ret
-
     }
 
     /*TODO figure out how best to handle the stories and characters subcollection
     *  AND STORAGE - Firebase extension should be able to do this*/
-    override fun deleteUserData(userUID: String){
+    private fun deleteUserData(userUID: String){
         db.collection("users")
             .document(userUID)
             .delete()
             .addOnSuccessListener { Timber.tag(tag).d("User Data successfully deleted!") }
             .addOnFailureListener { e -> Timber.tag(tag).w(e, "Error deleting user Data") }
     }
+}
 
+class MockUserDB: UserDBInterface{
+    /*
+    * returns true if password is "password"
+    * else false*/
+    override suspend fun reAuthUser(password: String): Boolean {
+        return password == "password"
+    }
 
+    /*
+    * if newPassword is:
+    * "new" -> "success"
+    * "invalid" -> "invalidUser"
+    * "weak" -> "weak password"
+    * "reauth" -> "triggerReAuth"*/
+    override suspend fun updatePassword(newPassword: String): String {
+        return when (newPassword){
+            "reauth" -> "triggerReAuth"
+            "weak" -> "weak password"
+            "invalid" -> "invalidUser"
+            else ->  "success"
+        }
+    }
+
+    /*
+    * if newEmail is "new" returns true
+    * else false*/
+    override suspend fun updateUserEmail(newEmail: String): Boolean {
+        return newEmail == "new"
+    }
+
+    /*always returns false since not bypassing the screen during tests*/
+    override fun isSignedIn(): Boolean {
+        return false
+    }
+
+    override fun signOut() {
+        // no return
+    }
+
+    /* if email is "email" return true
+    * else false*/
+    override suspend fun sendPasswordResetEmail(email: String): Boolean {
+        return email == "email"
+    }
+
+    /*
+    * if password is "correct" return true
+    * else false*/
+    override suspend fun signInWithEmailPassword(email: String, password: String): Boolean {
+        return password == "correct"
+    }
+
+    /*
+    * when email is:
+    * "email" -> true
+    * "collide" -> R.string.user_collision_message
+    * "weak" -> "weak password"
+    * "invalid" -> R.string.malformed_email_message
+    * else ->  null*/
+    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any? {
+        return when(email){
+            "email" -> true
+            "collide" -> R.string.user_collision_message
+            "weak" -> "weak password"
+            "invalid" -> R.string.malformed_email_message
+            else ->  null
+        }
+    }
+
+    /*
+    * if test is:
+    * "reauth" -> "triggerReAuth"
+    * "invalid"-> "invalidUser"
+    * else -> "navToSignIn"*/
+    override suspend fun deleteUser(test: String?): String {
+        return when(test){
+            "reauth" -> "triggerReAuth"
+            "invalid"-> "invalidUser"
+             else -> "navToSignIn"
+        }
+    }
 }
