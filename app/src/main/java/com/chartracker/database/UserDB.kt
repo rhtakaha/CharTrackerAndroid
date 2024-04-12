@@ -355,9 +355,9 @@ class MockUserDB: UserDBInterface{
     override suspend fun updatePassword(newPassword: String): String {
         return when (newPassword){
             "reauth" -> "triggerReAuth"
+            "new" -> "success"
             "weak" -> "weak password"
-            "invalid" -> "invalidUser"
-            else ->  "success"
+            else ->  "invalidUser"
         }
     }
 
@@ -410,13 +410,14 @@ class MockUserDB: UserDBInterface{
     /*
     * if test is:
     * "reauth" -> "triggerReAuth"
-    * "invalid"-> "invalidUser"
-    * else -> "navToSignIn"*/
+    * "gone" -> "navToSignIn"
+    *  else-> "invalidUser"
+    * */
     override suspend fun deleteUser(test: String?): String {
         return when(test){
             "reauth" -> "triggerReAuth"
-            "invalid"-> "invalidUser"
-             else -> "navToSignIn"
+            "gone"-> "navToSignIn"
+             else -> "invalidUser"
         }
     }
 

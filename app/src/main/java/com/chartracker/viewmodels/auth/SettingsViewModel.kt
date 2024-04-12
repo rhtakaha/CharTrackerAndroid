@@ -105,9 +105,9 @@ class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
         viewModelScope.launch {
             when (val temp = userDB.updatePassword(newPassword)) {
                 "success" -> _passwordUpdateSuccess.value = true
-                "invalidUser" -> _invalidUser.value = true
+                "weak password" -> _weakPassword.value = temp
                 "triggerReAuth" -> _triggerReAuth.value = true
-                else -> _weakPassword.value = temp
+                else ->  _invalidUser.value = true
             }
         }
     }
@@ -117,9 +117,9 @@ class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
         _readyToNavToSignIn.value = true
     }
 
-    fun deleteUser(){
+    fun deleteUser(test: String?=null){
         viewModelScope.launch {
-            when (userDB.deleteUser()) {
+            when (userDB.deleteUser(test)) {
                 "navToSignIn" -> _readyToNavToSignIn.value = true
                 "triggerReAuth" -> _triggerReAuth.value = true
                 "invalidUser" -> _invalidUser.value = true
