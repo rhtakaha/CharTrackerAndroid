@@ -26,9 +26,11 @@ import com.chartracker.ConnectivityStatus
 import com.chartracker.ui.components.TextAndContentHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.R
+import com.chartracker.database.UserDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.viewmodels.auth.EmailVerifyViewModel
+import com.chartracker.viewmodels.auth.EmailVerifyViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
@@ -37,8 +39,9 @@ fun EmailVerifyScreen(
     navToUpdateEmail: () -> Unit,
     navToStories: () -> Unit,
     onBackNav: () -> Unit,
+    userDB: UserDBInterface,
     userEmail: String,
-    emailVerifyViewModel: EmailVerifyViewModel = viewModel()
+    emailVerifyViewModel: EmailVerifyViewModel = viewModel(factory = EmailVerifyViewModelFactory(userDB))
 ){
     EmailVerifyScreen(email = userEmail,
         sendEmail = { emailVerifyViewModel.sendVerificationEmail()},

@@ -64,6 +64,7 @@ fun CharTrackerNavHost(
                 navToUpdateEmail = { /**/ },
                 navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 userEmail = userEmail,
+                userDB = UserDB(),
                 onBackNav = {navController.navigateUp()})
         }
         composable(route = Stories.route){

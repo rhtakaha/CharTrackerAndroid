@@ -36,6 +36,10 @@ interface UserDBInterface {
     suspend fun signUpUserWithEmailPassword(email: String, password: String): Any
 
     suspend fun deleteUser(test: String?= null): String
+
+    suspend fun sendVerificationEmail() : Boolean
+
+    suspend fun isEmailVerified(): Boolean
 }
 
 class UserDB : UserDBInterface {
@@ -301,6 +305,37 @@ class UserDB : UserDBInterface {
             .addOnSuccessListener { Timber.tag(tag).d("User Data successfully deleted!") }
             .addOnFailureListener { e -> Timber.tag(tag).w(e, "Error deleting user Data") }
     }
+
+    /*
+    * sends the verification email to the email provided by the user*/
+    override suspend fun sendVerificationEmail() : Boolean{
+        val user = auth.currentUser!!
+        var ret = true
+        try {
+            user.sendEmailVerification()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Timber.tag(tag).d("Email sent.")
+                    }
+                }
+                .await()
+        }catch (exception: Exception){
+            Timber.tag(tag).w(exception, "Email failed to send!")
+            ret = false
+
+        }
+        return ret
+    }
+
+    /*refreshes the current user and checks if the email is verified*/
+    override suspend fun isEmailVerified(): Boolean{
+        return try {
+            auth.currentUser!!.reload().await()
+            auth.currentUser!!.isEmailVerified
+        }catch (e: Exception){
+            false
+        }
+    }
 }
 
 class MockUserDB: UserDBInterface{
@@ -383,5 +418,17 @@ class MockUserDB: UserDBInterface{
             "invalid"-> "invalidUser"
              else -> "navToSignIn"
         }
+    }
+
+    /*
+    * always returns true*/
+    override suspend fun sendVerificationEmail(): Boolean {
+        return true
+    }
+
+    /*
+    * always returns true*/
+    override suspend fun isEmailVerified(): Boolean {
+        return true
     }
 }
