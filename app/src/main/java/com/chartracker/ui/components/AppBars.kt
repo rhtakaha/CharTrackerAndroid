@@ -27,7 +27,7 @@ import com.chartracker.ui.theme.CharTrackerTheme
 @Composable
 fun CharTrackerTopBar(
     title: String? = null,
-    onBackNav: ()-> Unit,
+    onBackNav: (()-> Unit)?=null,
     actionButtons: @Composable () -> Unit
 ){
     TopAppBar(
@@ -46,13 +46,15 @@ fun CharTrackerTopBar(
         titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         navigationIcon = {
-            IconButton(
-                onClick = { onBackNav() }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(id = R.string.up_button)
-                )
+            if (onBackNav != null) {
+                IconButton(
+                    onClick = { onBackNav() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(id = R.string.up_button)
+                    )
+                }
             }
         },
         actions = {actionButtons()},
@@ -65,7 +67,7 @@ fun CharTrackerTopBar(
 fun PreviewCharTrackerDefaultTopBar(){
     CharTrackerTheme {
         CharTrackerTopBar(
-            onBackNav = { /**/ },
+            onBackNav = null,
             actionButtons = {})
     }
 }

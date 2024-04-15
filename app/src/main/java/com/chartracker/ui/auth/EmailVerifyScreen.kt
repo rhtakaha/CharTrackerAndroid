@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 fun EmailVerifyScreen(
     navToUpdateEmail: () -> Unit,
     navToStories: () -> Unit,
-    onBackNav: () -> Unit,
     userDB: UserDBInterface,
     userEmail: String,
     emailVerifyViewModel: EmailVerifyViewModel = viewModel(factory = EmailVerifyViewModelFactory(userDB))
@@ -51,8 +50,7 @@ fun EmailVerifyScreen(
         resetFailedReload = {emailVerifyViewModel.resetFailedReload()},
         emailSent = emailVerifyViewModel.emailSent.value,
         resetEmailSent = { emailVerifyViewModel.resetEmailSent() },
-        navToStories = navToStories,
-        onBackNav= onBackNav)
+        navToStories = navToStories)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -66,15 +64,14 @@ fun EmailVerifyScreen(
     resetFailedReload: () -> Unit,
     emailSent: Boolean,
     resetEmailSent: () -> Unit,
-    navToStories: () -> Unit,
-    onBackNav: () -> Unit
+    navToStories: () -> Unit
 ){
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val notVerifiedMessage = stringResource(id = R.string.not_verified)
     Scaffold(
         snackbarHost ={SnackbarHost(hostState = snackbarHostState) },
-        topBar = { CharTrackerTopBar(onBackNav=onBackNav) {} }
+        topBar = { CharTrackerTopBar(actionButtons = {}) }
     ) {paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,
@@ -139,12 +136,12 @@ fun PreviewEmailVerifyScreen(){
             email = "test@email.com",
             sendEmail = {},
             changeEmail = { /*TODO*/ },
-            checkVerification = { -> false},
+            checkVerification = { false},
             failedReload = false,
             resetFailedReload = {},
             emailSent = false,
             resetEmailSent = {},
-            navToStories = {},
-            onBackNav = {})
+            navToStories = {}
+        )
     }
 }

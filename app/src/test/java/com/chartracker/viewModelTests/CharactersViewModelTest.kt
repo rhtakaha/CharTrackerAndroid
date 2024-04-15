@@ -36,7 +36,7 @@ class CharactersViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun init_getStoryIdTest() = runTest {
-        viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
+        viewmodel = CharactersViewModel(storyTitle = "Lord of the Rings", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -47,7 +47,7 @@ class CharactersViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun init_getStoryFromIdTest() = runTest {
-        viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
+        viewmodel = CharactersViewModel(storyTitle = "Lord of the Rings", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -71,7 +71,7 @@ class CharactersViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun init_getCharactersTest() = runTest {
-        viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
+        viewmodel = CharactersViewModel(storyTitle = "Lord of the Rings", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -95,7 +95,7 @@ class CharactersViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun init_getCharacters_alphaSortTest() = runTest {
-        viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
+        viewmodel = CharactersViewModel(storyTitle = "Lord of the Rings", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -110,7 +110,7 @@ class CharactersViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun init_getCharacters_reverseAlphaSortTest() = runTest {
-        viewmodel = CharactersViewModel(storyTitle = "title", storyDB = mockStoryDB, characterDB = mockCharacterDB)
+        viewmodel = CharactersViewModel(storyTitle = "Lord of the Rings", storyDB = mockStoryDB, characterDB = mockCharacterDB)
 
         //allows for the internal coroutines to run
         advanceUntilIdle()

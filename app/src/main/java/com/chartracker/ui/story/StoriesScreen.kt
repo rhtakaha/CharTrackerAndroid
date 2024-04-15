@@ -49,7 +49,6 @@ fun StoriesScreen(
     navToAddStory: () -> Unit,
     navToCharacters: (String) -> Unit,
     navToSettings: () -> Unit,
-    onBackNav: () -> Unit,//TODO figure out if actually want to go back
     storiesViewModel: StoriesViewModel = viewModel(factory = StoriesViewModelFactory(storyDB))
 ){
     val stories by storiesViewModel.stories.collectAsStateWithLifecycle()
@@ -64,8 +63,7 @@ fun StoriesScreen(
         resetFailedGetStories = { storiesViewModel.resetFailedGetStories() },
         navToAddStory= navToAddStory,
         navToCharacters= navToCharacters,
-        navToSettings = navToSettings,
-        onBackNav = onBackNav
+        navToSettings = navToSettings
     )
 }
 
@@ -82,8 +80,8 @@ fun StoriesScreen(
     resetFailedGetStories: () -> Unit,
     navToAddStory: () -> Unit,
     navToCharacters: (String) -> Unit,
-    navToSettings: () -> Unit,
-    onBackNav: () -> Unit){
+    navToSettings: () -> Unit
+){
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val refreshing by remember { mutableStateOf(false) }
@@ -93,7 +91,6 @@ fun StoriesScreen(
         topBar = { 
             CharTrackerTopBar(
                 title =  stringResource(R.string.stories),
-                onBackNav = onBackNav,
                 actionButtons = {
                     IconButton(onClick = { navToSettings() }) {
                         Icon(
@@ -107,7 +104,9 @@ fun StoriesScreen(
             FloatingActionButton(onClick = { navToAddStory() }) {
                 Icon(Icons.Filled.Add, stringResource(id = R.string.add_story_desc))
             }
-        }
+        },
+        modifier = Modifier
+            .semantics { contentDescription = "Stories Screen" }
     ) { paddingValue ->
         Box(modifier = Modifier
             .padding(paddingValue)
@@ -119,9 +118,8 @@ fun StoriesScreen(
                 alphaSort = alphaSort,
                 reverseAlphaSort = reverseAlphaSort,
                 recentSort = recentSort,
-                reverseRecentSort = reverseRecentSort,
-                modifier = Modifier
-                    .semantics { contentDescription = "Stories Screen" })
+                reverseRecentSort = reverseRecentSort
+            )
 
             PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
         }
@@ -167,9 +165,7 @@ fun PreviewStoriesScreen(){
                 resetFailedGetStories = {},
                 navToAddStory = { /*TODO*/ },
                 navToCharacters = {},
-                navToSettings = {}) {
-
-            }
+                navToSettings = {})
         }
     }
 }

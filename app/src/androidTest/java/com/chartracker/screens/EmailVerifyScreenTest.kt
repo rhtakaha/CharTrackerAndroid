@@ -35,9 +35,7 @@ class EmailVerifyScreenTest {
                 resetFailedReload = {failedReload.value = false},
                 emailSent = emailSent.value,
                 resetEmailSent = {emailSent.value = false},
-                navToStories = { /**/ }) {
-
-            }
+                navToStories = { /**/ })
         }
     }
 

@@ -46,9 +46,7 @@ class StoriesScreenTest {
                 resetFailedGetStories = {failedGetStories.value = false},
                 navToAddStory = { /**/ },
                 navToCharacters = {},
-                navToSettings = { /**/ }) {
-
-            }
+                navToSettings = { /**/ })
         }
     }
 

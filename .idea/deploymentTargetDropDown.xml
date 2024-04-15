@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="NavigationTest">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -15,8 +18,17 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-03-09T00:20:31.791122200Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-04-15T20:17:22.562449300Z" />
         </State>
+      </entry>
+      <entry key="charTrackerNavHost_SettingsNavigateToSignIn_deleteAccountTest()">
+        <State />
+      </entry>
+      <entry key="charTrackerNavHost_SettingsNavigateToSignIn_signOutTest()">
+        <State />
+      </entry>
+      <entry key="charTrackerNavHost_clickSignUpButton_signUpNavigatesToEmailVerifyTest()">
+        <State />
       </entry>
     </value>
   </component>

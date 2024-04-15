@@ -10,11 +10,6 @@ import kotlinx.coroutines.launch
 
 class EmailVerifyViewModel(private val userDB: UserDBInterface): ViewModel(){
 
-    init {
-        // sends the initial email when screen is opened
-        sendVerificationEmail()
-    }
-
     /* event for if user reload fails*/
     private val _failedReload = mutableStateOf(false)
     val failedReload: MutableState<Boolean>
@@ -38,6 +33,11 @@ class EmailVerifyViewModel(private val userDB: UserDBInterface): ViewModel(){
         viewModelScope.launch {
             _emailSent.value = userDB.sendVerificationEmail()
         }
+    }
+
+    init {
+        // sends the initial email when screen is opened
+        sendVerificationEmail()
     }
 
     /*refreshes the current user and checks if the email is verified*/

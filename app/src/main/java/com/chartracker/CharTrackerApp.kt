@@ -11,9 +11,13 @@ import com.chartracker.ui.theme.CharTrackerTheme
 import androidx.navigation.NavHostController
 //import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chartracker.database.CharacterDB
+import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.ImageDB
+import com.chartracker.database.ImageDBInterface
 import com.chartracker.database.StoryDB
+import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.UserDB
+import com.chartracker.database.UserDBInterface
 import com.chartracker.ui.auth.EmailVerifyScreen
 import com.chartracker.ui.auth.SettingsScreen
 import com.chartracker.ui.characters.AddEditCharacterScreen
@@ -32,24 +36,34 @@ fun CharTrackerApp(){
 //        val currentDestination = currentBackStack?.destination
 //        val currentScreen =
 //            charTrackerScreens.find { it.route == currentDestination?.route } ?: SignIn
-        CharTrackerNavHost(navController = navController)
+        CharTrackerNavHost(
+            navController = navController,
+            userDB = UserDB(),
+            storyDB = StoryDB(),
+            imageDB = ImageDB(),
+            characterDB = CharacterDB()
+        )
     }
 }
 
 @Composable
 fun CharTrackerNavHost(
-    navController: NavHostController
+    navController: NavHostController,
+    userDB: UserDBInterface,
+    storyDB: StoryDBInterface,
+    imageDB: ImageDBInterface,
+    characterDB: CharacterDBInterface
 ){
     NavHost(navController = navController, startDestination = SignIn.route) {
         composable(route = SignIn.route){
             SignInScreen(
-                userDB = UserDB(),
+                userDB = userDB,
                 navToSignUp = { navController.navigateSingleTopTo(SignUp.route) },
                 navToStories = {navController.navigateSingleTopTo(Stories.route)})
         }
         composable(route = SignUp.route){
             SignUpScreen(
-                userDB = UserDB(),
+                userDB = userDB,
                 navToEmailVerify = {email -> navController.navigateSingleTopToNoReturn("${EmailVerify.route}/$email") },
                 onBackNav = {navController.navigateUp()}
             )
@@ -61,19 +75,19 @@ fun CharTrackerNavHost(
             navBackStackEntry ->
             val userEmail = navBackStackEntry.arguments?.getString(EmailVerify.userEmailArg) ?: ""
             EmailVerifyScreen(
-                navToUpdateEmail = { /**/ },
+                navToUpdateEmail = { /*TODO*/ },
                 navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 userEmail = userEmail,
-                userDB = UserDB(),
-                onBackNav = {navController.navigateUp()})
+                userDB = userDB
+            )
         }
         composable(route = Stories.route){
             StoriesScreen(
-                storyDB = StoryDB(),
+                storyDB = storyDB,
                 navToAddStory = { navController.navigateSingleTopTo(AddEditStory.route) },
                 navToCharacters = { storyTitle -> navController.navigateSingleTopTo("${Characters.route}/$storyTitle") },
-                navToSettings = {navController.navigateSingleTopTo(Settings.route)},
-                onBackNav = {navController.navigateUp()})
+                navToSettings = {navController.navigateSingleTopTo(Settings.route)}
+            )
         }
         composable(
             route= AddEditStory.routeWithArgs,
@@ -85,8 +99,8 @@ fun CharTrackerNavHost(
                 navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 onBackNav = {navController.navigateUp()},
                 storyId = storyId,
-                storyDB = StoryDB(),
-                imageDB = ImageDB()
+                storyDB = storyDB,
+                imageDB = imageDB
                 )
         }
         composable(
@@ -103,8 +117,8 @@ fun CharTrackerNavHost(
                     navToSettings = {navController.navigateSingleTopTo(Settings.route)},
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle,
-                    storyDB = StoryDB(),
-                    characterDB = CharacterDB()
+                    storyDB = storyDB,
+                    characterDB = characterDB
                 )
             }
         }
@@ -121,7 +135,8 @@ fun CharTrackerNavHost(
                     storyId = storyId,
                     storyTitle = storyTitle,
                     charName = charName,
-                    characterDB = CharacterDB())
+                    characterDB = characterDB
+                )
             }
 
         }
@@ -136,8 +151,8 @@ fun CharTrackerNavHost(
                     storyId = storyId,
                     storyTitle = storyTitle,
                     charName = charName,
-                    imageDB = ImageDB(),
-                    characterDB = CharacterDB(),
+                    imageDB = imageDB,
+                    characterDB = characterDB,
                     navToCharacters = { navController.navigateSingleTopToNoReturn("${Characters.route}/$storyTitle") },
                     onBackNav = { navController.navigateUp() }
                 )
@@ -145,7 +160,7 @@ fun CharTrackerNavHost(
         }
         composable(route= Settings.route){
             SettingsScreen(
-                userDB = UserDB(),
+                userDB = userDB,
                 navToSignIn = { navController.navigateSingleTopToNoReturn(SignIn.route) },
                 onBackNav = { navController.navigateUp() }
             )

@@ -416,8 +416,8 @@ class MockUserDB: UserDBInterface{
     override suspend fun deleteUser(test: String?): String {
         return when(test){
             "reauth" -> "triggerReAuth"
-            "gone"-> "navToSignIn"
-             else -> "invalidUser"
+            "invalid" ->"invalidUser"
+             else -> "navToSignIn"
         }
     }
 

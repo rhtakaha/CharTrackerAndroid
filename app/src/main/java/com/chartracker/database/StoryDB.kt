@@ -343,7 +343,7 @@ class MockStoryDB: StoryDBInterface{
     * return "Paul" if the story title is "Dune"
     * else returns ""*/
     override suspend fun getStoryId(storyTitle: String): String {
-        if (storyTitle == "title"){
+        if (storyTitle == "Lord of the Rings"){
             return "id"
         }
         if (storyTitle == "xd"){
