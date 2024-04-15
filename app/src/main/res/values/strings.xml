@@ -123,4 +123,5 @@
     <string name="reverse_recent">Least Recent</string>
     <string name="sorting_menu_desc">Opens menu for sorting options</string>
     <string name="unexpected_exception">Unexpected error.</string>
+    <string name="signUp_wrong_email">If the email is incorrect:</string>
 </resources>

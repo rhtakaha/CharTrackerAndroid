@@ -45,4 +45,28 @@ class EmailVerifyViewModelTest {
         assert(output)
         assert(!viewmodel.failedReload.value)
     }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun updateUserEmailFailTest() = runTest {
+        viewmodel.updateUserEmail("FAIL")
+
+        //allows for the internal coroutines to run
+        advanceUntilIdle()
+
+        assert(viewmodel.invalidUser.value)
+        viewmodel.resetInvalidUser()
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun updateUserEmailTest() = runTest {
+        viewmodel.updateUserEmail("new")
+
+        //allows for the internal coroutines to run
+        advanceUntilIdle()
+
+        assert(viewmodel.updateEmailVerificationSent.value)
+        viewmodel.resetUpdateEmailVerificationSent()
+    }
 }

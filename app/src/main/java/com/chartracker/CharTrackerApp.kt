@@ -75,7 +75,6 @@ fun CharTrackerNavHost(
             navBackStackEntry ->
             val userEmail = navBackStackEntry.arguments?.getString(EmailVerify.userEmailArg) ?: ""
             EmailVerifyScreen(
-                navToUpdateEmail = { /*TODO*/ },
                 navToStories = {navController.navigateSingleTopToNoReturn(Stories.route)},
                 userEmail = userEmail,
                 userDB = userDB
