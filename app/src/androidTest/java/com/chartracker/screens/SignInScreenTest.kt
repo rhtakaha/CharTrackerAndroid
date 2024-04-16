@@ -42,7 +42,10 @@ class SignInScreenTest {
                 resetSignedIn = {},
                 invalidCredentials = invalidCredentials.value,
                 resetInvalidCredentials = {invalidCredentials.value = !invalidCredentials.value},
+                unverifiedEmail = false,
+                resetUnverifiedEmail = {},
                 navToStories = {},
+                navToEmailVerify = {},
                 emailSent = emailSent.value,
                 resetEmailSent = {emailSent.value = !emailSent.value},
                 onPasswordResetClick = {}
@@ -68,7 +71,7 @@ class SignInScreenTest {
             .onNode(
                 hasSetTextAction()
                 and
-                hasText("Enter email")
+                hasText("Enter Email")
             )
             .assertIsDisplayed()
 
@@ -80,7 +83,7 @@ class SignInScreenTest {
             .onNode(
                 hasSetTextAction()
                         and
-                        hasText("Enter password")
+                        hasText("Enter Password")
             )
             .assertIsDisplayed()
 
@@ -116,7 +119,7 @@ class SignInScreenTest {
             .onNode(
                 hasSetTextAction()
                         and
-                        hasText("Enter email")
+                        hasText("Enter Email")
             )
             .performTextInput("test@email.com")
 
@@ -135,7 +138,7 @@ class SignInScreenTest {
             .onNode(
                 hasSetTextAction()
                         and
-                        hasText("Enter password")
+                        hasText("Enter Password")
             )
             .performTextInput("password")
 
@@ -154,7 +157,7 @@ class SignInScreenTest {
             .onNode(
                 hasSetTextAction()
                         and
-                        hasText("Enter email")
+                        hasText("Enter Email")
             )
             .performTextInput("")
 
@@ -204,7 +207,7 @@ class SignInScreenTest {
             .onNode(
                 hasSetTextAction()
                         and
-                        hasText("Enter email")
+                        hasText("Enter Email")
             )
             .performTextInput("")
 
@@ -250,7 +253,7 @@ class SignInScreenTest {
             .onNode(
                 hasSetTextAction()
                         and
-                        hasText("Enter password")
+                        hasText("Enter Password")
             )
             .performTextInput("")
 

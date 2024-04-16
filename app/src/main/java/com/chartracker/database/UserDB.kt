@@ -31,7 +31,7 @@ interface UserDBInterface {
 
     suspend fun sendPasswordResetEmail(email: String): Boolean
 
-    suspend fun signInWithEmailPassword(email: String, password: String): Boolean
+    suspend fun signInWithEmailPassword(email: String, password: String): String
 
     suspend fun signUpUserWithEmailPassword(email: String, password: String): Any
 
@@ -158,10 +158,11 @@ class UserDB : UserDBInterface {
     }
 
     /* signs in the user with the email and password
-    * on success returns true
-    * else false*/
-    override suspend fun signInWithEmailPassword(email: String, password: String): Boolean{
-        var ret = true
+    * on success returns "success"
+    *   (on success) if the email is not verified returns "unverified"
+    * else "failure"*/
+    override suspend fun signInWithEmailPassword(email: String, password: String): String{
+        var ret = "success"
         try {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
@@ -173,8 +174,8 @@ class UserDB : UserDBInterface {
                             Timber.tag(tag).d("email verified!")
                         }else{
                             // if their email is unverified
-                            //TODO DOUBLE CHECK IF WE WANTED TO NAV TO EMAIL VERIFY
                             Timber.tag(tag).d("email unverified")
+                            ret = "unverified"
                         }
 
                     }
@@ -188,7 +189,7 @@ class UserDB : UserDBInterface {
             ){
                 //email and/or password is incorrect
                 //not differentiating to protect vs email enumeration attacks
-                ret = false
+                ret = "failure"
             }
         }
 
@@ -384,10 +385,17 @@ class MockUserDB: UserDBInterface{
     }
 
     /*
-    * if password is "correct" return true
-    * else false*/
-    override suspend fun signInWithEmailPassword(email: String, password: String): Boolean {
-        return password == "correct"
+    * if password is:
+    * "correct" -> "success"
+    * "unverified" -> "unverified"
+    * else -> "failure"
+    * */
+    override suspend fun signInWithEmailPassword(email: String, password: String): String {
+        return when(password){
+            "correct" -> "success"
+            "unverified" -> "unverified"
+            else -> "failure"
+        }
     }
 
     /*

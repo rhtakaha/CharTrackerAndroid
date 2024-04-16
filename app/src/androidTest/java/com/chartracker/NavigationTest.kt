@@ -102,6 +102,30 @@ class NavigationTest {
             .assertIsDisplayed()
     }
 
+    @Test
+    fun charTrackerNavHost_SignInNavigatesToEmailVerifyTest(){
+        composeTestRule
+            .onNodeWithText("Enter Email")
+            .performTextInput("email@email.com")
+
+        composeTestRule
+            .onNodeWithText("Enter Password")
+            .performTextInput("unverified")
+
+
+        composeTestRule
+            .onNode(
+                hasClickAction()
+                        and
+                        hasText("Sign In")
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("EmailVerify Screen")
+            .assertIsDisplayed()
+    }
+
     /** Sign Up **/
     @Test
     fun charTrackerNavHost_clickSignUpButton_signUpNavigatesToEmailVerifyTest(){

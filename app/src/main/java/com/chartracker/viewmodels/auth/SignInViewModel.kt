@@ -53,6 +53,15 @@ class SignInViewModel(private val userDB: UserDBInterface) : ViewModel(){
         _emailSent.value = false
     }
 
+    /* event for notifying that the user's email is unverified*/
+    private val _unverifiedEmail = mutableStateOf(false)
+    val unverifiedEmail: MutableState<Boolean>
+        get() = _unverifiedEmail
+
+    fun resetUnverifiedEmail(){
+        _unverifiedEmail.value = false
+    }
+
     init {
         _signedIn.value = userDB.isSignedIn()
     }
@@ -66,11 +75,16 @@ class SignInViewModel(private val userDB: UserDBInterface) : ViewModel(){
     fun signInWithEmailPassword(email: String, password: String){
         Timber.tag("SignIn").i("signing in")
         viewModelScope.launch {
-            if (!userDB.signInWithEmailPassword(email, password)){
-                _invalidCredentials.value = true
-            }else{
-                _signedIn.value = true
+            when(userDB.signInWithEmailPassword(email, password)){
+                "success" -> _signedIn.value = true
+                "unverified" -> _unverifiedEmail.value = true
+                "failure" -> _invalidCredentials.value = true
             }
+//            if (!){
+//                _invalidCredentials.value = true
+//            }else{
+//                _signedIn.value = true
+//            }
         }
     }
 }

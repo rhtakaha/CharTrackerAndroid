@@ -40,6 +40,7 @@ fun SignInScreen(
     userDB: UserDBInterface,
     navToSignUp: () -> Unit,
     navToStories: () -> Unit,
+    navToEmailVerify: (String) -> Unit,
     signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(userDB = userDB))
 ){
     SignInScreen(
@@ -55,7 +56,10 @@ fun SignInScreen(
         resetInvalidCredentials = { signInViewModel.resetInvalidCredentials() },
         emailSent = signInViewModel.emailSent.value,
         resetEmailSent = { signInViewModel.resetEmailSent() },
+        unverifiedEmail = signInViewModel.unverifiedEmail.value,
+        resetUnverifiedEmail = {signInViewModel.resetUnverifiedEmail()},
         navToStories = navToStories,
+        navToEmailVerify = navToEmailVerify,
         onPasswordResetClick = {signInViewModel.sendPasswordResetEmail(signInViewModel.email.value)}
     )
 }
@@ -76,7 +80,10 @@ fun SignInScreen(
     resetInvalidCredentials: () -> Unit,
     emailSent: Boolean,
     resetEmailSent: () -> Unit,
+    unverifiedEmail: Boolean,
+    resetUnverifiedEmail: () -> Unit,
     navToStories: () -> Unit,
+    navToEmailVerify: (String) -> Unit,
     onPasswordResetClick: (String) -> Unit,
 ){
     val scope = rememberCoroutineScope()
@@ -88,9 +95,15 @@ fun SignInScreen(
         mutableStateOf(false)
     }
     if (signedIn){
-        //event for navigation
+        //event for navigation on sign in (verified)
         resetSignedIn()
         navToStories()
+    }
+    if (unverifiedEmail){
+        // event for navigation to email verify if unverified
+        // from there it goes to stories like usual
+        resetUnverifiedEmail()
+        navToEmailVerify(email)
     }
     Scaffold(
         snackbarHost ={ SnackbarHost(hostState = snackbarHostState) }
@@ -191,6 +204,7 @@ fun PreviewSignInScreen(){
             var password by remember { mutableStateOf("") }
             var invalidCredentials by remember { mutableStateOf(false) }
             var emailSent by remember { mutableStateOf(false) }
+            var unverified by remember { mutableStateOf(false) }
             SignInScreen(
                 email = email,
                 onEmailType = {newInput -> email = newInput},
@@ -203,8 +217,11 @@ fun PreviewSignInScreen(){
                 invalidCredentials = invalidCredentials,
                 resetInvalidCredentials = {invalidCredentials = !invalidCredentials},
                 navToStories = {},
+                navToEmailVerify = {},
                 emailSent = emailSent,
                 resetEmailSent = {emailSent = !emailSent},
+                unverifiedEmail = unverified,
+                resetUnverifiedEmail = {unverified = !unverified},
                 onPasswordResetClick = {}
             )
         }

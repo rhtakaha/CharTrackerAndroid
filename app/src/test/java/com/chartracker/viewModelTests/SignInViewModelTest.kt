@@ -68,6 +68,17 @@ class SignInViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
+    fun signInWithEmailPasswordUnverifiedTest() = runTest {
+        viewmodel.signInWithEmailPassword("email", "unverified")
+
+        //allows for the internal coroutines to run
+        advanceUntilIdle()
+
+        assert(viewmodel.unverifiedEmail.value)
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
     fun signInWithEmailPasswordTest() = runTest {
         viewmodel.signInWithEmailPassword("email", "correct")
 
