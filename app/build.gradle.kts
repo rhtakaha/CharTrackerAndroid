@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -17,6 +19,22 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        //load the values from .properties file
+        val keystoreFile = project.rootProject.file("\\gradle\\keys.properties")
+        val properties = Properties()
+        properties.load(keystoreFile.inputStream())
+
+        //return empty key in case something goes wrong
+        val bannerKey = properties.getProperty("BANNER_KEY") ?: ""
+
+        buildConfigField(
+            type = "String",
+            name = "BANNER_KEY",
+            value = bannerKey
+        )
+
+        manifestPlaceholders["BANNER_KEY"] = bannerKey
     }
 
     buildTypes {
@@ -29,6 +47,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     compileOptions {
@@ -99,6 +118,8 @@ dependencies {
     // FirebaseUI Storage only (for downloading images easily)
     implementation("com.firebaseui:firebase-ui-storage:7.2.0")
 
+    //AdMob
+    implementation ("com.google.android.gms:play-services-ads:23.0.0")
 
     // Credential Manager
     implementation("androidx.credentials:credentials:1.3.0-alpha01")

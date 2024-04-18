@@ -23,7 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--        &lt;!&ndash; Trigger Google Play services to install the backported photo picker module. &ndash;&gt;-->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${BANNER_KEY}"/>
+
+        <!--        &lt;!&ndash; Trigger Google Play services to install the backported photo picker module. &ndash;&gt;-->
 <!--        <service android:name="com.google.android.gms.metadata.ModuleDependencies"-->
 <!--            android:enabled="false"-->
 <!--            android:exported="false"-->
