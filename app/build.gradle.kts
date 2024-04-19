@@ -26,6 +26,10 @@ android {
         properties.load(keystoreFile.inputStream())
 
         //return empty key in case something goes wrong
+        val appId = properties.getProperty("APP_ID") ?: ""
+
+        manifestPlaceholders["APP_ID"] = appId
+
         val bannerKey = properties.getProperty("BANNER_KEY") ?: ""
 
         buildConfigField(
@@ -33,8 +37,6 @@ android {
             name = "BANNER_KEY",
             value = bannerKey
         )
-
-        manifestPlaceholders["BANNER_KEY"] = bannerKey
     }
 
     buildTypes {

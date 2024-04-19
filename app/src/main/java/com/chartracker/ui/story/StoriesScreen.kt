@@ -113,6 +113,7 @@ fun StoriesScreen(
             .pullRefresh(pullRefreshState)
         ){
             EntityHolderList(
+                adSpacing = 5,
                 entities = stories,
                 onClick = navToCharacters,
                 alphaSort = alphaSort,

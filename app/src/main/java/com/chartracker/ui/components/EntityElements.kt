@@ -154,6 +154,7 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
 
 @Composable
 fun EntityHolderList(
+    adSpacing: Int,
     entities: List<DatabaseEntity>,
     modifier: Modifier=Modifier,
     onClick: (String) -> Unit,
@@ -163,6 +164,7 @@ fun EntityHolderList(
     recentSort: () -> Unit,
     reverseRecentSort: () -> Unit,
     ){
+    var elements = 0
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val showScrollToTopButton by remember{
@@ -193,7 +195,16 @@ fun EntityHolderList(
                         entityName = entity.name.value,
                         onClick = onClick
                     )
+                    elements += 1
+                    if (elements % adSpacing == 0){
+                        // if have passed adSpacing
+                        AdmobBanner()
+                    }
                 }
+            }
+            if (entities.size < adSpacing){
+                // if less than
+                AdmobBanner()
             }
         }
         if (showScrollToTopButton) {
@@ -297,7 +308,11 @@ fun PreviewEntityHolderListWithStoryDetails(){
         type = "Book/Film")
     CharTrackerTheme {
         Surface {
-            EntityHolderList(entities = characters, onClick = {}, story = story,
+            EntityHolderList(
+                adSpacing = 4,
+                entities = characters,
+                onClick = {},
+                story = story,
                 alphaSort = {},
                 reverseAlphaSort = {},
                 recentSort = {},
@@ -317,7 +332,10 @@ fun PreviewEntityHolderList(){
     val stories = listOf(StoryEntity(name="Lord of the Rings", imagePublicUrl = ""), StoryEntity(name = "Batman"))
     CharTrackerTheme {
         Surface {
-            EntityHolderList(entities = stories, onClick = {},
+            EntityHolderList(
+                adSpacing = 5,
+                entities = stories,
+                onClick = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
                 recentSort = {},

@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.UserDBInterface
+import com.chartracker.ui.components.AdmobBanner
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
@@ -154,6 +155,8 @@ fun SignInScreen(
             }) {
                 Text(text = stringResource(id = R.string.password_reset))
             }
+
+            AdmobBanner()
 
         }
         if (missingEmail) {

@@ -25,7 +25,7 @@
         </activity>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="${BANNER_KEY}"/>
+            android:value="${APP_ID}"/>
 
         <!--        &lt;!&ndash; Trigger Google Play services to install the backported photo picker module. &ndash;&gt;-->
 <!--        <service android:name="com.google.android.gms.metadata.ModuleDependencies"-->

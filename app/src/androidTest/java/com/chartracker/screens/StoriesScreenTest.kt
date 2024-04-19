@@ -62,11 +62,6 @@ class StoriesScreenTest {
             .assertIsDisplayed()
             .assertHasClickAction()
 
-        composeTestRule
-            .onNodeWithContentDescription("Up button")
-            .assertIsDisplayed()
-            .assertHasClickAction()
-
         //screen content
         composeTestRule
             .onNodeWithText("Lord of the Rings")

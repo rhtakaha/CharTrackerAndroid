@@ -36,6 +36,7 @@ import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
+import com.chartracker.ui.components.AdmobBanner
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.RefreshDialog
 import com.chartracker.ui.components.TextAndContentHolder
@@ -102,6 +103,11 @@ fun CharacterDetailsScreen(
                     }
                 })
         },
+        bottomBar = {
+            AdmobBanner()
+        },
+        modifier = Modifier
+            .navigationBarsPadding()
     ) {paddingValue ->
         Column(
             verticalArrangement = Arrangement.Center,

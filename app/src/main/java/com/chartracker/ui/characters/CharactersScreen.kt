@@ -143,6 +143,7 @@ fun CharactersScreen(
             .pullRefresh(pullRefreshState)
         ){
             EntityHolderList(
+                adSpacing = 4,
                 entities = characters,
                 story = story,
                 onClick = navToCharacterDetails,

@@ -2,10 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="NavigationTest">
+      <entry key="CharacterDetailsScreenTest">
         <State />
       </entry>
-      <entry key="SignInScreenTest">
+      <entry key="CharactersScreenTest">
+        <State />
+      </entry>
+      <entry key="EntityElementsTest">
         <State />
       </entry>
       <entry key="SignUpScreenTest">
@@ -24,6 +27,9 @@
           <timeTargetWasSelectedWithDropDown value="2024-04-17T21:09:18.571331800Z" />
         </State>
       </entry>
+      <entry key="StoriesScreenTest">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -39,9 +45,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-04-15T20:17:22.562449300Z" />
         </State>
-      </entry>
-      <entry key="charTrackerNavHost_EmailVerifyUpToSignInTest()">
-        <State />
       </entry>
     </value>
   </component>
