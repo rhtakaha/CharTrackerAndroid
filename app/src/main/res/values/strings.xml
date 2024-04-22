@@ -124,4 +124,5 @@
     <string name="sorting_menu_desc">Opens menu for sorting options</string>
     <string name="unexpected_exception">Unexpected error.</string>
     <string name="signUp_wrong_email">If the email is incorrect:</string>
+    <string name="cropping_error">Error cropping the image!</string>
 </resources>

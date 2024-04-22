@@ -123,6 +123,9 @@ dependencies {
     //AdMob
     implementation ("com.google.android.gms:play-services-ads:23.0.0")
 
+    //Image cropper
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
+
     // Credential Manager
     implementation("androidx.credentials:credentials:1.3.0-alpha01")
 

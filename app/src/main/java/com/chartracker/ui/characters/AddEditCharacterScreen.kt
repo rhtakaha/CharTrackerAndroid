@@ -3,7 +3,6 @@ package com.chartracker.ui.characters
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
 import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.CharacterDBInterface
@@ -135,8 +137,25 @@ fun AddEditCharacterScreen(
     val localUri = remember(key1 = startImage) {
         mutableStateOf(startImage)
     }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia() ){
-        localUri.value = it
+
+    val croppingError = remember {
+        mutableStateOf(false)
+    }
+
+    val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            // use the cropped image
+            localUri.value = result.uriContent
+        } else {
+            // an error occurred cropping
+//            val exception = result.error
+            croppingError.value = true
+        }
+    }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        val cropOptions = CropImageContractOptions(uri, CropImageOptions())
+        imageCropLauncher.launch(cropOptions)
     }
 
     Scaffold(
@@ -195,11 +214,7 @@ fun AddEditCharacterScreen(
                     }else{
                         Spacer(modifier = Modifier
                             .size(120.dp))
-                        Button(onClick = {
-                            launcher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
-                        }) {
+                        Button(onClick = { imagePickerLauncher.launch("image/*") }) {
                             Text(text = stringResource(id = R.string.select_image))
                         }
                     }
@@ -304,6 +319,11 @@ fun AddEditCharacterScreen(
                 message = stringResource(id = R.string.duplicate_name_error),
                 onDismiss = {resetDuplicateNameError()}
             )
+        }
+        if (croppingError.value){
+            MessageDialog(message = stringResource(id = R.string.cropping_error)) {
+                croppingError.value = false
+            }
         }
         ConnectivityStatus(scope, snackbarHostState)
     }
