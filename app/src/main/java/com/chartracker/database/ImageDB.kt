@@ -1,6 +1,7 @@
 package com.chartracker.database
 
 import android.net.Uri
+import androidx.core.net.toFile
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -38,6 +39,10 @@ class ImageDB : ImageDBInterface {
                 .toString()
         }catch (e: Exception){
             // if it is still an empty string it knows an error occurred
+        }
+        val file = imageURI.toFile()
+        if (file.exists() && file.isFile) {
+            file.delete()
         }
 
         //TODO probably add associated Toast or something to let users know they are waiting for the upload

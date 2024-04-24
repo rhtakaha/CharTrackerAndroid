@@ -126,6 +126,9 @@ dependencies {
     //Image cropper
     implementation("com.vanniktech:android-image-cropper:4.5.0")
 
+    //Image compressor
+    implementation("id.zelory:compressor:3.0.1")
+
     // Credential Manager
     implementation("androidx.credentials:credentials:1.3.0-alpha01")
 

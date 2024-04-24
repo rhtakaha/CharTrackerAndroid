@@ -2,6 +2,7 @@ package com.chartracker.ui.characters
 
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -45,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -60,7 +63,12 @@ import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.characters.AddEditCharacterViewModel
 import com.chartracker.viewmodels.characters.AddEditCharacterViewModelFactory
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.size
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.io.File
 
 @Composable
 fun AddEditCharacterScreen(
@@ -142,10 +150,44 @@ fun AddEditCharacterScreen(
         mutableStateOf(false)
     }
 
+    val croppingInProgress = remember {
+        mutableStateOf(false)
+    }
+
+    val context = LocalContext.current
+
     val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        croppingInProgress.value = true
         if (result.isSuccessful) {
             // use the cropped image
-            localUri.value = result.uriContent
+            val path = result.getUriFilePath(context = context)
+
+            Timber.tag("Add Image").i("original cropped uri: ${result.uriContent} and path: $path")
+
+            if (path != null) {
+                scope.launch {
+                    val file =  File(path)
+                    Timber.tag("Add Image").i("starting compression and the file is normal: ${file.isFile}")
+                    val compressedImageFile = if (Build.VERSION.SDK_INT >= 30) {
+                        Timber.tag("Add Image").i(">30")
+                        Compressor.compress(context, file) {
+                            size(51200) // 2 MB
+                        }
+                    }else{
+                        Timber.tag("Add Image").i("<30")
+                            Compressor.compress(context, file) {
+                                size(51200) // 2 MB
+                            }
+                    }
+
+                    file.delete()
+
+                    localUri.value = compressedImageFile.toUri()
+                    croppingInProgress.value = false
+                    Timber.tag("Add Image").i("compressed cropped uri: ${localUri.value}")
+
+                }
+            }
         } else {
             // an error occurred cropping
 //            val exception = result.error
@@ -163,7 +205,7 @@ fun AddEditCharacterScreen(
         topBar = {
         CharTrackerTopBar(onBackNav=onBackNav, actionButtons = {
             IconButton(onClick = {
-                if (character.name.value != "") {
+                if (character.name.value != "" && !croppingInProgress.value) {
                     submitCharacter(character, localUri.value)
                 }
             }) {
@@ -201,13 +243,17 @@ fun AddEditCharacterScreen(
                     if (localUri.value != null){
                         GlideImage(
                             model = localUri.value,
-                            contentDescription = stringResource(id = R.string.story_image_desc),
+                            contentDescription = stringResource(id = R.string.character_image_desc),
                             loading = placeholder(R.drawable.baseline_downloading_24),
                             failure = placeholder(R.drawable.baseline_broken_image_24),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(80.dp)
-                                .clip(CircleShape))
+                                .clip(CircleShape)){
+                            it
+                                .skipMemoryCache(true)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        }
                         Button(onClick = {localUri.value = null}) {
                             Text(text = stringResource(id = R.string.remove_selected_image))
                         }
@@ -360,7 +406,7 @@ fun PreviewAddCharacterScreen(){
                 resetDuplicateNameError = {},
                 readyToNavToCharacters = false,
                 navToCharacters = {},
-                resetNavToCharacters = { /*TODO*/ },
+                resetNavToCharacters = { /**/ },
                 startImage = null
             ) {
 
