@@ -566,7 +566,7 @@ class NavigationTest {
     }
 
     @Test
-    fun charTrackerNavHost_EditCharacterNavigatesToCharactersTest(){
+    fun charTrackerNavHost_EditCharacterNavigatesToCharacters_SubmitTest(){
         composeTestRule
             .onNodeWithText("Enter Email")
             .performTextInput("email@email.com")
@@ -601,6 +601,92 @@ class NavigationTest {
 
         composeTestRule
             .onNodeWithContentDescription("Characters Screen")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun charTrackerNavHost_EditCharacterNavigatesToCharacters_DeleteTest(){
+        composeTestRule
+            .onNodeWithText("Enter Email")
+            .performTextInput("email@email.com")
+
+        composeTestRule
+            .onNodeWithText("Enter Password")
+            .performTextInput("correct")
+
+        composeTestRule
+            .onNode(
+                hasClickAction()
+                        and
+                        hasText("Sign In")
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Lord of the Rings")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Frodo")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Edit Character")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Delete")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Characters Screen")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun charTrackerNavHost_EditCharacterNavigatesToCharacters_Delete_upBackstackCheckTest(){
+        composeTestRule
+            .onNodeWithText("Enter Email")
+            .performTextInput("email@email.com")
+
+        composeTestRule
+            .onNodeWithText("Enter Password")
+            .performTextInput("correct")
+
+        composeTestRule
+            .onNode(
+                hasClickAction()
+                        and
+                        hasText("Sign In")
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Lord of the Rings")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Frodo")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Edit Character")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Delete")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Characters Screen")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithContentDescription("Up button")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Stories Screen")
             .assertIsDisplayed()
     }
 

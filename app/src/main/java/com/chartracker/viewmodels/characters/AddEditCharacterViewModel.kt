@@ -58,6 +58,15 @@ class AddEditCharacterViewModel(
         _readyToNavToCharacters.value = false
     }
 
+    /*navigate back to characters when deleting event*/
+    private val _readyToNavToCharactersDelete = mutableStateOf(false)
+    val readyToNavToCharactersDelete: MutableState<Boolean>
+        get() = _readyToNavToCharactersDelete
+
+    fun resetReadyToNavToCharactersDelete(){
+        _readyToNavToCharactersDelete.value = false
+    }
+
     /*upload error event*/
     private val _uploadError = mutableStateOf(false)
     val uploadError: MutableState<Boolean>
@@ -242,7 +251,7 @@ class AddEditCharacterViewModel(
             charId?.let { characterDB.deleteCharacter(storyId, it, currentNames!!.filter { name -> name != originalCharacterName }) }
             character.value.imageFilename.value?.let { imageDB.deleteImage(it) }
         }
-        _readyToNavToCharacters.value = true
+        _readyToNavToCharactersDelete.value = true
     }
 
     fun alliesUpdated(charName: String, selected: Boolean){

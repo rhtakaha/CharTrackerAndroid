@@ -386,6 +386,26 @@ class AddEditCharacterViewModelTest {
         assert(viewmodel.readyToNavToCharacters.value)
     }
 
+    /*******************************   DELETE   ***************************************************/
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun updateCharacter_submitCharacterDeleteTest() = runTest {
+        viewmodel = AddEditCharacterViewModel(
+            storyId = "id",
+            storyTitle = "title",
+            charName = "Frodo",
+            imageDB = mockImageDB,
+            characterDB = mockCharacterDB
+        )
+        viewmodel.submitCharacterDelete()
+
+        //allows for the internal coroutines to run
+        advanceUntilIdle()
+
+        assert(viewmodel.readyToNavToCharactersDelete.value)
+    }
+
     /*********************************   MISC   ***************************************************/
 
     @ExperimentalCoroutinesApi

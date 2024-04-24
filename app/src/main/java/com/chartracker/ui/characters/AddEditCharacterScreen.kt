@@ -78,6 +78,7 @@ fun AddEditCharacterScreen(
     imageDB: ImageDBInterface,
     characterDB: CharacterDBInterface,
     navToCharacters: () -> Unit,
+    navToCharactersDelete: () -> Unit,
     onBackNav: () -> Unit,
     addEditCharacterViewModel: AddEditCharacterViewModel =
         viewModel(
@@ -108,6 +109,9 @@ fun AddEditCharacterScreen(
         readyToNavToCharacters = addEditCharacterViewModel.readyToNavToCharacters.value,
         navToCharacters = navToCharacters,
         resetNavToCharacters = { addEditCharacterViewModel.resetReadyToNavToCharacters() },
+        readyToNavToCharactersDelete = addEditCharacterViewModel.readyToNavToCharactersDelete.value,
+        navToCharactersDelete = navToCharactersDelete,
+        resetNavToCharactersDelete = { addEditCharacterViewModel.resetReadyToNavToCharactersDelete() },
         startImage = addEditCharacterViewModel.character.value.imagePublicUrl.value?.toUri(),
         onBackNav = onBackNav
     )
@@ -133,6 +137,9 @@ fun AddEditCharacterScreen(
     readyToNavToCharacters: Boolean,
     navToCharacters: () -> Unit,
     resetNavToCharacters: () -> Unit,
+    readyToNavToCharactersDelete: Boolean,
+    navToCharactersDelete: () -> Unit,
+    resetNavToCharactersDelete: () -> Unit,
     startImage: Uri?,
     onBackNav: () -> Unit,
 ){
@@ -141,6 +148,10 @@ fun AddEditCharacterScreen(
     if (readyToNavToCharacters){
         resetNavToCharacters()
         navToCharacters()
+    }
+    if (readyToNavToCharactersDelete){
+        resetNavToCharactersDelete()
+        navToCharactersDelete()
     }
     val localUri = remember(key1 = startImage) {
         mutableStateOf(startImage)
@@ -407,6 +418,9 @@ fun PreviewAddCharacterScreen(){
                 readyToNavToCharacters = false,
                 navToCharacters = {},
                 resetNavToCharacters = { /**/ },
+                readyToNavToCharactersDelete = false,
+                navToCharactersDelete = {},
+                resetNavToCharactersDelete = { /**/ },
                 startImage = null
             ) {
 

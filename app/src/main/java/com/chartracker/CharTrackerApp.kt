@@ -155,6 +155,7 @@ fun CharTrackerNavHost(
                     imageDB = imageDB,
                     characterDB = characterDB,
                     navToCharacters = { navController.navigateSingleTopToNoReturn("${Characters.route}/$storyTitle") },
+                    navToCharactersDelete =  { navController.navigateSingleTopToDoubleNoReturn("${Characters.route}/$storyTitle") },
                     onBackNav = { navController.navigateUp() }
                 )
             }
@@ -174,6 +175,12 @@ fun CharTrackerNavHost(
 fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) { launchSingleTop = true }
 
 fun NavHostController.navigateSingleTopToNoReturn(route: String) = this.navigate(route) {
+    popBackStack()
+    launchSingleTop = true
+}
+
+fun NavHostController.navigateSingleTopToDoubleNoReturn(route: String) = this.navigate(route) {
+    popBackStack()
     popBackStack()
     launchSingleTop = true
 }
