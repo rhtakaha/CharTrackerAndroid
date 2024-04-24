@@ -164,7 +164,6 @@ fun EntityHolderList(
     recentSort: () -> Unit,
     reverseRecentSort: () -> Unit,
     ){
-    var elements = 0
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val showScrollToTopButton by remember{
@@ -189,15 +188,28 @@ fun EntityHolderList(
                         StoryDetails(story = story)
                     }
                 }
-                items(entities) { entity ->
-                    EntityHolder(
-                        imageUrl = entity.imagePublicUrl.value,
-                        entityName = entity.name.value,
-                        onClick = onClick
-                    )
-                    elements += 1
-                    if (elements % adSpacing == 0){
-                        // if have passed adSpacing
+                //adding the ads to the list
+                val itemList = mutableListOf<Any>()
+                itemList.addAll(entities)
+                var i = 0
+                var numAds = 0
+                while (i <= itemList.size){
+                    // determines where the ads belong
+                    if (i!= 0 && i % (adSpacing + ((adSpacing + 1) * numAds)) ==0){
+                        itemList.add(i, "ad")
+                        numAds++
+                    }
+                    i++
+                }
+
+                items(itemList) { entity ->
+                    if (entity is DatabaseEntity){
+                        EntityHolder(
+                            imageUrl = entity.imagePublicUrl.value,
+                            entityName = entity.name.value,
+                            onClick = onClick
+                        )
+                    }else if (entity == "ad"){
                         AdmobBanner()
                     }
                 }
@@ -261,8 +273,8 @@ fun PreviewEntityHolderWithImage(){
     CharTrackerTheme {
         Surface {
             EntityHolder("https://th.bing.com/th/id/OIP.xJ2gfgHVXWPRDgBclINipgHaEK?rs=1&pid=ImgDetMain",
-                "Gollum",
-                {})
+                "Gollum"
+            ) {}
         }
     }
 }
@@ -277,7 +289,7 @@ fun PreviewEntityHolderWithImage(){
 fun PreviewEntityHolderWithoutImage(){
     CharTrackerTheme {
         Surface {
-            EntityHolder(null, "Gollum", {})
+            EntityHolder(null, "Gollum") {}
         }
     }
 }
