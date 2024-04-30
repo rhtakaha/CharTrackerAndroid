@@ -154,8 +154,7 @@ fun CharTrackerNavHost(
                     charName = charName,
                     imageDB = imageDB,
                     characterDB = characterDB,
-                    navToCharacters = { navController.navigateSingleTopToNoReturn("${Characters.route}/$storyTitle") },
-                    navToCharactersDelete =  { navController.navigateSingleTopToDoubleNoReturn("${Characters.route}/$storyTitle") },
+                    navToCharacters = { navController.navigateSingleTopToDoubleNoReturn("${Characters.route}/$storyTitle") },
                     onBackNav = { navController.navigateUp() }
                 )
             }

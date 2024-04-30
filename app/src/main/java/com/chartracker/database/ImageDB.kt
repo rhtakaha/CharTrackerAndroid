@@ -25,7 +25,7 @@ class ImageDB : ImageDBInterface {
     /* function for adding an image into cloud storage
     * input: String filename WITHOUT EXTENSION and local imageUri*/
     override suspend fun addImage(filename: String, imageURI: Uri): String{
-        if (!logImage(filename)){
+        if (!logImage("users/${auth.currentUser!!.uid}/images/$filename")){
             // if we fail to log we stop here
             return ""
         }
@@ -97,7 +97,7 @@ class ImageDB : ImageDBInterface {
             imageRef.delete().addOnSuccessListener {
                 // File deleted successfully
                 Timber.tag(tag).d("successfully deleted the image")
-                unLogImage(filename)
+                unLogImage("users/${auth.currentUser!!.uid}/images/$filename")
             }
         }catch (exception: Exception){
             // Uh-oh, an error occurred!
