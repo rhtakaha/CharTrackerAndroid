@@ -41,8 +41,8 @@ exports.maintainStorage = onRequest(async (req, res) => {
     bucket.getFiles(
     async function(err, files) {
         if (!err) {
-            var deletedFromStorage = false;
-            var deletedFromList = false;
+            var deletedFromStorage = 0;
+            var deletedFromList = 0;
           // files is an array of File objects.
           files.forEach(element => {
                 if (fileNames.includes(element.name)) {
@@ -52,7 +52,7 @@ exports.maintainStorage = onRequest(async (req, res) => {
                 }else{
                     //means there is a file in storage not on the list then delete it (from storage)
                     bucket.file(element.name).delete();
-                    deletedFromStorage = true;
+                    deletedFromStorage++;
                 }
             });
 
@@ -67,10 +67,10 @@ exports.maintainStorage = onRequest(async (req, res) => {
                     .collection("all")
                     .doc("imageFiles")
                     .update({imageFilenames: updatedFileNames});
-                deletedFromList = true;
+                deletedFromList++;
             }
 
-            res.send(`deleted file from storage: ${deletedFromStorage}. deleted filename from list: ${deletedFromList}`);
+            res.send(`files deleted from storage: ${deletedFromStorage}. filenames deleted from list: ${deletedFromList}`);
             
         }else{
             res.send(`Error: ${err.message}`);
