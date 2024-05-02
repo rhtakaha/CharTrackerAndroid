@@ -54,14 +54,7 @@ class SignUpViewModel(private val userDB: UserDBInterface): ViewModel(){
 
     fun signUpUserWithEmailPassword(email: String, password: String){
         viewModelScope.launch{
-            val output = userDB.signUpUserWithEmailPassword(email, password)
-            if (output is String || output is Int || (output is Boolean && !output)){
-                // if it is an error message
-                _signUpErrorMessage.value = output
-            }else{
-                //event for navigating out
-                _signedIn.value = true
-            }
+            userDB.signUpUserWithEmailPassword(email, password, _signedIn, _signUpErrorMessage)
         }
     }
 

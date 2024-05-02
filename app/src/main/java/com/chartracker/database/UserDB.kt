@@ -38,7 +38,11 @@ interface UserDBInterface {
         unverifiedEmail: MutableState<Boolean>,
         invalidCredentials: MutableState<Boolean>)
 
-    suspend fun signUpUserWithEmailPassword(email: String, password: String): Any
+    suspend fun signUpUserWithEmailPassword(
+        email: String,
+        password: String,
+        signedIn: MutableState<Boolean>,
+        signUpErrorMessage: MutableState<Any?>)
 
     suspend fun deleteUser(test: String?= null): String
 
@@ -197,70 +201,68 @@ class UserDB : UserDBInterface {
     * return true means it worked
     * return false means it technically worked, but could not setup the account in db
     * return string or string resource means sign up failed*/
-    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any{
-        var ret: Any = R.string.unexpected_exception
-        try {
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success
-                        Timber.tag(tag).d("createUserWithEmail:success")
-                        CoroutineScope(Dispatchers.IO).launch {
-                            //try and set up their document here, TODO mitigate failure -do again later?
-                            ret = createUser(UserEntity(auth.currentUser?.email))
-                        }
-                    }
-                }
-                .await()
-        }catch (exception: Exception){
-            // If sign in fails, display a message to the user.
-            Timber.tag(tag).w(exception, "createUserWithEmail:failure")
-            ret = when(exception){
-                is FirebaseAuthWeakPasswordException -> exception.message.toString()
-                is FirebaseAuthInvalidCredentialsException -> R.string.malformed_email_message
-                is FirebaseAuthUserCollisionException -> R.string.user_collision_message
-                else -> R.string.unexpected_exception
-            }
-        }
+    override suspend fun signUpUserWithEmailPassword(
+        email: String,
+        password: String,
+        signedIn: MutableState<Boolean>,
+        signUpErrorMessage: MutableState<Any?>){
 
-        Timber.tag(tag).d("sign up ret is: $ret")
-        return ret
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                // Sign in success
+                Timber.tag(tag).d("createUserWithEmail:success")
+                CoroutineScope(Dispatchers.IO).launch {
+                    //try and set up their document here, TODO mitigate failure -do again later?
+                    createUser(UserEntity(auth.currentUser?.email), signedIn)
+                }
+            }
+            .addOnFailureListener {exception ->
+                // If sign in fails, display a message to the user.
+                Timber.tag(tag).w(exception, "createUserWithEmail:failure")
+                when(exception){
+                    is FirebaseAuthWeakPasswordException -> signUpErrorMessage.value = exception.message.toString()
+                    is FirebaseAuthInvalidCredentialsException -> signUpErrorMessage.value =  R.string.malformed_email_message
+                    is FirebaseAuthUserCollisionException -> signUpErrorMessage.value =  R.string.user_collision_message
+                    else -> signUpErrorMessage.value =  R.string.unexpected_exception
+                }
+            }
     }
 
     /*creates a new user in Firebase
     * this includes the overall user
     *               AND
-    * the story titles document in the stories collection used to ensure unique titles*/
-    private suspend fun createUser(user: UserEntity): Boolean{
-        var ret = true
+    * the story titles document in the stories collection used to ensure unique titles
+    * handles the state for signed in*/
+    /** Can call if on sign in too to mitigate failure?**/
+    private fun createUser(user: UserEntity, signedIn: MutableState<Boolean>){
 
-        try {
-            // batched operation so atomic
-            db.runBatch {batch ->
+        // batched operation so atomic
+        db.runBatch {batch ->
 
-                //create user
-                batch.set(
-                    db.collection("users")
-                        .document(auth.currentUser!!.uid),
-                    user
-                )
+            //create user
+            batch.set(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid),
+                user
+            )
 
-                // create titles document
-                batch.set(
-                    db.collection("users")
-                        .document(auth.currentUser!!.uid)
-                        .collection("stories")
-                        .document("titles"),
-                    hashMapOf("titles" to listOf<String>())
-                )
+            // create titles document
+            batch.set(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document("titles"),
+                hashMapOf("titles" to listOf<String>())
+            )
 
-            }
-                .await()
-        }catch (exception: Exception){
-            ret = false
-            Timber.tag(tag).w(exception, "Error setting up user")
         }
-        return ret
+            .addOnSuccessListener {
+                signedIn.value = true
+            }
+            .addOnFailureListener { exception ->
+                Timber.tag(tag).w(exception, "Error setting up user")
+                /** EXPONENTIAL BACKOFF?????**/
+            }
     }
 
     /* deletes user and their data and on success returns "navToSignIn"
@@ -410,18 +412,22 @@ class MockUserDB: UserDBInterface{
 
     /*
     * when email is:
-    * "email" -> true
-    * "collide" -> R.string.user_collision_message
-    * "weak" -> "weak password"
-    * "invalid" -> R.string.malformed_email_message
-    * else ->  null*/
-    override suspend fun signUpUserWithEmailPassword(email: String, password: String): Any {
-        return when(email){
-            "email" -> true
-            "collide" -> R.string.user_collision_message
-            "weak" -> "weak password"
-            "invalid" -> R.string.malformed_email_message
-            else ->  R.string.unexpected_exception
+    * "email" -> sets signedIn state to true
+    * "collide" -> sets signUpErrorMessage stat to R.string.user_collision_message
+    * "weak" -> sets signUpErrorMessage stat to "weak password"
+    * "invalid" -> sets signUpErrorMessage stat to R.string.malformed_email_message
+    * else -> sets signUpErrorMessage stat to R.string.unexpected_exception*/
+    override suspend fun signUpUserWithEmailPassword(
+        email: String,
+        password: String,
+        signedIn: MutableState<Boolean>,
+        signUpErrorMessage: MutableState<Any?>) {
+        when(email){
+            "email" -> signedIn.value = true
+            "collide" -> signUpErrorMessage.value =  R.string.user_collision_message
+            "weak" -> signUpErrorMessage.value = "weak password"
+            "invalid" -> signUpErrorMessage.value = R.string.malformed_email_message
+            else -> signUpErrorMessage.value =  R.string.unexpected_exception
         }
     }
 
