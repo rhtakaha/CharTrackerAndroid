@@ -94,6 +94,8 @@ class AddEditCharacterViewModel(
             }
             if (charName != null){
                 getCharacter(charName)
+            }else{
+                _charactersStringList = currentNames!!.toMutableList()
             }
         }
     }
@@ -106,7 +108,6 @@ class AddEditCharacterViewModel(
                 originalCharacterName = character.value.name.value
                 originalFilename = character.value.imageFilename.value
                 _charactersStringList = currentNames!!.filter { name -> name != charName }.toMutableList()
-
             }else{
                 _retrievalError.value = true
             }

@@ -61,7 +61,7 @@ class StoryDB : StoryDBInterface {
                     storyRef
                         .collection("characters")
                         .document("names"),
-                    hashMapOf("names" to listOf("names"))
+                    hashMapOf("names" to listOf<String>())
                 )
 
 

@@ -51,9 +51,6 @@ class AddCharacterScreenTest{
                 readyToNavToCharacters = false,
                 navToCharacters = { /**/ },
                 resetNavToCharacters = { /**/ },
-                readyToNavToCharactersDelete = false,
-                navToCharactersDelete = {},
-                resetNavToCharactersDelete = { /**/ },
                 startImage = null,
                 onBackNav = {}
             )
@@ -352,9 +349,6 @@ class EditCharacterScreenTest{
                 readyToNavToCharacters = false,
                 navToCharacters = { /**/ },
                 resetNavToCharacters = { /**/ },
-                readyToNavToCharactersDelete = false,
-                navToCharactersDelete = {},
-                resetNavToCharactersDelete = { /**/ },
                 startImage = null,
                 onBackNav = {}
             )

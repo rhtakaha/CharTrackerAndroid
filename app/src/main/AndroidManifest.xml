@@ -11,9 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CharTracker"
-        android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <!--        TODO REMEMBER TO REMOVE CLEARTEXTTRAFFIC FOR PRODUCTION-->
+        <!--            android:usesCleartextTraffic="true"    TODO REMEMBER TO REMOVE CLEARTEXTTRAFFIC FOR PRODUCTION-->
         <activity
             android:name="com.chartracker.MainActivity"
             android:exported="true">
