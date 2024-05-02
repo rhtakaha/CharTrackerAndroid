@@ -36,14 +36,10 @@ class EmailVerifyViewModel(private val userDB: UserDBInterface): ViewModel(){
         _updateEmailVerificationSent.value = false
     }
 
-    /* event for if user reload fails*/
-    private val _failedReload = mutableStateOf(false)
-    val failedReload: MutableState<Boolean>
-        get() = _failedReload
-
-    fun resetFailedReload(){
-        _failedReload.value = false
-    }
+    /* state to hold if verified when checking*/
+    private val _verified = mutableStateOf(false)
+    val verified: MutableState<Boolean>
+        get() = _verified
 
     /* event for email successfully sent to trigger snackbar*/
     private val _emailSent = mutableStateOf(false)
@@ -57,7 +53,7 @@ class EmailVerifyViewModel(private val userDB: UserDBInterface): ViewModel(){
     /* once on entry and then when the button it pressed*/
     fun sendVerificationEmail(){
         viewModelScope.launch {
-            _emailSent.value = userDB.sendVerificationEmail()
+            userDB.sendVerificationEmail(_emailSent)
         }
     }
 
@@ -69,21 +65,17 @@ class EmailVerifyViewModel(private val userDB: UserDBInterface): ViewModel(){
     /*refreshes the current user and checks if the email is verified*/
     fun isEmailVerified(): Boolean{
         viewModelScope.launch {
-            _failedReload.value = !userDB.isEmailVerified()
+            userDB.isEmailVerified(_verified)
         }
-        return !_failedReload.value
+        return _verified.value
+
     }
 
     //sends the user a verification email to the new email which completes the change
     fun updateUserEmail(newEmail: String){
         viewModelScope.launch {
-            if (userDB.updateUserEmail(newEmail)){
-                _updateEmailVerificationSent.value = true
-            }else{
-                _invalidUser.value = true
-            }
+            userDB.updateUserEmail(newEmail, _updateEmailVerificationSent, _invalidUser)
         }
-
     }
 }
 

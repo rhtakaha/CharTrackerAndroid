@@ -22,7 +22,6 @@ import org.junit.Test
 class EmailVerifyScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
-    private val failedReload = mutableStateOf(false)
     private val emailSent = mutableStateOf(false)
     private val invalidUser =  mutableStateOf(false)
     private val updateEmailVerificationSent =  mutableStateOf(false)
@@ -41,9 +40,7 @@ class EmailVerifyScreenTest {
                 invalidUser = invalidUser.value,
                 resetInvalidUser = {invalidUser.value = false},
                 sendEmail = { /**/ },
-                checkVerification = { -> false },
-                failedReload = failedReload.value,
-                resetFailedReload = {failedReload.value = false},
+                checkVerification = {  false },
                 emailSent = emailSent.value,
                 resetEmailSent = {emailSent.value = false},
                 navToStories = { /**/ })
@@ -225,39 +222,6 @@ class EmailVerifyScreenTest {
                 hasAnyAncestor(isDialog())
                         and
                         hasText("Missing email!")
-            )
-            .assertDoesNotExist()
-    }
-
-    @Test
-    fun failedReloadTest(){
-        // activate the dialog
-        failedReload.value = true
-
-        composeTestRule
-            .onNode(
-                hasAnyAncestor(isDialog())
-                        and
-                        hasText("Error with account!")
-            )
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNode(
-                hasAnyAncestor(isDialog())
-                        and
-                        hasClickAction()
-                        and
-                        hasText("Dismiss")
-            )
-            .assertIsDisplayed()
-            .performClick()
-
-        composeTestRule
-            .onNode(
-                hasAnyAncestor(isDialog())
-                        and
-                        hasText("Error with account!")
             )
             .assertDoesNotExist()
     }

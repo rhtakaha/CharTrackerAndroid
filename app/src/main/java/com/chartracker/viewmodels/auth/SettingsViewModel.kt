@@ -92,23 +92,19 @@ class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
     //sends the user a verification email to the new email which completes the change
     fun updateUserEmail(newEmail: String){
         viewModelScope.launch {
-            if (userDB.updateUserEmail(newEmail)){
-                _updateEmailVerificationSent.value = true
-            }else{
-                _invalidUser.value = true
-            }
+            userDB.updateUserEmail(newEmail, _updateEmailVerificationSent, _invalidUser)
         }
 
     }
 
     fun updatePassword(newPassword: String){
         viewModelScope.launch {
-            when (val temp = userDB.updatePassword(newPassword)) {
-                "success" -> _passwordUpdateSuccess.value = true
-                "weak password" -> _weakPassword.value = temp
-                "triggerReAuth" -> _triggerReAuth.value = true
-                else ->  _invalidUser.value = true
-            }
+            userDB.updatePassword(
+                newPassword,
+                _passwordUpdateSuccess,
+                _weakPassword,
+                _triggerReAuth,
+                _invalidUser)
         }
     }
 
@@ -119,19 +115,13 @@ class SettingsViewModel(private val userDB: UserDBInterface): ViewModel(){
 
     fun deleteUser(test: String?=null){
         viewModelScope.launch {
-            when (userDB.deleteUser(test)) {
-                "navToSignIn" -> _readyToNavToSignIn.value = true
-                "triggerReAuth" -> _triggerReAuth.value = true
-                "invalidUser" -> _invalidUser.value = true
-            }
+            userDB.deleteUser(test, _readyToNavToSignIn, _triggerReAuth, _invalidUser)
         }
     }
 
     fun reAuthUser(password: String){
         viewModelScope.launch {
-            if (!userDB.reAuthUser(password)) {
-                _invalidUser.value = true
-            }
+            userDB.reAuthUser(password, _invalidUser)
         }
     }
 }

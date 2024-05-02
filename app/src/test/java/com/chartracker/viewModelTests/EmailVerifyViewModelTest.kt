@@ -43,7 +43,7 @@ class EmailVerifyViewModelTest {
         advanceUntilIdle()
 
         assert(output)
-        assert(!viewmodel.failedReload.value)
+        assert(viewmodel.verified.value)
     }
 
     @ExperimentalCoroutinesApi

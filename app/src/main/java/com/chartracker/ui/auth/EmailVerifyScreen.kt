@@ -56,8 +56,6 @@ fun EmailVerifyScreen(
         resetInvalidUser = { emailVerifyViewModel.resetInvalidUser() },
         sendEmail = { emailVerifyViewModel.sendVerificationEmail()},
         checkVerification = {emailVerifyViewModel.isEmailVerified()},
-        failedReload = emailVerifyViewModel.failedReload.value,
-        resetFailedReload = {emailVerifyViewModel.resetFailedReload()},
         emailSent = emailVerifyViewModel.emailSent.value,
         resetEmailSent = { emailVerifyViewModel.resetEmailSent() },
         navToStories = navToStories)
@@ -76,8 +74,6 @@ fun EmailVerifyScreen(
     resetInvalidUser: () -> Unit,
     sendEmail: () -> Unit,
     checkVerification: () -> Boolean,
-    failedReload: Boolean,
-    resetFailedReload: () -> Unit,
     emailSent: Boolean,
     resetEmailSent: () -> Unit,
     navToStories: () -> Unit
@@ -137,13 +133,6 @@ fun EmailVerifyScreen(
                 Text(text = stringResource(id = R.string.Im_verified))
             }
         }
-        if (failedReload){
-            // really shouldn't ever see, but here in case
-            MessageDialog(
-                message = stringResource(id = R.string.fail_user_reload_message),
-                onDismiss = {resetFailedReload()}
-            )
-        }
         if (emailSent){
             resetEmailSent()
             val message = stringResource(id = R.string.email_sent)
@@ -195,8 +184,6 @@ fun PreviewEmailVerifyScreen(){
             resetInvalidUser = {},
             sendEmail = {},
             checkVerification = { false},
-            failedReload = false,
-            resetFailedReload = {},
             emailSent = false,
             resetEmailSent = {},
             navToStories = {}
