@@ -1,5 +1,6 @@
 package com.chartracker.database
 
+import androidx.compose.runtime.MutableState
 import com.chartracker.R
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -29,9 +30,13 @@ interface UserDBInterface {
 
     fun signOut()
 
-    suspend fun sendPasswordResetEmail(email: String): Boolean
-
-    suspend fun signInWithEmailPassword(email: String, password: String): String
+    suspend fun sendPasswordResetEmail(email: String, emailSent: MutableState<Boolean>)
+    suspend fun signInWithEmailPassword(
+        email: String,
+        password: String,
+        signedIn: MutableState<Boolean>,
+        unverifiedEmail: MutableState<Boolean>,
+        invalidCredentials: MutableState<Boolean>)
 
     suspend fun signUpUserWithEmailPassword(email: String, password: String): Any
 
@@ -43,7 +48,7 @@ interface UserDBInterface {
 }
 
 class UserDB : UserDBInterface {
-    private val tag = "dbAccess"
+    private val tag = "userDB"
     private val db = Firebase.firestore
     private val auth = Firebase.auth
 
@@ -138,62 +143,53 @@ class UserDB : UserDBInterface {
     }
 
     /* sends password reset to given email*/
-    override suspend fun sendPasswordResetEmail(email: String): Boolean{
-        var ret = false
-        try {
-            auth.sendPasswordResetEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        ret = true
-                        Timber.tag(tag).d("Email sent.")
-                    }
-                }
-                .await()
-        }catch (exception: Exception){
-            //if the email was not a valid user
-            // Don't say anything to protect vs email enumeration attacks
-        }
-
-        return ret
+    override suspend fun sendPasswordResetEmail(email: String, emailSent: MutableState<Boolean>){
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                Timber.tag(tag).d("Email sent.")
+                emailSent.value = true
+            }
+            .addOnFailureListener {
+                //if the email was not a valid user
+                // Don't say anything to protect vs email enumeration attacks
+            }
     }
 
     /* signs in the user with the email and password
     * on success returns "success"
     *   (on success) if the email is not verified returns "unverified"
     * else "failure"*/
-    override suspend fun signInWithEmailPassword(email: String, password: String): String{
-        var ret = "success"
-        try {
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
+    override suspend fun signInWithEmailPassword(
+        email: String,
+        password: String,
+        signedIn: MutableState<Boolean>,
+        unverifiedEmail: MutableState<Boolean>,
+        invalidCredentials: MutableState<Boolean>){
 
-                    if (task.isSuccessful) {
-                        //check if their email is verified
-                        if (auth.currentUser!!.isEmailVerified){
-                            // go to their stories page
-                            Timber.tag(tag).d("email verified!")
-                        }else{
-                            // if their email is unverified
-                            Timber.tag(tag).d("email unverified")
-                            ret = "unverified"
-                        }
-
-                    }
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                //check if their email is verified
+                if (auth.currentUser!!.isEmailVerified){
+                    // go to their stories page
+                    Timber.tag(tag).d("email verified!")
+                    signedIn.value = true
+                }else{
+                    // if their email is unverified
+                    Timber.tag(tag).d("email unverified")
+                    unverifiedEmail.value = true
                 }
-                .await()
-        }catch (exception: Exception){
-            // If sign in fails, display a message to the user.
-            Timber.tag(tag).i("fails: %s", exception.toString())
-            if (exception is FirebaseAuthInvalidUserException ||
-                exception is FirebaseAuthInvalidCredentialsException
-            ){
-                //email and/or password is incorrect
-                //not differentiating to protect vs email enumeration attacks
-                ret = "failure"
             }
-        }
-
-        return ret
+            .addOnFailureListener {exception ->
+                // If sign in fails, display a message to the user.
+                Timber.tag(tag).i("fails: %s", exception.toString())
+                if (exception is FirebaseAuthInvalidUserException ||
+                    exception is FirebaseAuthInvalidCredentialsException
+                ){
+                    //email and/or password is incorrect
+                    //not differentiating to protect vs email enumeration attacks
+                    invalidCredentials.value = true
+                }
+            }
     }
 
     /*
@@ -227,6 +223,7 @@ class UserDB : UserDBInterface {
             }
         }
 
+        Timber.tag(tag).d("sign up ret is: $ret")
         return ret
     }
 
@@ -378,25 +375,38 @@ class MockUserDB: UserDBInterface{
         // no return
     }
 
-    /* if email is "email" return true
+    /* if email is "email" sets the state to true
     * else false*/
-    override suspend fun sendPasswordResetEmail(email: String): Boolean {
-        return email == "email"
+    override suspend fun sendPasswordResetEmail(email: String, emailSent: MutableState<Boolean>) {
+        emailSent.value = email == "email"
     }
 
     /*
     * if password is:
-    * "correct" -> "success"
-    * "unverified" -> "unverified"
-    * else -> "failure"
+    * "correct" -> sets signedIn state to true
+    * "unverified" -> sets unverifiedEmail state to true
+    * else -> sets invalidCredentials state to true
     * */
-    override suspend fun signInWithEmailPassword(email: String, password: String): String {
-        return when(password){
-            "correct" -> "success"
-            "unverified" -> "unverified"
-            else -> "failure"
+    override suspend fun signInWithEmailPassword(
+        email: String,
+        password: String,
+        signedIn: MutableState<Boolean>,
+        unverifiedEmail: MutableState<Boolean>,
+        invalidCredentials: MutableState<Boolean>) {
+        when(password){
+            "correct" -> signedIn.value = true
+            "unverified" -> unverifiedEmail.value = true
+            else -> invalidCredentials.value = true
         }
     }
+
+//    override suspend fun signInWithEmailPassword(email: String, password: String): String {
+//        return when(password){
+//            "correct" -> "success"
+//            "unverified" -> "unverified"
+//            else -> "failure"
+//        }
+//    }
 
     /*
     * when email is:

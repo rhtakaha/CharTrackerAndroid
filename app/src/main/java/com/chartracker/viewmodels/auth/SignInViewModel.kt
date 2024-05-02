@@ -68,23 +68,14 @@ class SignInViewModel(private val userDB: UserDBInterface) : ViewModel(){
 
     fun sendPasswordResetEmail(email: String){
         viewModelScope.launch {
-            _emailSent.value = userDB.sendPasswordResetEmail(email)
+            userDB.sendPasswordResetEmail(email, _emailSent)
         }
     }
 
     fun signInWithEmailPassword(email: String, password: String){
         Timber.tag("SignIn").i("signing in")
         viewModelScope.launch {
-            when(userDB.signInWithEmailPassword(email, password)){
-                "success" -> _signedIn.value = true
-                "unverified" -> _unverifiedEmail.value = true
-                "failure" -> _invalidCredentials.value = true
-            }
-//            if (!){
-//                _invalidCredentials.value = true
-//            }else{
-//                _signedIn.value = true
-//            }
+            userDB.signInWithEmailPassword(email, password, _signedIn, _unverifiedEmail, _invalidCredentials)
         }
     }
 }

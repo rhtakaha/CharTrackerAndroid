@@ -403,7 +403,7 @@ class AddEditCharacterViewModelTest {
         //allows for the internal coroutines to run
         advanceUntilIdle()
 
-        assert(viewmodel.readyToNavToCharactersDelete.value)
+        assert(viewmodel.readyToNavToCharacters.value)
     }
 
     /*********************************   MISC   ***************************************************/
