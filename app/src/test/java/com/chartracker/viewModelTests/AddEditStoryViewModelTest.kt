@@ -29,7 +29,22 @@ class AddEditStoryViewModelTest {
     @Test
     fun initTest() = runTest {
         viewmodel = AddEditStoryViewModel("id", mockStoryDB, mockImageDB)
+
+        //allows for the internal coroutines to run
+        advanceUntilIdle()
+
         assert(!viewmodel.uploadError.value)
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun init_retrievalErrorTest() = runTest {
+        viewmodel = AddEditStoryViewModel("WHAT", mockStoryDB, mockImageDB)
+
+        //allows for the internal coroutines to run
+        advanceUntilIdle()
+
+        assert(viewmodel.retrievalError.value)
     }
 
     /***************************************UPDATE*************************************************/

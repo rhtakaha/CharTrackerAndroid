@@ -25,6 +25,7 @@ class AddStoryScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
     private val uploadError =  mutableStateOf(false)
+    private val retrievalError =  mutableStateOf(false)
     private val duplicateTitleError =  mutableStateOf(false)
 
     @Before
@@ -37,6 +38,8 @@ class AddStoryScreenTest {
                 deleteStory = { /**/ },
                 uploadError = uploadError.value,
                 resetUploadError = {uploadError.value = false},
+                retrievalError = retrievalError.value,
+                resetRetrievalError = {retrievalError.value = false},
                 duplicateTitleError = duplicateTitleError.value,
                 resetDuplicateTitleError = { duplicateTitleError.value = false},
                 readyToNavToStories = false,
@@ -236,6 +239,7 @@ class EditStoryScreenTest {
     @get: Rule
     val composeTestRule = createComposeRule()
     private val uploadError =  mutableStateOf(false)
+    private val retrievalError =  mutableStateOf(false)
     private val duplicateTitleError =  mutableStateOf(false)
 
     @Before
@@ -252,6 +256,8 @@ class EditStoryScreenTest {
                 deleteStory = { /**/ },
                 uploadError = uploadError.value,
                 resetUploadError = {uploadError.value = false},
+                retrievalError = retrievalError.value,
+                resetRetrievalError = {retrievalError.value = false},
                 duplicateTitleError = duplicateTitleError.value,
                 resetDuplicateTitleError = { duplicateTitleError.value = false},
                 readyToNavToStories = false,
@@ -361,6 +367,39 @@ class EditStoryScreenTest {
                 hasAnyAncestor(isDialog())
                         and
                         hasText("Error uploading story!")
+            )
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun retrievalErrorTest(){
+        // activate the dialog directly
+        retrievalError.value = true
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Error retrieving the data!")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasClickAction()
+                        and
+                        hasText("Dismiss")
+            )
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Error retrieving the data!")
             )
             .assertDoesNotExist()
     }

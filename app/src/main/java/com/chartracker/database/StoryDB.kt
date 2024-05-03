@@ -8,6 +8,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -32,8 +33,10 @@ interface StoryDBInterface {
     suspend fun getStoryFromId(
         storyId: String,
         story: MutableState<StoryEntity>,
-        originalFilename: MutableState<String?> = mutableStateOf(""),
-        originalStoryTitle: MutableState<String> = mutableStateOf(""))
+        error: MutableState<Boolean>,
+        originalFilename: MutableState<String?> = mutableStateOf(null),
+        originalStoryTitle: MutableState<String> = mutableStateOf("")
+    )
 
     /*update the document associated with the given Id with the given StoryEntity*/
     suspend fun updateStory(
@@ -140,24 +143,24 @@ class StoryDB : StoryDBInterface {
                 failedGetStories.value = true
             }
     }
-
     override suspend fun getStoryId(storyTitle: String): String{
         var story = ""
+
         try {
-            db.collection("users")
+            story = db.collection("users")
                 .document(auth.currentUser!!.uid)
                 .collection("stories")
                 .whereEqualTo("name", storyTitle)
                 .get()
-                .addOnSuccessListener { document ->
-                    if (!document.isEmpty){
-                        story = document.documents[0].id
-                        Timber.tag(tag).w("Successfully retrieved the document ID")
-                    }else{
-                        Timber.tag(tag).w("Error: could not find the document ID")
-                    }
-                }
-                .await()
+//                .addOnSuccessListener { document ->
+//                    if (!document.isEmpty){
+//                        story = document.documents[0].id
+//                        Timber.tag(tag).w("Successfully retrieved the document ID")
+//                    }else{
+//                        Timber.tag(tag).w("Error: could not find the document ID")
+//                    }
+//                }
+                .await().documents[0].id
         }catch (exception: Exception){
             Timber.tag(tag).w(exception, "Error getting documents: ")
         }
@@ -165,10 +168,44 @@ class StoryDB : StoryDBInterface {
         return story
     }
 
-    /*Document ID to story*/
+//    override suspend fun getStoryId(
+//        storyTitle: String,
+//        failedGetCharacters: MutableState<Boolean>,
+//        story: MutableState<StoryEntity>){
+//
+//        try {
+//            db.collection("users")
+//                .document(auth.currentUser!!.uid)
+//                .collection("stories")
+//                .whereEqualTo("name", storyTitle)
+//                .get()
+//                .addOnSuccessListener { document ->
+//                    if (!document.isEmpty){
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            getStoryFromId(document.documents[0].id, story)
+//                        }
+//
+////                        story = document.documents[0].id
+//                        Timber.tag(tag).w("Successfully retrieved the document ID")
+//                    }else{
+//                        Timber.tag(tag).w("Error: could not find the document ID")
+//                        failedGetCharacters.value = true
+//                    }
+//                }
+//                .addOnFailureListener{
+//                    failedGetCharacters.value = true
+//                }
+//        }catch (exception: Exception){
+//            Timber.tag(tag).w(exception, "Error getting documents: ")
+//        }
+//    }
+
+    /*Document ID to story
+    * originalFilename and originalStoryTitle are optional(so only use if those need to be obtained)*/
     override suspend fun getStoryFromId(
         storyId: String,
         story: MutableState<StoryEntity>,
+        error: MutableState<Boolean>,
         originalFilename: MutableState<String?>,
         originalStoryTitle: MutableState<String>){
         db.collection("users")
@@ -187,10 +224,12 @@ class StoryDB : StoryDBInterface {
                     Timber.tag(tag).w("Successfully retrieved the story from the given ID ")
                 }else{
                     Timber.tag(tag).w("Error: could not find the story from the given ID ")
+                    error.value = true
                 }
             }
             .addOnFailureListener {exception ->
                 Timber.tag(tag).w(exception, "Error getting story from the given ID: ")
+                error.value = true
             }
     }
 
@@ -418,21 +457,22 @@ class MockStoryDB: StoryDBInterface{
     /* mocked get story from id
     * sets story state to Dune story if story id is "Paul"
     * sets story state to Lord of the Rings if story id is "id"
+    * else sets error state to true
     * */
     override suspend fun getStoryFromId(
         storyId: String,
         story: MutableState<StoryEntity>,
+        error: MutableState<Boolean>,
         originalFilename: MutableState<String?>,
         originalStoryTitle: MutableState<String>) {
-        if (storyId == "Paul"){
-            story.value = StoryEntity(
+        when(storyId){
+            "Paul" -> story.value = StoryEntity(
                 name = "Dune",
                 genre = "Sci-Fi",
                 author = "Frank Herbert"
             )
-        }
-        if (storyId == "id"){
-            story.value = StoryEntity(name = "Lord of the Rings")
+            "id" -> story.value = StoryEntity(name = "Lord of the Rings")
+            else -> error.value = true
         }
     }
 

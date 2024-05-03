@@ -43,6 +43,15 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
         _uploadError.value = false
     }
 
+    /*retrieval error event*/
+    private val _retrievalError = mutableStateOf(false)
+    val retrievalError: MutableState<Boolean>
+        get() = _retrievalError
+
+    fun resetRetrievalError(){
+        _retrievalError.value = false
+    }
+
     /*duplicate title error event*/
     private val _duplicateTitleError = mutableStateOf(false)
     val duplicateTitleError: MutableState<Boolean>
@@ -166,8 +175,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
 
         viewModelScope.launch {
             Timber.tag(tag).d("storyID: %s", storyId)
-            storyDB.getStoryFromId(storyId, _story, originalFilename, originalStoryTitle)
-            //TODO error for it it fails?
+            storyDB.getStoryFromId(storyId, _story, _retrievalError, originalFilename, originalStoryTitle)
         }
     }
 

@@ -84,6 +84,8 @@ fun AddEditStoryScreen(
         deleteStory = { addEditStoryViewModel.submitStoryDelete() },
         uploadError = addEditStoryViewModel.uploadError.value,
         resetUploadError = { addEditStoryViewModel.resetUploadError() },
+        retrievalError = addEditStoryViewModel.retrievalError.value,
+        resetRetrievalError = { addEditStoryViewModel.resetRetrievalError() },
         duplicateTitleError = addEditStoryViewModel.duplicateTitleError.value,
         resetDuplicateTitleError = { addEditStoryViewModel.resetDuplicateTitleError() },
         readyToNavToStories = addEditStoryViewModel.navToStories.value,
@@ -102,6 +104,8 @@ fun AddEditStoryScreen(
     deleteStory: () -> Unit,
     uploadError: Boolean,
     resetUploadError: () -> Unit,
+    retrievalError: Boolean,
+    resetRetrievalError: () -> Unit,
     duplicateTitleError: Boolean,
     resetDuplicateTitleError: () -> Unit,
     readyToNavToStories: Boolean,
@@ -259,6 +263,12 @@ fun AddEditStoryScreen(
                 onDismiss = { resetUploadError() }
             )
         }
+        if (retrievalError){
+            MessageDialog(
+                message = stringResource(id = R.string.retrieval_error),
+                onDismiss = { resetRetrievalError() }
+            )
+        }
         if (duplicateTitleError){
             MessageDialog(
                 message = stringResource(id = R.string.duplicate_title_error),
@@ -294,6 +304,8 @@ fun PreviewAddStoryScreen(){
                 deleteStory = {},
                 uploadError = false,
                 resetUploadError = {},
+                retrievalError = false,
+                resetRetrievalError = {},
                 duplicateTitleError = false,
                 resetDuplicateTitleError = {},
                 readyToNavToStories = false,

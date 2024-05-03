@@ -9,10 +9,12 @@ import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CharactersViewModel(private val storyTitle: String, private val storyDB: StoryDBInterface, private val characterDB: CharacterDBInterface): ViewModel() {
     private val _characters = MutableStateFlow<List<CharacterEntity>>(emptyList())
@@ -21,8 +23,6 @@ class CharactersViewModel(private val storyTitle: String, private val storyDB: S
     private val _story = mutableStateOf(StoryEntity())
     val story: MutableState<StoryEntity>
         get() = _story
-//    private val _story = MutableStateFlow(StoryEntity())
-//    val story: StateFlow<StoryEntity> = _story.asStateFlow()
 
     /* event for failing to get characters*/
     private val _failedGetCharacters = mutableStateOf(false)
@@ -38,13 +38,10 @@ class CharactersViewModel(private val storyTitle: String, private val storyDB: S
         viewModelScope.launch {
             storyId = storyDB.getStoryId(storyTitle)
             if (storyId != ""){
-                storyDB.getStoryFromId(storyId, _story)
-                if (_story.value.name.value != ""){
-                    getCharacters()
-                }else{
-                    _failedGetCharacters.value = true
-                }
+                storyDB.getStoryFromId(storyId, _story, _failedGetCharacters)
+                getCharacters()
             }else{
+                Timber.tag("CharactersVM").i("failed get getStoryId")
                 _failedGetCharacters.value = true
             }
         }
@@ -55,6 +52,7 @@ class CharactersViewModel(private val storyTitle: String, private val storyDB: S
         if (temp != null){
             _characters.value = temp.sortedBy { character -> character.name.value }
         }else{
+            Timber.tag("CharactersVM").i("failed get getCharacters")
             _failedGetCharacters.value = true
         }
 
