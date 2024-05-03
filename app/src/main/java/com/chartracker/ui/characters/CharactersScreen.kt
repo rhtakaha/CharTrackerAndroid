@@ -65,7 +65,6 @@ fun CharactersScreen(
     )
 ){
     val characters by charactersViewModel.characters.collectAsStateWithLifecycle()
-    val story by charactersViewModel.story.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     CharactersScreen(
         characters = characters,
@@ -80,7 +79,7 @@ fun CharactersScreen(
                 charactersViewModel.getCharacters()
             }
         },
-        story = story,
+        story = charactersViewModel.story.value,
         navToAddCharacter = {navToAddCharacter(charactersViewModel.storyId, storyTitle, null)},
         /* convert 2 input lambda into 1 input by adding the storyId here*/
         navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, storyTitle, charName)},

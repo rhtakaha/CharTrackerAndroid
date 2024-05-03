@@ -17,9 +17,9 @@ import java.util.Date
 
 class AddEditStoryViewModel(private val storyId: String?, private val storyDB: StoryDBInterface, private val imageDB: ImageDBInterface): ViewModel() {
     private val tag = "AddEditStoryVM"
-    private var originalFilename: String? = null
-    private lateinit var originalStoryTitle: String
-    private var currentTitles: MutableList<String>? = null
+    private var originalFilename: MutableState<String?> = mutableStateOf(null)
+    private var originalStoryTitle: MutableState<String> = mutableStateOf("")
+    private var currentTitles: MutableList<String> = mutableListOf()
 
     private val _story = mutableStateOf(StoryEntity())
     val story: MutableState<StoryEntity>
@@ -57,11 +57,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
             getStory(storyId= storyId)
         }
         viewModelScope.launch {
-            currentTitles = storyDB.getCurrentTitles()
-            if (currentTitles == null){
-                // if we could not get the current titles
-                _uploadError.value = true
-            }
+            storyDB.getCurrentTitles(currentTitles, _uploadError)
         }
     }
 
@@ -80,17 +76,18 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
     }
 
     private suspend fun updateStory(storyId: String, updatedStory: StoryEntity, localImageURI: Uri?){
-        if (originalStoryTitle != updatedStory.name.value){
+        if (originalStoryTitle.value != updatedStory.name.value){
             // if the title was changed then need to check to make sure it is valid
-            if (updatedStory.name.value in currentTitles!!){
+            Timber.tag(tag).i("original title: ${originalStoryTitle.value} vs updated: ${updatedStory.name.value}")
+            if (updatedStory.name.value in currentTitles){
                 _duplicateTitleError.value = true
                 return
             }
 
             // add this title to currentTitles
-            currentTitles!!.add(updatedStory.name.value)
+            currentTitles.add(updatedStory.name.value)
             //remove the title which is being replaced
-            currentTitles!!.remove(originalStoryTitle)
+            currentTitles.remove(originalStoryTitle.value)
         }
         Timber.tag(tag).i("starting to update story")
 
@@ -107,7 +104,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                     updatedStory.imagePublicUrl.value = imageUrl
 
                     //if adding a new image be sure to delete the original too (if it had one)
-                    originalFilename?.let {
+                    originalFilename.value?.let {
                             it1 ->
                         Timber.tag(tag)
                             .i("deleting original story image with original filename: %s", it1)
@@ -123,40 +120,37 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
 
         }else{
             // could be either making no image change or trying to delete it
-            if (originalFilename != null) {
+            if (originalFilename.value != null) {
                 // if there is no file in new version (due to localImageURI == null)
                 //                  AND
                 // the old version had one then we are deleting the current
                 Timber.tag(tag)
-                    .i("deleting original story image with original filename: %s", originalFilename)
-                imageDB.deleteImage(originalFilename!!)
+                    .i("deleting original story image with original filename: %s", originalFilename.value)
+                imageDB.deleteImage(originalFilename.value!!)
                 updatedStory.imageFilename.value = null
                 updatedStory.imagePublicUrl.value = null
             }
             // if both were null it would be that there started with and ended with no image
         }
-        val succeeded = storyDB.updateStory(storyId, updatedStory, currentTitles)
-        if(!succeeded && localImageURI != null){
-            //failed and uploaded the image
-            imageDB.deleteImage(updatedStory.imageFilename.value!!)
-            _uploadError.value = true
-            return
-        }else if (!succeeded){
-            // if just failed
-            _uploadError.value = true
-            return
-        }
-        _navToStories.value = true
+        storyDB.updateStory(
+            storyId,
+            updatedStory,
+            currentTitles,
+            originalStoryTitle.value != updatedStory.name.value,
+            _navToStories,
+            _uploadError,
+            localImageURI != null
+        ) { imageDB.deleteImage(updatedStory.imageFilename.value!!) }
     }
 
     private suspend fun addStory(newStory: StoryEntity, localImageURI: Uri?){
-        if (newStory.name.value in currentTitles!!){
+        if (newStory.name.value in currentTitles){
             _duplicateTitleError.value = true
             return
         }
 
         // add this title to currentTitles
-        currentTitles?.add(newStory.name.value)
+        currentTitles.add(newStory.name.value)
         if (localImageURI != null) {
             // if we are adding an image
             newStory.imageFilename.value = getStoryFilename(newStory.name.value)
@@ -171,18 +165,13 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
 
         }
         Timber.tag(tag).i("Creation of new story initiated")
-        val succeeded = storyDB.createStory(newStory, currentTitles!!)
-        if (!succeeded && localImageURI != null){
-            //failed and uploaded the image
-            imageDB.deleteImage(newStory.imageFilename.value!!)
-            _uploadError.value = true
-            return
-        }else if (!succeeded){
-            // if just failed
-            _uploadError.value = true
-            return
-        }
-        _navToStories.value = true
+        storyDB.createStory(
+            newStory,
+            currentTitles,
+            _navToStories,
+            _uploadError,
+            localImageURI != null
+        ) { imageDB.deleteImage(newStory.imageFilename.value!!) }
     }
 
     /* function which gets the story given the id*/
@@ -190,9 +179,8 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
 
         viewModelScope.launch {
             Timber.tag(tag).d("storyID: %s", storyId)
-            _story.value = storyDB.getStoryFromId(storyId)
-            originalFilename = story.value.imageFilename.value
-            originalStoryTitle = story.value.name.value
+            storyDB.getStoryFromId(storyId, _story, originalFilename, originalStoryTitle)
+            //TODO error for it it fails?
         }
     }
 
@@ -201,7 +189,7 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
             Timber.tag(tag).i("starting to delete story")
 
             if (storyId != null) {
-                storyDB.deleteStory(storyId, currentTitles!!.filter { title -> title != originalStoryTitle })
+                storyDB.deleteStory(storyId, currentTitles.filter { title -> title != originalStoryTitle.value })
             }
             // if it has an image delete that too
             story.value.imageFilename.value?.let { imageDB.deleteImage(it) }

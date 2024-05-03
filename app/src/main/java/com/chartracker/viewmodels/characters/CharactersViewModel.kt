@@ -18,8 +18,11 @@ class CharactersViewModel(private val storyTitle: String, private val storyDB: S
     private val _characters = MutableStateFlow<List<CharacterEntity>>(emptyList())
     val characters: StateFlow<List<CharacterEntity>> = _characters.asStateFlow()
     lateinit var storyId: String
-    private val _story = MutableStateFlow(StoryEntity())
-    val story: StateFlow<StoryEntity> = _story.asStateFlow()
+    private val _story = mutableStateOf(StoryEntity())
+    val story: MutableState<StoryEntity>
+        get() = _story
+//    private val _story = MutableStateFlow(StoryEntity())
+//    val story: StateFlow<StoryEntity> = _story.asStateFlow()
 
     /* event for failing to get characters*/
     private val _failedGetCharacters = mutableStateOf(false)
@@ -35,7 +38,7 @@ class CharactersViewModel(private val storyTitle: String, private val storyDB: S
         viewModelScope.launch {
             storyId = storyDB.getStoryId(storyTitle)
             if (storyId != ""){
-                _story.value = storyDB.getStoryFromId(storyId)
+                storyDB.getStoryFromId(storyId, _story)
                 if (_story.value.name.value != ""){
                     getCharacters()
                 }else{

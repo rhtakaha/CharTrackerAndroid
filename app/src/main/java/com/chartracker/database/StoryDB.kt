@@ -1,34 +1,57 @@
 package com.chartracker.database
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 interface StoryDBInterface {
     /*creates a new story in Firebase*/
-    suspend fun createStory(story: StoryEntity, currentTitles: List<String>): Boolean
-    suspend fun getStories(): MutableList<StoryEntity>?
+    suspend fun createStory(
+        story: StoryEntity,
+        currentTitles: List<String>,
+        navToStories: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit)
+    suspend fun getStories(
+        stories: MutableStateFlow<MutableList<StoryEntity>>,
+        failedGetStories: MutableState<Boolean>)
 
     suspend fun getStoryId(storyTitle: String): String
 
     /*Document ID to story*/
-    suspend fun getStoryFromId(storyId: String): StoryEntity
+    suspend fun getStoryFromId(
+        storyId: String,
+        story: MutableState<StoryEntity>,
+        originalFilename: MutableState<String?> = mutableStateOf(""),
+        originalStoryTitle: MutableState<String> = mutableStateOf(""))
 
     /*update the document associated with the given Id with the given StoryEntity*/
-    suspend fun updateStory(storyId: String, story: StoryEntity, currentTitles: List<String>?): Boolean
+    suspend fun updateStory(
+        storyId: String,
+        story: StoryEntity,
+        currentTitles: List<String>,
+        updatedTitle: Boolean,
+        navToStories: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit)
 
     /*more complex because Story can (will) have a subcollection and cannot easily delete them together
     * it isn't recommended to do the deletion on mobile clients either so just going to delete the story doc which should work for now*/
     fun deleteStory(storyId: String, currentTitles: List<String>)
 
     /* function to get all the in use titles*/
-    suspend fun getCurrentTitles(): MutableList<String>?
+    suspend fun getCurrentTitles(titles: MutableList<String>, error: MutableState<Boolean>)
 }
 
 class StoryDB : StoryDBInterface {
@@ -38,77 +61,84 @@ class StoryDB : StoryDBInterface {
 
     /*****************************************    STORY  ******************************************/
     /*creates a new story in Firebase*/
-    override suspend fun createStory(story: StoryEntity, currentTitles: List<String>): Boolean{
-        var ret = true
-        try {
-            // batched operation so atomic
-            db.runBatch {batch ->
+    override suspend fun createStory(
+        story: StoryEntity,
+        currentTitles: List<String>,
+        navToStories: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit){
 
-                // reference to the new story being created
-                val storyRef = db.collection("users")
-                    .document(auth.currentUser!!.uid)
-                    .collection("stories")
-                    .document()
+        // batched operation so atomic
+        db.runBatch {batch ->
 
-                //create story
-                batch.set(
-                    storyRef,
-                    story.toHashMap()
-                )
-
-                // created the names document for the characters of this story
-                batch.set(
-                    storyRef
-                        .collection("characters")
-                        .document("names"),
-                    hashMapOf("names" to listOf<String>())
-                )
-
-
-                // update titles document by adding the new title
-                batch.update(
-                    db.collection("users")
-                        .document(auth.currentUser!!.uid)
-                        .collection("stories")
-                        .document("titles"),
-                    "titles",
-                    currentTitles
-                )
-
-            }
-                .await()
-        }catch (exception: Exception){
-            ret = false
-            Timber.tag(tag).w(exception, "Error creating story")
-        }
-
-        return ret
-    }
-
-    override suspend fun getStories(): MutableList<StoryEntity>? {
-        var stories: MutableList<StoryEntity>? = mutableListOf()
-
-        try {
-            //getting every document in the story subcollection
-            db.collection("users")
+            // reference to the new story being created
+            val storyRef = db.collection("users")
                 .document(auth.currentUser!!.uid)
                 .collection("stories")
-                .get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        if (document.id != "titles") {
-                            stories?.add(buildStoryFromDocumentSnapshot(document))
-                        }
-                    }
-                    Timber.tag(tag).i("success")
+                .document()
 
-                }
-                .await()
-        }catch (exception: Exception){
-            Timber.tag(tag).d(exception, "Error getting documents: ")
-            stories = null
+            //create story
+            batch.set(
+                storyRef,
+                story.toHashMap()
+            )
+
+            // created the names document for the characters of this story
+            batch.set(
+                storyRef
+                    .collection("characters")
+                    .document("names"),
+                hashMapOf("names" to listOf<String>())
+            )
+
+
+            // update titles document by adding the new title
+            batch.update(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document("titles"),
+                "titles",
+                currentTitles
+            )
+
         }
-        return stories
+            .addOnSuccessListener {
+                navToStories.value = true
+            }
+            .addOnFailureListener {exception ->
+                Timber.tag(tag).w(exception, "Error creating story")
+                if (hasImage){
+                    // only delete the image if it uploaded one
+                    deleteImage()
+                }
+                uploadError.value = true
+            }
+    }
+
+    override suspend fun getStories(
+        stories: MutableStateFlow<MutableList<StoryEntity>>,
+        failedGetStories: MutableState<Boolean>){
+        stories.value.clear()
+        //getting every document in the story subcollection
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    if (document.id != "titles") {
+                        stories.value.add(buildStoryFromDocumentSnapshot(document))
+                    }
+                }
+                Timber.tag(tag).i("got the stories")
+
+            }
+            .addOnFailureListener { exception ->
+                Timber.tag(tag).d(exception, "Error getting documents: ")
+                failedGetStories.value = true
+            }
     }
 
     override suspend fun getStoryId(storyTitle: String): String{
@@ -136,82 +166,102 @@ class StoryDB : StoryDBInterface {
     }
 
     /*Document ID to story*/
-    override suspend fun getStoryFromId(storyId: String): StoryEntity{
-        var story = StoryEntity()
-        try {
+    override suspend fun getStoryFromId(
+        storyId: String,
+        story: MutableState<StoryEntity>,
+        originalFilename: MutableState<String?>,
+        originalStoryTitle: MutableState<String>){
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
+            .document(storyId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null){
+                    document.data?.let {
+                        story.value = buildStoryFromDocumentSnapshot(document)
+                        originalStoryTitle.value = story.value.name.value
+                        originalFilename.value = story.value.imageFilename.value
+                    }
+
+                    Timber.tag(tag).w("Successfully retrieved the story from the given ID ")
+                }else{
+                    Timber.tag(tag).w("Error: could not find the story from the given ID ")
+                }
+            }
+            .addOnFailureListener {exception ->
+                Timber.tag(tag).w(exception, "Error getting story from the given ID: ")
+            }
+    }
+
+    /*update the document associated with the given Id with the given StoryEntity*/
+    override suspend fun updateStory(
+        storyId: String,
+        story: StoryEntity,
+        currentTitles: List<String>,
+        updatedTitle: Boolean,
+        navToStories: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit){
+
+        if (!updatedTitle){
+            // if no name change then no need to update titles doc
             db.collection("users")
                 .document(auth.currentUser!!.uid)
                 .collection("stories")
                 .document(storyId)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document != null){
-                        document.data?.let {
-                            story = buildStoryFromDocumentSnapshot(document)
-                        }
-
-                        Timber.tag(tag).w("Successfully retrieved the story from the given ID ")
-                    }else{
-                        Timber.tag(tag).w("Error: could not find the story from the given ID ")
+                .set(story.toHashMap())
+                .addOnSuccessListener {
+                    Timber.tag(tag).d("Story successfully updated!")
+                    navToStories.value = true
+                }
+                .addOnFailureListener {exception ->
+                    Timber.tag(tag).w(exception, "Error updating story")
+                    if (hasImage){
+                        // only delete the image if it uploaded one
+                        deleteImage()
                     }
+                    uploadError.value = true
                 }
-                .await()
-        }catch (exception: Exception){
-            Timber.tag(tag).w(exception, "Error getting story from the given ID: ")
-        }
+        }else{
+            // if the name changed then need to update titles
+            // batched operation so atomic
+            db.runBatch {batch ->
 
-        return story
-    }
-
-    /*update the document associated with the given Id with the given StoryEntity*/
-    override suspend fun updateStory(storyId: String, story: StoryEntity, currentTitles: List<String>?): Boolean{
-        var ret = true
-        try {
-            if (currentTitles == null){
-                // if no name change then no need to update titles doc
-                db.collection("users")
-                    .document(auth.currentUser!!.uid)
-                    .collection("stories")
-                    .document(storyId)
-                    .set(story.toHashMap())
-                    .addOnSuccessListener { Timber.tag(tag).d("Story successfully updated!") }
-                    .await()
-            }else{
-                // if the name changed then need to update titles
-                // batched operation so atomic
-                db.runBatch {batch ->
-
-                    //update story
-                    batch.set(
-                        db.collection("users")
-                            .document(auth.currentUser!!.uid)
-                            .collection("stories")
-                            .document(storyId),
-                        story.toHashMap()
-                    )
+                //update story
+                batch.set(
+                    db.collection("users")
+                        .document(auth.currentUser!!.uid)
+                        .collection("stories")
+                        .document(storyId),
+                    story.toHashMap()
+                )
 
 
-                    // update titles document by adding the new title
-                    batch.update(
-                        db.collection("users")
-                            .document(auth.currentUser!!.uid)
-                            .collection("stories")
-                            .document("titles"),
-                        "titles",
-                        currentTitles
-                    )
+                // update titles document by adding the new title
+                batch.update(
+                    db.collection("users")
+                        .document(auth.currentUser!!.uid)
+                        .collection("stories")
+                        .document("titles"),
+                    "titles",
+                    currentTitles
+                )
 
-                }.addOnSuccessListener {
-
-                }
-                    .await()
             }
-        }catch (exception: Exception){
-            Timber.tag(tag).w(exception, "Error updating story")
-            ret = false
+                .addOnSuccessListener {
+                    navToStories.value = true
+                }
+                .addOnFailureListener {exception ->
+                    Timber.tag(tag).w(exception, "Error updating story")
+                    if (hasImage){
+                        // only delete the image if it uploaded one
+                        deleteImage()
+                    }
+                    uploadError.value = true
+                }
         }
-
-        return ret
     }
 
     //TODO figure out how best to handle the characters subcollection
@@ -254,45 +304,38 @@ class StoryDB : StoryDBInterface {
 
     /* function to get all the in use titles*/
     @Suppress("UNCHECKED_CAST")
-    override suspend fun getCurrentTitles(): MutableList<String>?{
-        var titles: MutableList<String>? = mutableListOf()
+    override suspend fun getCurrentTitles(titles: MutableList<String>, error: MutableState<Boolean>){
 
-        try {
-            //getting every document in the story subcollection
-            db.collection("users")
-                .document(auth.currentUser!!.uid)
-                .collection("stories")
-                .document("titles")
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        if (!task.result.exists()) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                db.collection("users")
-                                    .document(auth.currentUser!!.uid)
-                                    .collection("stories")
-                                    .document("titles")
-                                    .set(hashMapOf("titles" to listOf<String>()))
-                                    .addOnSuccessListener {
-                                        titles = mutableListOf()
-                                    }
-                                    .addOnFailureListener {
-                                        titles = null
-                                    }
-                                    .await()
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
+            .document("titles")
+            .get()
+            .addOnSuccessListener {docSnap ->
+                if (!docSnap.exists()) {
+                    // if we couldn't find it make it
+                    CoroutineScope(Dispatchers.IO).launch {
+                        db.collection("users")
+                            .document(auth.currentUser!!.uid)
+                            .collection("stories")
+                            .document("titles")
+                            .set(hashMapOf("titles" to listOf<String>()))
+                            .addOnSuccessListener {
+                                // default is empty list so nothing to do
                             }
-                        } else {
-                            titles = task.result.get("titles") as MutableList<String>?
-                        }
-                        Timber.tag(tag).i("success")
+                            .addOnFailureListener {
+                                error.value = true
+                            }
                     }
+                } else {
+                    titles.addAll(docSnap.get("titles") as MutableList<String>)
                 }
-                .await()
-        }catch (exception: Exception){
-            Timber.tag(tag).d(exception, "Error getting current titles")
-            titles = null
-        }
-        return titles
+                Timber.tag(tag).i("success")
+            }
+            .addOnFailureListener {exception ->
+                Timber.tag(tag).d(exception, "Error getting current titles")
+                error.value = true
+            }
     }
 
     private fun buildStoryFromDocumentSnapshot(document: DocumentSnapshot): StoryEntity{
@@ -309,30 +352,47 @@ class StoryDB : StoryDBInterface {
 
 class MockStoryDB: StoryDBInterface{
     /* mocked create story
-    * returns true if the story title is "title"
-    * else returns false*/
-    override suspend fun createStory(story: StoryEntity, currentTitles: List<String>): Boolean {
-        return story.name.value == "title"
+    * sets navToStories state to true if the story title is "title"
+    * else sets uploadError state to true and calls the deleteImage function*/
+    override suspend fun createStory(
+        story: StoryEntity,
+        currentTitles: List<String>,
+        navToStories: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit) {
+        if (story.name.value == "title"){
+            navToStories.value = true
+        }else{
+            if (hasImage){
+                deleteImage()
+            }
+            uploadError.value = true
+        }
     }
 
     /*mocked get stories
-    this always returns a list of stories*/
-    override suspend fun getStories(): MutableList<StoryEntity> {
-        return mutableListOf(
-            StoryEntity(
-                name = "Lord of the Rings",
-                genre = "Fantasy",
-                author = "JRR Tolkien"
-            ),
-            StoryEntity(
-                name = "Dune",
-                genre = "Sci-Fi",
-                author = "Frank Herbert"
-            ),
-            StoryEntity(
-                name = "Star Wars",
-                genre = "Sci-Fi",
-                author = "George Lucas"
+    this always sets the state to a list of stories*/
+    override  suspend fun getStories(
+        stories: MutableStateFlow<MutableList<StoryEntity>>,
+        failedGetStories: MutableState<Boolean>) {
+        stories.value.addAll(
+            mutableListOf(
+                StoryEntity(
+                    name = "Lord of the Rings",
+                    genre = "Fantasy",
+                    author = "JRR Tolkien"
+                ),
+                StoryEntity(
+                    name = "Dune",
+                    genre = "Sci-Fi",
+                    author = "Frank Herbert"
+                ),
+                StoryEntity(
+                    name = "Star Wars",
+                    genre = "Sci-Fi",
+                    author = "George Lucas"
+                )
             )
         )
     }
@@ -356,21 +416,24 @@ class MockStoryDB: StoryDBInterface{
     }
 
     /* mocked get story from id
-    * returns Dune story if story id is "Paul"
-    * returns Lord of the Rings if story id is "id"
-    * else returns empty story*/
-    override suspend fun getStoryFromId(storyId: String): StoryEntity {
+    * sets story state to Dune story if story id is "Paul"
+    * sets story state to Lord of the Rings if story id is "id"
+    * */
+    override suspend fun getStoryFromId(
+        storyId: String,
+        story: MutableState<StoryEntity>,
+        originalFilename: MutableState<String?>,
+        originalStoryTitle: MutableState<String>) {
         if (storyId == "Paul"){
-            return StoryEntity(
+            story.value = StoryEntity(
                 name = "Dune",
                 genre = "Sci-Fi",
                 author = "Frank Herbert"
             )
         }
         if (storyId == "id"){
-            return StoryEntity(name = "Lord of the Rings")
+            story.value = StoryEntity(name = "Lord of the Rings")
         }
-        return StoryEntity()
     }
 
     /* mocked update story
@@ -379,9 +442,20 @@ class MockStoryDB: StoryDBInterface{
     override suspend fun updateStory(
         storyId: String,
         story: StoryEntity,
-        currentTitles: List<String>?
-    ): Boolean {
-        return storyId == "id"
+        currentTitles: List<String>,
+        updatedTitle: Boolean,
+        navToStories: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit){
+        if (storyId == "id"){
+            navToStories.value = true
+        }else{
+            if (hasImage){
+                deleteImage()
+            }
+            uploadError.value = true
+        }
     }
 
     override fun deleteStory(storyId: String, currentTitles: List<String>) {
@@ -390,7 +464,7 @@ class MockStoryDB: StoryDBInterface{
 
     /*mocked get current titles
     this always returns a list of titles (strings)*/
-    override suspend fun getCurrentTitles(): MutableList<String> {
-        return mutableListOf("Lord of the Rings", "Dune", "Star Wars")
+    override suspend fun getCurrentTitles(titles: MutableList<String>, error: MutableState<Boolean>) {
+        titles.addAll(mutableListOf("Lord of the Rings", "Dune", "Star Wars"))
     }
 }

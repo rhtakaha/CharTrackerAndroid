@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class StoriesViewModel(private val storyDB: StoryDBInterface) : ViewModel(){
-    private val _stories = MutableStateFlow<List<StoryEntity>>(emptyList())
+    private val _stories = MutableStateFlow<MutableList<StoryEntity>>(mutableListOf())
     val stories: StateFlow<List<StoryEntity>> = _stories.asStateFlow()
 
     /* event for failing to get stories*/
@@ -32,29 +32,27 @@ class StoriesViewModel(private val storyDB: StoryDBInterface) : ViewModel(){
     fun getStories(){
         Timber.tag("StoriesVM").i("getting stories")
         viewModelScope.launch {
-            val temp = storyDB.getStories()
-            if (temp == null){
-                _failedGetStories.value = true
-            }else{
-                _stories.value = temp.sortedBy { storyEntity -> storyEntity.name.value }
-            }
+            storyDB.getStories(_stories, _failedGetStories)
+            _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.name.value }.toMutableList()
         }
     }
 
     fun storiesAlphaSort(){
-        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.name.value }
+        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.name.value }.toMutableList()
     }
 
     fun storiesReverseAlphaSort(){
-        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.name.value }.reversed()
+        _stories.value =
+            _stories.value.sortedBy { storyEntity -> storyEntity.name.value }.reversed().toMutableList()
     }
 
     fun storiesRecentSort(){
-        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.accessDate.value }.reversed()
+        _stories.value =
+            _stories.value.sortedBy { storyEntity -> storyEntity.accessDate.value }.reversed().toMutableList()
     }
 
     fun storiesReverseRecentSort(){
-        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.accessDate.value }
+        _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.accessDate.value }.toMutableList()
     }
 }
 
