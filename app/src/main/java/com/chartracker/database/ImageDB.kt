@@ -1,17 +1,26 @@
 package com.chartracker.database
 
 import android.net.Uri
+import androidx.compose.runtime.MutableState
 import androidx.core.net.toFile
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 interface ImageDBInterface {
-    suspend fun addImage(filename: String, imageURI: Uri): String
+    suspend fun addImage(
+        entity: DatabaseEntity,
+        imageURI: Uri,
+        uploadError: MutableState<Boolean>,
+        originalFilename: String? = null
+    )
 
     fun deleteImage(filename: String)
 }
@@ -23,19 +32,25 @@ class ImageDB : ImageDBInterface {
     private val db = Firebase.firestore
     /*****************************************    IMAGE  ******************************************/
     /* function for adding an image into cloud storage
-    * input: String filename WITHOUT EXTENSION and local imageUri*/
-    override suspend fun addImage(filename: String, imageURI: Uri): String{
-        if (!logImage("users/${auth.currentUser!!.uid}/images/$filename")){
+    * input: DatabaseEntity, local imageUri, uploadError state, and (optional) original filename
+    * */
+    override suspend fun addImage(
+        entity: DatabaseEntity,
+        imageURI: Uri,
+        uploadError: MutableState<Boolean>,
+        originalFilename: String?
+        ){
+        if (!logImage("users/${auth.currentUser!!.uid}/images/${entity.imageFilename}")){
             // if we fail to log we stop here
-            return ""
+            uploadError.value = true
         }
-        var downloadUrl = ""
+
         // make a reference to where the file will be
         val storageRef = storage.reference
-        val imageRef = storageRef.child("users/${auth.currentUser!!.uid}/images/$filename")
+        val imageRef = storageRef.child("users/${auth.currentUser!!.uid}/images/${entity.imageFilename}")
 
-        try{
-            downloadUrl = imageRef.putFile(imageURI)
+        try {
+            entity.imagePublicUrl.value = imageRef.putFile(imageURI)
                 .continueWithTask { uploadTask ->
                     if (!uploadTask.isSuccessful) {
                         throw uploadTask.exception!!
@@ -44,16 +59,17 @@ class ImageDB : ImageDBInterface {
                 }
                 .await()
                 .toString()
-        }catch (e: Exception){
-            // if it is still an empty string it knows an error occurred
+        }catch (exception: Exception){
+            uploadError.value = true
+            throw exception
         }
+
+
+        // cleaning up the on device cache
         val file = imageURI.toFile()
         if (file.exists() && file.isFile) {
             file.delete()
         }
-
-        //TODO probably add associated Toast or something to let users know they are waiting for the upload
-        return downloadUrl
     }
 
     /* add this filename to the list of every file we are storing
@@ -108,13 +124,20 @@ class ImageDB : ImageDBInterface {
 
 class MockImageDB: ImageDBInterface{
     /* mocked add image
-    * returns "downloadUrl" if the imageUri (string) is "fileUri"
-    * else returns ""*/
-    override suspend fun addImage(filename: String, imageURI: Uri): String {
+    * sets entity imagePublicUrl state to "downloadUrl" if the imageUri (string) is "fileUri"
+    * else sets entity imagePublicUrl state to ""*/
+    override suspend fun addImage(
+        entity: DatabaseEntity,
+        imageURI: Uri,
+        uploadError: MutableState<Boolean>,
+        originalFilename: String?
+    ) {
         if (imageURI.toString() == "fileUri"){
-            return "downloadUrl"
+            entity.imagePublicUrl.value = "downloadUrl"
+        }else{
+            uploadError.value = true
+            throw Exception("bad image :(")
         }
-        return ""
     }
 
     override fun deleteImage(filename: String) {

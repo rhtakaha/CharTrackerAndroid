@@ -153,11 +153,9 @@ class AddEditCharacterViewModel(
         if (localImageURI != null){
             // adding an image
             newCharacter.imageFilename.value = getCharacterFilename(newCharacter.name.value, storyTitle)
-            val imageUrl = imageDB.addImage(newCharacter.imageFilename.value!!, localImageURI)
-            if (imageUrl != ""){
-                newCharacter.imagePublicUrl.value = imageUrl
-            }else{
-                _uploadError.value = true
+            try {
+                imageDB.addImage(newCharacter, localImageURI, _uploadError)
+            }catch (exception: Exception){
                 return
             }
 
@@ -197,14 +195,9 @@ class AddEditCharacterViewModel(
                 // trying to add a new image
                 updatedCharacter.imageFilename.value = getCharacterFilename(updatedCharacter.name.value, storyTitle)
 
-                val imageUrl = imageDB.addImage(updatedCharacter.imageFilename.value!!, localImageURI)
-                if (imageUrl != ""){
-                    updatedCharacter.imagePublicUrl.value = imageUrl
-
-                    //if adding a new image be sure to delete the original too (if it had one)
-                    originalFilename?.let { it1 -> imageDB.deleteImage(it1) }
-                }else{
-                    _uploadError.value = true
+                try {
+                    imageDB.addImage(updatedCharacter, localImageURI, _uploadError, originalFilename)
+                }catch (exception: Exception){
                     return
                 }
             }

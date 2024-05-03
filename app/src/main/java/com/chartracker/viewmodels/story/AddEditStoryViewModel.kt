@@ -99,22 +99,12 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
                 updatedStory.imageFilename.value = getStoryFilename(updatedStory.name.value)
                 Timber.tag(tag)
                     .i("adding new image to story with new filename: %s", updatedStory.imageFilename.value)
-                val imageUrl = imageDB.addImage(updatedStory.imageFilename.value!!, localImageURI)
-                if(imageUrl != ""){
-                    updatedStory.imagePublicUrl.value = imageUrl
-
-                    //if adding a new image be sure to delete the original too (if it had one)
-                    originalFilename.value?.let {
-                            it1 ->
-                        Timber.tag(tag)
-                            .i("deleting original story image with original filename: %s", it1)
-                        imageDB.deleteImage(it1)
-                    }
-                }else{
-                    // if something went wrong with image upload
-                    _uploadError.value = true
+                try {
+                    imageDB.addImage(updatedStory, localImageURI, _uploadError, originalFilename.value)
+                }catch (exception: Exception){
                     return
                 }
+
             }
             // if this was just the existing image don't do anything
 
@@ -154,12 +144,9 @@ class AddEditStoryViewModel(private val storyId: String?, private val storyDB: S
         if (localImageURI != null) {
             // if we are adding an image
             newStory.imageFilename.value = getStoryFilename(newStory.name.value)
-            val imageUrl = imageDB.addImage(newStory.imageFilename.value!!, localImageURI)
-            if (imageUrl != ""){
-                newStory.imagePublicUrl.value = imageUrl
-            }else{
-                // if something went wrong with image upload
-                _uploadError.value = true
+            try {
+                imageDB.addImage(newStory, localImageURI, _uploadError)
+            }catch (exception: Exception){
                 return
             }
 
