@@ -1,21 +1,49 @@
 package com.chartracker.database
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 interface CharacterDBInterface {
     /* creates a character document in the given story*/
-    suspend fun createCharacter(storyId: String, character: CharacterEntity, currentNames: List<String>): Boolean
-    suspend fun getCharacter(storyId: String, charName: String): CharacterEntity
+    suspend fun createCharacter(
+        storyId: String,
+        character: CharacterEntity,
+        currentNames: List<String>,
+        readyToNavToCharacters: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit
+    )
+    suspend fun getCharacter(
+        storyId: String,
+        charName: String,
+        character: MutableState<CharacterEntity>,
+        failedGetCharacter: MutableState<Boolean>)
 
     /*given the document ID of the story return the list of characters*/
-    suspend fun getCharacters(storyId: String): MutableList<CharacterEntity>?
+    suspend fun getCharacters(
+        storyId: String,
+        characters: MutableStateFlow<MutableList<CharacterEntity>>,
+        failedGetCharacters: MutableState<Boolean>)
     suspend fun getCharacterId(storyId: String, charName: String): String
-    suspend fun updateCharacter(storyId: String, charId: String, updatedCharacter: CharacterEntity, currentNames: List<String>?): Boolean
+    suspend fun updateCharacter(
+        storyId: String,
+        charId: String,
+        updatedCharacter: CharacterEntity,
+        currentNames: List<String>,
+        updatedName: Boolean,
+        hasImage: Boolean,
+        deleteImage: () -> Unit,
+        readyToNavToCharacters: MutableState<Boolean> = mutableStateOf(false),
+        uploadError: MutableState<Boolean> = mutableStateOf(false)
+    )
 
     /* first queries for characters with a relationship with the to be deleted character
         *   modifies those characters to remove the to be deleted character AND deletes the character ATOMICALLY*/
@@ -26,7 +54,10 @@ interface CharacterDBInterface {
 
     /* function to get all the in use names for the given title*/
 
-    suspend fun getCurrentNames(storyId: String): MutableList<String>?
+    suspend fun getCurrentNames(
+        storyId: String,
+        currentNames: MutableList<String>,
+        error: MutableState<Boolean>)
 }
 
 class CharacterDB : CharacterDBInterface {
@@ -36,21 +67,170 @@ class CharacterDB : CharacterDBInterface {
     /***************************************** CHARACTER ******************************************/
 
     /* creates a character document in the given story*/
-    override suspend fun createCharacter(storyId: String, character: CharacterEntity, currentNames: List<String>): Boolean{
-        var ret = true
+    override suspend fun createCharacter(
+        storyId: String,
+        character: CharacterEntity,
+        currentNames: List<String>,
+        readyToNavToCharacters: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit
+        ){
+        // batched operation so atomic
+        db.runBatch {batch ->
+
+            //create character
+            batch.set(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(storyId)
+                    .collection("characters")
+                    .document(),
+                character.toHashMap()
+            )
+
+
+            // update names document by adding the new name
+            batch.update(
+                db.collection("users")
+                    .document(auth.currentUser!!.uid)
+                    .collection("stories")
+                    .document(storyId)
+                    .collection("characters")
+                    .document("names"),
+                "names",
+                currentNames
+            )
+
+        }
+            .addOnSuccessListener {
+                readyToNavToCharacters.value = true
+            }
+            .addOnFailureListener {exception ->
+                Timber.tag(tag).w(exception, "Error creating character")
+                if (hasImage){
+                    deleteImage()
+                }
+                uploadError.value = true
+            }
+    }
+
+    override suspend fun getCharacter(
+        storyId: String,
+        charName: String,
+        character: MutableState<CharacterEntity>,
+        failedGetCharacter: MutableState<Boolean>){
+
         try {
+            character.value = buildCharacterFromDocumentSnapshot(db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .collection("stories")
+                .document(storyId)
+                .collection("characters")
+                .whereEqualTo("name", charName)
+                .get()
+                .await().documents[0])
+        }catch (exception: Exception){
+            Timber.tag(tag).w(exception, "Error getting character: ")
+            failedGetCharacter.value = true
+        }
+    }
+
+    /*given the document ID of the story return the list of characters*/
+    override suspend fun getCharacters(
+        storyId: String,
+        characters: MutableStateFlow<MutableList<CharacterEntity>>,
+        failedGetCharacters: MutableState<Boolean>){
+
+        //getting every document in the characters subcollection of that particular story
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    if (document.id != "names") {
+                        characters.value.add(buildCharacterFromDocumentSnapshot(document))
+                    }
+
+                }
+                Timber.tag(tag).i("success")
+                characters.value = characters.value.sortedBy { character -> character.name.value }.toMutableList()
+
+            }
+            .addOnFailureListener {
+                failedGetCharacters.value = true
+            }
+    }
+
+    override suspend fun getCharacterId(storyId: String, charName: String): String{
+        var character = ""
+        try {
+            character = db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .collection("stories")
+                .document(storyId)
+                .collection("characters")
+                .whereEqualTo("name", charName)
+                .get()
+                .await().documents[0].id
+        }catch (exception: Exception){
+            Timber.tag(tag).w(exception, "Error getting character: ")
+        }
+
+        return character
+    }
+
+    override suspend fun updateCharacter(
+        storyId: String,
+        charId: String,
+        updatedCharacter: CharacterEntity,
+        currentNames: List<String>,
+        updatedName: Boolean,
+        hasImage: Boolean,
+        deleteImage: () -> Unit,
+        readyToNavToCharacters: MutableState<Boolean> ,
+        uploadError: MutableState<Boolean>
+    ){
+
+        if (!updatedName){
+            // if no name change don't need to change current names
+            db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .collection("stories")
+                .document(storyId)
+                .collection("characters")
+                .document(charId)
+                .set(updatedCharacter.toHashMap())
+                .addOnSuccessListener {
+                    Timber.tag(tag).d("Character successfully updated!")
+                    readyToNavToCharacters.value = true
+                }
+                .addOnFailureListener { exception ->
+                    // if failed to update the doc remove image if one was uploaded
+                    if (hasImage){
+                        deleteImage()
+                    }
+                    uploadError.value = true
+                    Timber.tag(tag).w(exception, "Error updating character")
+                }
+        }else{
+            // if the name changed then need to update names
             // batched operation so atomic
             db.runBatch {batch ->
 
-                //create character
+                //update character
                 batch.set(
                     db.collection("users")
                         .document(auth.currentUser!!.uid)
                         .collection("stories")
                         .document(storyId)
                         .collection("characters")
-                        .document(),
-                    character.toHashMap()
+                        .document(charId),
+                    updatedCharacter.toHashMap()
                 )
 
 
@@ -67,152 +247,19 @@ class CharacterDB : CharacterDBInterface {
                 )
 
             }
-                .await()
-        }catch (exception: Exception){
-            ret = false
-            Timber.tag(tag).w(exception, "Error creating character")
-        }
-
-
-        return ret
-    }
-
-    override suspend fun getCharacter(storyId: String, charName: String): CharacterEntity{
-        var character = CharacterEntity()
-        try {
-            db.collection("users")
-                .document(auth.currentUser!!.uid)
-                .collection("stories")
-                .document(storyId)
-                .collection("characters")
-                .whereEqualTo("name", charName)
-                .get()
-                .addOnSuccessListener { documents ->
-                    if (documents.documents[0] != null){
-                        character = buildCharacterFromDocumentSnapshot(documents.documents[0])
-                        Timber.tag(tag).w("Successfully retrieved the character ")
-                    }else{
-                        Timber.tag(tag).w("Error: could not find the character ")
+                .addOnSuccessListener {
+                    Timber.tag(tag).d("Character successfully updated!")
+                    readyToNavToCharacters.value = true
+                }
+                .addOnFailureListener {exception ->
+                    // if failed to update the doc remove image if one was uploaded
+                    if (hasImage){
+                        deleteImage()
                     }
+                    uploadError.value = true
+                    Timber.tag(tag).w(exception, "Error updating character")
                 }
-                .await()
-        }catch (exception: Exception){
-            Timber.tag(tag).w(exception, "Error getting character: ")
         }
-        return character
-    }
-
-    /*given the document ID of the story return the list of characters*/
-    override suspend fun getCharacters(storyId: String): MutableList<CharacterEntity>?{
-        var characters: MutableList<CharacterEntity>? = mutableListOf()
-
-        try {
-            //getting every document in the characters subcollection of that particular story
-            db.collection("users")
-                .document(auth.currentUser!!.uid)
-                .collection("stories")
-                .document(storyId)
-                .collection("characters")
-                .get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        if (document.id != "names") {
-                            characters?.add(buildCharacterFromDocumentSnapshot(document))
-                        }
-
-                    }
-                    Timber.tag(tag).i("success")
-
-                }
-                .await()
-        }catch (exception: Exception){
-            Timber.tag(tag).d(exception, "Error getting documents: ")
-            characters = null
-        }
-
-        return characters
-    }
-
-    override suspend fun getCharacterId(storyId: String, charName: String): String{
-        var character = ""
-        try {
-            db.collection("users")
-                .document(auth.currentUser!!.uid)
-                .collection("stories")
-                .document(storyId)
-                .collection("characters")
-                .whereEqualTo("name", charName)
-                .get()
-                .addOnSuccessListener { documents ->
-                    if (documents.documents[0] != null){
-                        character = documents.documents[0].id
-                        Timber.tag(tag).w("Successfully retrieved the character ")
-                    }else{
-                        Timber.tag(tag).w("Error: could not find the character ")
-                    }
-                }
-                .await()
-        }catch (exception: Exception){
-            Timber.tag(tag).w(exception, "Error getting character: ")
-        }
-
-        return character
-    }
-
-    override suspend fun updateCharacter(storyId: String, charId: String, updatedCharacter: CharacterEntity, currentNames: List<String>?): Boolean{
-        var ret = true
-
-        try {
-            if (currentNames == null){
-                db.collection("users")
-                    .document(auth.currentUser!!.uid)
-                    .collection("stories")
-                    .document(storyId)
-                    .collection("characters")
-                    .document(charId)
-                    .set(updatedCharacter.toHashMap())
-                    .addOnSuccessListener { Timber.tag(tag).d("Character successfully updated!") }
-                    .await()
-            }else{
-                // if the name changed then need to update names
-                // batched operation so atomic
-                db.runBatch {batch ->
-
-                    //update character
-                    batch.set(
-                        db.collection("users")
-                            .document(auth.currentUser!!.uid)
-                            .collection("stories")
-                            .document(storyId)
-                            .collection("characters")
-                            .document(charId),
-                        updatedCharacter.toHashMap()
-                    )
-
-
-                    // update names document by adding the new name
-                    batch.update(
-                        db.collection("users")
-                            .document(auth.currentUser!!.uid)
-                            .collection("stories")
-                            .document(storyId)
-                            .collection("characters")
-                            .document("names"),
-                        "names",
-                        currentNames
-                    )
-
-                }.addOnSuccessListener {
-
-                }
-                    .await()
-            }
-        }catch (exception: Exception){
-            ret = false
-            Timber.tag(tag).w(exception, "Error updating character")
-        }
-
-        return ret
     }
 
     /* first queries for characters with a relationship with the to be deleted character
@@ -256,29 +303,25 @@ class CharacterDB : CharacterDBInterface {
 
     /* function to get all the in use names for the given title*/
     @Suppress("UNCHECKED_CAST")
-    override suspend fun getCurrentNames(storyId: String): MutableList<String>?{
-        var names: MutableList<String>? = mutableListOf()
+    override suspend fun getCurrentNames(
+        storyId: String,
+        currentNames: MutableList<String>,
+        error: MutableState<Boolean>){
 
         try {
             //getting every document in the character subcollection
-            db.collection("users")
+            currentNames.addAll(db.collection("users")
                 .document(auth.currentUser!!.uid)
                 .collection("stories")
                 .document(storyId)
                 .collection("characters")
                 .document("names")
                 .get()
-                .addOnSuccessListener { result ->
-                    names = result.get("names") as MutableList<String>?
-                    Timber.tag(tag).i("success")
-                }
-                .await()
+                .await().get("names") as MutableList<String>)
         }catch (exception: Exception){
             Timber.tag(tag).d(exception, "Error getting current names")
-            names = null
+            error.value = true
         }
-
-        return names
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -314,9 +357,20 @@ class MockCharacterDB: CharacterDBInterface{
     override suspend fun createCharacter(
         storyId: String,
         character: CharacterEntity,
-        currentNames: List<String>
-    ): Boolean {
-        return character.name.value == "true"
+        currentNames: List<String>,
+        readyToNavToCharacters: MutableState<Boolean>,
+        uploadError: MutableState<Boolean>,
+        hasImage: Boolean,
+        deleteImage: () -> Unit
+    ) {
+        if (character.name.value == "true"){
+            readyToNavToCharacters.value = true
+        }else{
+            if (hasImage){
+                deleteImage()
+            }
+            uploadError.value = true
+        }
     }
 
     /*
@@ -324,37 +378,49 @@ class MockCharacterDB: CharacterDBInterface{
     * if charName is "Frodo" returns a Frodo CharacterEntity
     * if charName is "Sam" returns a Sam CharacterEntity (with imageFilename = "filename")
     * else returns empty CharacterEntity*/
-    override suspend fun getCharacter(storyId: String, charName: String): CharacterEntity {
-        if (charName == "Frodo"){
-            return CharacterEntity(
-                name = "Frodo",
-                home = "Bag End",
-                race = "Hobbit",
-                weapons = "Sting",
-                allies = listOf("Sam", "Legolas", "Aragorn"),
-                enemies = listOf("Sauron", "Sauruman", "Witch King"),
-                neutral = listOf("Gollum")
-            )
+    override suspend fun getCharacter(
+        storyId: String,
+        charName: String,
+        character: MutableState<CharacterEntity>,
+        failedGetCharacter: MutableState<Boolean>) {
+        when (charName) {
+            "Frodo" -> {
+                character.value = CharacterEntity(
+                    name = "Frodo",
+                    home = "Bag End",
+                    race = "Hobbit",
+                    weapons = "Sting",
+                    allies = listOf("Sam", "Legolas", "Aragorn"),
+                    enemies = listOf("Sauron", "Sauruman", "Witch King"),
+                    neutral = listOf("Gollum")
+                )
+            }
+            "Sam" -> {
+                character.value = CharacterEntity(name = "Sam", race = "Hobbit", imageFilename = "filename")
+            }
+            else -> {
+                failedGetCharacter.value = true
+            }
         }
-        if (charName == "Sam"){
-            return CharacterEntity(name = "Sam", race = "Hobbit", imageFilename = "filename")
-        }
-        return CharacterEntity()
     }
 
     /*
     * mocks get characters
-    * if storyId is "id" returns a mutable list of characters
-    * else returns null*/
-    override suspend fun getCharacters(storyId: String): MutableList<CharacterEntity>? {
+    * if storyId is "id" sets character state to a mutable list of characters
+    * else sets error state to true*/
+    override suspend fun getCharacters(
+        storyId: String,
+        characters: MutableStateFlow<MutableList<CharacterEntity>>,
+        failedGetCharacters: MutableState<Boolean>) {
         if (storyId == "id"){
-            return mutableListOf(
-                CharacterEntity(name = "Frodo", home = "Bag End", race = "Hobbit", weapons = "Sting"),
+            characters.value.addAll( mutableListOf(
                 CharacterEntity(name = "Aragorn", weapons = "Anduril"),
+                CharacterEntity(name = "Frodo", home = "Bag End", race = "Hobbit", weapons = "Sting"),
                 CharacterEntity(name = "Sam")
-            )
+            ))
+        }else{
+            failedGetCharacters.value = true
         }
-        return null
     }
 
     /*
@@ -383,9 +449,21 @@ class MockCharacterDB: CharacterDBInterface{
         storyId: String,
         charId: String,
         updatedCharacter: CharacterEntity,
-        currentNames: List<String>?
-    ): Boolean {
-        return charId == "id"
+        currentNames: List<String>,
+        updatedName: Boolean,
+        hasImage: Boolean,
+        deleteImage: () -> Unit,
+        readyToNavToCharacters: MutableState<Boolean> ,
+        uploadError: MutableState<Boolean>
+    ) {
+        if (charId =="id"){
+            readyToNavToCharacters.value = true
+        }else{
+            if (hasImage){
+                deleteImage()
+            }
+            uploadError.value = true
+        }
     }
 
     override fun deleteCharacter(storyId: String, charId: String, currentNames: List<String>) {
@@ -396,11 +474,15 @@ class MockCharacterDB: CharacterDBInterface{
     * mocks get current names
     * if storyId is "id" returns list of names
     * else returns null*/
-    override suspend fun getCurrentNames(storyId: String): MutableList<String>? {
+    override suspend fun getCurrentNames(
+        storyId: String,
+        currentNames: MutableList<String>,
+        error: MutableState<Boolean>) {
         if (storyId == "id"){
-            return mutableListOf("Frodo", "Aragorn", "Sam", "Sauruman", "Witch King")
+            currentNames.addAll( mutableListOf("Frodo", "Aragorn", "Sam", "Sauruman", "Witch King"))
+        }else{
+            error.value = true
         }
-        return null
     }
 
 }

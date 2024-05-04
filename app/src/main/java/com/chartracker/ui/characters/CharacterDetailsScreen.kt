@@ -199,7 +199,7 @@ fun CharacterDetailsScreen(
                     body = character.bio.value
                 )
             }
-            if (character.bio.value != ""){
+            if (character.faction.value != ""){
                 TextAndContentHolder(
                     title = R.string.faction,
                     body = character.faction.value

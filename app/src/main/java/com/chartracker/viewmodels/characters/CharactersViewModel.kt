@@ -9,7 +9,6 @@ import com.chartracker.database.CharacterDBInterface
 import com.chartracker.database.CharacterEntity
 import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +16,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CharactersViewModel(private val storyTitle: String, private val storyDB: StoryDBInterface, private val characterDB: CharacterDBInterface): ViewModel() {
-    private val _characters = MutableStateFlow<List<CharacterEntity>>(emptyList())
+    private val _characters = MutableStateFlow<MutableList<CharacterEntity>>(mutableListOf())
     val characters: StateFlow<List<CharacterEntity>> = _characters.asStateFlow()
     lateinit var storyId: String
     private val _story = mutableStateOf(StoryEntity())
@@ -48,30 +47,25 @@ class CharactersViewModel(private val storyTitle: String, private val storyDB: S
     }
 
     suspend fun getCharacters(){
-        val temp = characterDB.getCharacters(storyId)
-        if (temp != null){
-            _characters.value = temp.sortedBy { character -> character.name.value }
-        }else{
-            Timber.tag("CharactersVM").i("failed get getCharacters")
-            _failedGetCharacters.value = true
-        }
-
+        characterDB.getCharacters(storyId, _characters, _failedGetCharacters)
     }
 
     fun charactersAlphaSort(){
-        _characters.value = _characters.value.sortedBy { character -> character.name.value }
+        _characters.value = _characters.value.sortedBy { character -> character.name.value }.toMutableList()
     }
 
     fun charactersReverseAlphaSort(){
-        _characters.value = _characters.value.sortedBy { character -> character.name.value }.reversed()
+        _characters.value =
+            _characters.value.sortedBy { character -> character.name.value }.reversed().toMutableList()
     }
 
     fun charactersRecentSort(){
-        _characters.value = _characters.value.sortedBy { character -> character.accessDate.value }.reversed()
+        _characters.value =
+            _characters.value.sortedBy { character -> character.accessDate.value }.reversed().toMutableList()
     }
 
     fun charactersReverseRecentSort(){
-        _characters.value = _characters.value.sortedBy { character -> character.accessDate.value }
+        _characters.value = _characters.value.sortedBy { character -> character.accessDate.value }.toMutableList()
     }
 }
 

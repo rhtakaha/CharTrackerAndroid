@@ -33,7 +33,6 @@ class StoriesViewModel(private val storyDB: StoryDBInterface) : ViewModel(){
         Timber.tag("StoriesVM").i("getting stories")
         viewModelScope.launch {
             storyDB.getStories(_stories, _failedGetStories)
-            _stories.value = _stories.value.sortedBy { storyEntity -> storyEntity.name.value }.toMutableList()
         }
     }
 

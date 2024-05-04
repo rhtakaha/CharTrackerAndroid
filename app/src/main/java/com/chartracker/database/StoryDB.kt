@@ -8,7 +8,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -136,6 +135,7 @@ class StoryDB : StoryDBInterface {
                     }
                 }
                 Timber.tag(tag).i("got the stories")
+                stories.value = stories.value.sortedBy { storyEntity -> storyEntity.name.value }.toMutableList()
 
             }
             .addOnFailureListener { exception ->

@@ -30,7 +30,7 @@ class AddEditCharacterViewModel(
     private var originalFilename: String? = null
     private lateinit var originalCharacterName: String
     private var charId: String? = null
-    private var currentNames: MutableList<String>? = null
+    private var currentNames: MutableList<String> = mutableListOf()
 
     private val _character = mutableStateOf(CharacterEntity())
     val character: MutableState<CharacterEntity>
@@ -87,15 +87,15 @@ class AddEditCharacterViewModel(
 
     init {
         viewModelScope.launch {
-            currentNames = characterDB.getCurrentNames(storyId)
-            if (currentNames == null){
-                _retrievalError.value = true
+            characterDB.getCurrentNames(storyId, currentNames, _retrievalError)
+            if (currentNames.isEmpty()){
                 return@launch
             }
             if (charName != null){
                 getCharacter(charName)
             }else{
-                _charactersStringList = currentNames!!.toMutableList()
+                // when adding still need the list but don't need to remove themselves
+                _charactersStringList = currentNames.toMutableList()
             }
         }
     }
@@ -103,13 +103,11 @@ class AddEditCharacterViewModel(
     private suspend fun getCharacter(charName: String){
         charId = characterDB.getCharacterId(storyId, charName)
         if (charId != ""){
-            _character.value = characterDB.getCharacter(storyId, charName)
+            characterDB.getCharacter(storyId, charName, _character, _retrievalError)
             if (_character.value.name.value != ""){
                 originalCharacterName = character.value.name.value
                 originalFilename = character.value.imageFilename.value
-                _charactersStringList = currentNames!!.filter { name -> name != charName }.toMutableList()
-            }else{
-                _retrievalError.value = true
+                _charactersStringList = currentNames.filter { name -> name != charName }.toMutableList()
             }
         }else{
             _retrievalError.value = true
@@ -142,13 +140,13 @@ class AddEditCharacterViewModel(
 
     private suspend fun addCharacter(storyId: String, newCharacter: CharacterEntity, localImageURI: Uri?){
         Timber.tag(tag).i("Creation of new char initiated")
-        if (newCharacter.name.value in currentNames!!){
+        if (newCharacter.name.value in currentNames){
             _duplicateNameError.value = true
             return
         }
 
         // add the new name to the list
-        currentNames!!.add(newCharacter.name.value)
+        currentNames.add(newCharacter.name.value)
 
         if (localImageURI != null){
             // adding an image
@@ -160,33 +158,30 @@ class AddEditCharacterViewModel(
             }
 
         }
-        val succeeded = characterDB.createCharacter(storyId, newCharacter, currentNames!!)
-        if (!succeeded && localImageURI != null){
-            //failed and uploaded the image
-            imageDB.deleteImage(newCharacter.imageFilename.value!!)
-            _uploadError.value = true
-            return
-        }else if (!succeeded){
-            // if just failed
-            _uploadError.value = true
-            return
-        }
-        _readyToNavToCharacters.value = true
+        characterDB.createCharacter(
+            storyId,
+            newCharacter,
+            currentNames,
+            readyToNavToCharacters = _readyToNavToCharacters,
+            uploadError = _uploadError,
+            localImageURI != null,
+            deleteImage = {imageDB.deleteImage(newCharacter.imageFilename.value!!)}
+        )
     }
 
     private suspend fun updateCharacter(updatedCharacter: CharacterEntity, localImageURI: Uri?, charId: String){
         Timber.tag("EditCharVM").i("starting to update character")
         if (updatedCharacter.name.value != originalCharacterName){
             // if the name was changed have to make sure it is valid
-            if (updatedCharacter.name.value in currentNames!!){
+            if (updatedCharacter.name.value in currentNames){
                 _duplicateNameError.value = true
                 return
             }
 
             // add the new name to the list
-            currentNames!!.add(updatedCharacter.name.value)
+            currentNames.add(updatedCharacter.name.value)
             // remove the name which is being replaced
-            currentNames!!.remove(originalCharacterName)
+            currentNames.remove(originalCharacterName)
         }
 
         if (localImageURI != null){
@@ -216,24 +211,23 @@ class AddEditCharacterViewModel(
             // if both were null it would be that there started with and ended with no image
         }
 
-        val succeeded = characterDB.updateCharacter(storyId, charId, updatedCharacter, currentNames)
-        if (!succeeded && localImageURI != null){
-            //failed and uploaded the image
-            imageDB.deleteImage(updatedCharacter.imageFilename.value!!)
-            _uploadError.value = true
-            return
-        }else if (!succeeded){
-            // if just failed
-            _uploadError.value = true
-            return
-        }
-        _readyToNavToCharacters.value = true
+        characterDB.updateCharacter(
+            storyId,
+            charId,
+            updatedCharacter,
+            currentNames,
+            originalCharacterName != updatedCharacter.name.value,
+            localImageURI != null,
+            readyToNavToCharacters = _readyToNavToCharacters,
+            uploadError = _uploadError,
+            deleteImage = {imageDB.deleteImage(updatedCharacter.imageFilename.value!!)}
+            )
     }
 
     fun submitCharacterDelete(){
         CoroutineScope(Dispatchers.IO).launch {
             Timber.tag(tag).i("starting to delete character")
-            charId?.let { characterDB.deleteCharacter(storyId, it, currentNames!!.filter { name -> name != originalCharacterName }) }
+            charId?.let { characterDB.deleteCharacter(storyId, it, currentNames.filter { name -> name != originalCharacterName }) }
             character.value.imageFilename.value?.let { imageDB.deleteImage(it) }
         }
         _readyToNavToCharacters.value = true

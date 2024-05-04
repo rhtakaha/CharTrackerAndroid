@@ -19,7 +19,7 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
     var alliesList: String? = null
     var enemiesList: String? = null
     var neutralList: String? = null
-    private var currentNames: List<String>? = null
+    private var currentNames: MutableList<String> = mutableListOf()
 
     /* event for failing to get the character*/
     private val _failedGetCharacter = mutableStateOf(false)
@@ -36,27 +36,21 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
 
     fun setup(){
         viewModelScope.launch {
-            if (getCharacter()){
-                verifyAssociatesLists()
-                alliesList = character.value.allies.value?.let { formatAssociatesList(it) }
-                enemiesList = character.value.enemies.value?.let { formatAssociatesList(it) }
-                neutralList = character.value.neutral.value?.let { formatAssociatesList(it) }
-            }else{
-                _failedGetCharacter.value = true
-            }
+            getCharacter()
+            verifyAssociatesLists()
+            alliesList = character.value.allies.value?.let { formatAssociatesList(it) }
+            enemiesList = character.value.enemies.value?.let { formatAssociatesList(it) }
+            neutralList = character.value.neutral.value?.let { formatAssociatesList(it) }
         }
     }
 
-    private suspend fun getCharacter(): Boolean{
-        _character.value =
-            characterDB.getCharacter(
-                storyId = storyId,
-                charName = charName
-            )
+    private suspend fun getCharacter(){
+        viewModelScope.launch {
+            characterDB.getCharacter(storyId,charName,_character, _failedGetCharacter)
 
-        currentNames = characterDB.getCurrentNames(storyId)
-
-        return !(currentNames == null || _character.value.name.value == "")
+            characterDB.getCurrentNames(storyId, currentNames, _failedGetCharacter)
+        }.join()
+        Timber.tag("Details").i("finished getting character: ${_character.value.name.value} and found current names: $currentNames")
     }
 
     private suspend fun verifyAssociatesLists(){
@@ -64,12 +58,17 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         as long as the user facing info is correct,
         the db can be wrong for a bit longer until they come back to this page
         should not be able to really effect performance*/
+        Timber.tag("Details").i("verifying the associates of character: ${_character.value.name.value}")
+        if (currentNames.isEmpty()){
+            // if failed to get them then do not change anything
+            return
+        }
 
         /* performing the set operation: associates - (associates - currentNames)*/
         val allies = character.value.allies.value
         var updatedAllies: List<String> = listOf()
         if (allies != null){
-            updatedAllies = allies.subtract(allies.subtract(currentNames!!.toSet())).toList()
+            updatedAllies = allies.subtract(allies.subtract(currentNames.toSet())).toList()
             character.value.allies.value = updatedAllies
             Timber.tag("details").d("allies changed")
         }
@@ -77,7 +76,7 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         val enemies = character.value.enemies.value
         var updatedEnemies: List<String> = listOf()
         if (enemies != null){
-            updatedEnemies = enemies.subtract(enemies.subtract(currentNames!!.toSet())).toList()
+            updatedEnemies = enemies.subtract(enemies.subtract(currentNames.toSet())).toList()
             character.value.enemies.value = updatedEnemies
             Timber.tag("details").d("enemies changed")
         }
@@ -85,7 +84,7 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         val neutrals = character.value.neutral.value
         var updatedNeutrals: List<String> = listOf()
         if (neutrals != null){
-            updatedNeutrals = neutrals.subtract(neutrals.subtract(currentNames!!.toSet())).toList()
+            updatedNeutrals = neutrals.subtract(neutrals.subtract(currentNames.toSet())).toList()
             character.value.neutral.value = updatedNeutrals
             Timber.tag("details").d("neutrals changed")
         }
@@ -99,7 +98,15 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
             val charId = characterDB.getCharacterId(storyId, charName)
             if (charId != ""){
                 // again, if it fails no need to report to the user
-                characterDB.updateCharacter(storyId, charId, character.value, null)
+                characterDB.updateCharacter(
+                    storyId,
+                    charId,
+                    character.value,
+                    currentNames,
+                    false,
+                    hasImage = false,
+                    deleteImage = {}
+                    )
             }
         }
     }
