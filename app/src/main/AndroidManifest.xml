@@ -13,6 +13,8 @@
         android:theme="@style/Theme.CharTracker"
         tools:targetApi="31">
         <!--            android:usesCleartextTraffic="true"    TODO REMEMBER TO REMOVE CLEARTEXTTRAFFIC FOR PRODUCTION-->
+        <activity android:name="com.canhub.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
         <activity
             android:name="com.chartracker.MainActivity"
             android:exported="true">

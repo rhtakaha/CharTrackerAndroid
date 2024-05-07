@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
@@ -52,7 +51,8 @@ import kotlinx.coroutines.launch
 fun StoryDetails(story: StoryEntity){
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+//            containerColor = MaterialTheme.colorScheme.primaryContainer,
+//            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ),
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
@@ -112,12 +112,13 @@ fun StoryDetails(story: StoryEntity){
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Unit){
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+//            containerColor = MaterialTheme.colorScheme.primaryContainer,
+//            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ),
         shape = MaterialTheme.shapes.small,
         onClick = { onClick(entityName)},
@@ -171,69 +172,73 @@ fun EntityHolderList(
             lazyListState.firstVisibleItemIndex > 0
         }
     }
-    Box(modifier= modifier.fillMaxSize()) {
-        Column(horizontalAlignment = Alignment.End) {
-            SortingMenu(
-                alphaSort = alphaSort,
-                reverseAlphaSort = reverseAlphaSort,
-                recentSort = recentSort,
-                reverseRecentSort = reverseRecentSort)
-            LazyColumn(
-                contentPadding = PaddingValues(4.dp),
-                state = lazyListState,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                if (story != null) {
-                    item {
-                        StoryDetails(story = story)
-                    }
-                }
-                //adding the ads to the list
-                val itemList = mutableListOf<Any>()
-                itemList.addAll(entities)
-                var i = 0
-                var numAds = 0
-                while (i <= itemList.size){
-                    // determines where the ads belong
-                    if (i!= 0 && i % (adSpacing + ((adSpacing + 1) * numAds)) ==0){
-                        itemList.add(i, "ad")
-                        numAds++
-                    }
-                    i++
-                }
+    Surface {
+        Box(modifier= modifier.fillMaxSize()) {
 
-                items(itemList) { entity ->
-                    if (entity is DatabaseEntity){
-                        EntityHolder(
-                            imageUrl = entity.imagePublicUrl.value,
-                            entityName = entity.name.value,
-                            onClick = onClick
-                        )
-                    }else if (entity == "ad"){
+            Column(horizontalAlignment = Alignment.End) {
+                SortingMenu(
+                    alphaSort = alphaSort,
+                    reverseAlphaSort = reverseAlphaSort,
+                    recentSort = recentSort,
+                    reverseRecentSort = reverseRecentSort
+                )
+                LazyColumn(
+                    contentPadding = PaddingValues(4.dp),
+                    state = lazyListState,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    if (story != null) {
+                        item {
+                            StoryDetails(story = story)
+                        }
+                    }
+                    //adding the ads to the list
+                    val itemList = mutableListOf<Any>()
+                    itemList.addAll(entities)
+                    var i = 0
+                    var numAds = 0
+                    while (i <= itemList.size) {
+                        // determines where the ads belong
+                        if (i != 0 && i % (adSpacing + ((adSpacing + 1) * numAds)) == 0) {
+                            itemList.add(i, "ad")
+                            numAds++
+                        }
+                        i++
+                    }
+
+                    items(itemList) { entity ->
+                        if (entity is DatabaseEntity) {
+                            EntityHolder(
+                                imageUrl = entity.imagePublicUrl.value,
+                                entityName = entity.name.value,
+                                onClick = onClick
+                            )
+                        } else if (entity == "ad") {
                         AdmobBanner()
+                        }
                     }
                 }
-            }
-            if (entities.size < adSpacing){
-                // if less than
+                if (entities.size < adSpacing) {
+                    // if less than
                 AdmobBanner()
+                }
             }
-        }
-        if (showScrollToTopButton) {
-            SmallFloatingActionButton(
-                onClick = {
-                    coroutineScope.launch {
-                        lazyListState.animateScrollToItem(0)
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowUpward,
-                    contentDescription = stringResource(id = R.string.scroll_to_top)
-                )
+            if (showScrollToTopButton) {
+                SmallFloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            lazyListState.animateScrollToItem(0)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowUpward,
+                        contentDescription = stringResource(id = R.string.scroll_to_top)
+                    )
+                }
             }
         }
     }

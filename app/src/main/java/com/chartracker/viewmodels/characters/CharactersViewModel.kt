@@ -47,6 +47,7 @@ class CharactersViewModel(private val storyTitle: String, private val storyDB: S
     }
 
     suspend fun getCharacters(){
+        _characters.value.clear()
         characterDB.getCharacters(storyId, _characters, _failedGetCharacters)
     }
 
