@@ -331,16 +331,19 @@ fun AddEditCharacterScreen(
             ChipGroupRow(
                 header = stringResource(id = R.string.allies),
                 contentsList = charactersStringList,
+                selectedList = character.allies.value,
                 onClick = updateAllies
             )
             ChipGroupRow(
                 header = stringResource(id = R.string.enemies),
                 contentsList = charactersStringList,
+                selectedList = character.enemies.value,
                 onClick = updateEnemies
             )
             ChipGroupRow(
                 header = stringResource(id = R.string.neutral),
                 contentsList = charactersStringList,
+                selectedList = character.neutral.value,
                 onClick = updateNeutrals
             )
 

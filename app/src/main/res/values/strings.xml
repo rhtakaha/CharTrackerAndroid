@@ -126,4 +126,5 @@
     <string name="signUp_wrong_email">If the email is incorrect:</string>
     <string name="cropping_error">Error cropping the image!</string>
     <string name="retrieval_error">Error retrieving the data!</string>
+    <string name="selected_chip">Selected option</string>
 </resources>

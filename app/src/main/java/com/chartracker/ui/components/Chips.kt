@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -23,12 +22,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.chartracker.R
 import com.chartracker.ui.theme.CharTrackerTheme
 
 @Composable
 fun ChipGroupRow(
     header: String,
     contentsList: List<String>,
+    selectedList: List<String>?,
     onClick: (String, Boolean) -> Unit){
     Column {
         Text(text = header)
@@ -37,22 +38,31 @@ fun ChipGroupRow(
                 .horizontalScroll(rememberScrollState())
         ) {
             for (item in contentsList){
-                BasicChip(
-                    text = item,
-                    onClick = {selected -> onClick(item, selected)}
-                )
+                if (selectedList != null) {
+                    // if there are some selected check if this is one of them
+                    BasicChip(
+                        isSelected = item in selectedList,
+                        text = item,
+                        onClick = {selected -> onClick(item, selected)}
+                    )
+                }else{
+                    BasicChip(
+                        text = item,
+                        onClick = {selected -> onClick(item, selected)}
+                    )
+                }
             }
         }
     }
 }
 
 @SuppressLint("PrivateResource")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BasicChip(
+    isSelected: Boolean = false,
     text: String,
     onClick: (Boolean) -> Unit) {
-    var selected by remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf(isSelected) }
 
     FilterChip(
         onClick = {
@@ -67,7 +77,7 @@ fun BasicChip(
             {
                 Icon(
                     imageVector = Icons.Filled.Done,
-                    contentDescription = stringResource(id = androidx.compose.ui.R.string.selected),
+                    contentDescription = stringResource(id = R.string.selected_chip),
                     modifier = Modifier.size(FilterChipDefaults.IconSize)
                 )
             }
@@ -91,6 +101,7 @@ fun PreviewChipGroupRow(){
             ChipGroupRow(
                 header = "Allies:",
                 contentsList = characters,
+                selectedList = listOf(),
                 onClick = {_, _ ->}
             )
         }
