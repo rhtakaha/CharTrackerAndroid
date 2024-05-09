@@ -1,8 +1,10 @@
 package com.chartracker.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.chartracker.BuildConfig
 import com.google.android.gms.ads.AdRequest
@@ -13,7 +15,7 @@ import com.google.android.gms.ads.AdView
 @Composable
 fun AdmobBanner() {
     AndroidView(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.height(40.dp).fillMaxWidth(),
         factory = { context ->
             // on below line specifying ad view.
             AdView(context).apply {

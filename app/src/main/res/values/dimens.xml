@@ -6,4 +6,8 @@
     <dimen name="add_image_height">150dp</dimen>
     <dimen name="list_image_width">75dp</dimen>
     <dimen name="list_image_height">75dp</dimen>
+    <dimen name="card_height">120dp</dimen>
+    <dimen name="card_image_padding">8dp</dimen>
+    <dimen name="details_card_height">100dp</dimen>
+    <dimen name="image_to_text_spacing">40dp</dimen>
 </resources>

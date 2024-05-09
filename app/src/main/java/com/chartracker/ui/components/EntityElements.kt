@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,6 +59,7 @@ fun StoryDetails(story: StoryEntity){
         ),
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
+            .height(dimensionResource(id = R.dimen.details_card_height))
             .fillMaxWidth()
 
     ) {
@@ -70,40 +74,41 @@ fun StoryDetails(story: StoryEntity){
                     loading = placeholder(R.drawable.baseline_downloading_24),
                     failure = placeholder(R.drawable.baseline_broken_image_24),
                     modifier = Modifier
-                        .size(120.dp)
+                        .size(dimensionResource(id = R.dimen.details_card_height))
                         .clip(RoundedCornerShape(16.dp))
+                        .padding(dimensionResource(id = R.dimen.card_image_padding))
                 )
             } else {
-                Spacer(modifier = Modifier.size(120.dp))
+                Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.details_card_height)))
             }
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .padding(start = 40.dp)
+                    .padding(start = dimensionResource(id = R.dimen.image_to_text_spacing))
             ) {
                 if (story.author.value != ""){
                     Text(
                         text = story.author.value,
-                        style = MaterialTheme.typography.headlineLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 4.dp)
                     )
                 }
                 if (story.genre.value != ""){
                     Text(
                         text = story.genre.value,
-                        style = MaterialTheme.typography.headlineLarge,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 4.dp)
                     )
                 }
                 if (story.type.value != ""){
                     Text(
                         text = story.type.value,
-                        style = MaterialTheme.typography.headlineLarge,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 4.dp)
                     )
                 }
             }
@@ -123,6 +128,7 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
         shape = MaterialTheme.shapes.small,
         onClick = { onClick(entityName)},
         modifier = Modifier
+            .height(dimensionResource(id = R.dimen.card_height))
             .fillMaxWidth()
 
     ) {
@@ -138,13 +144,14 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
                     failure = placeholder(R.drawable.baseline_broken_image_24),
 //                contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(120.dp)
+                        .size(dimensionResource(id = R.dimen.card_height))
                         .clip(RoundedCornerShape(16.dp))
+                        .padding(dimensionResource(id = R.dimen.card_image_padding))
                 )
             } else {
-                Spacer(modifier = Modifier.size(120.dp))
+                Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.card_height)))
             }
-            Spacer(modifier = Modifier.width(40.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.image_to_text_spacing)))
             Text(
                 text = entityName,
                 style = MaterialTheme.typography.headlineLarge
@@ -155,7 +162,7 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
 
 @Composable
 fun EntityHolderList(
-    adSpacing: Int,
+//    adSpacing: Int,
     entities: List<DatabaseEntity>,
     modifier: Modifier=Modifier,
     onClick: (String) -> Unit,
@@ -165,6 +172,17 @@ fun EntityHolderList(
     recentSort: () -> Unit,
     reverseRecentSort: () -> Unit,
     ){
+    // use the screen height to calculate the adSpacing so there is one at the bottom of each full swipe
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val adSpacing = if (story == null){
+        //if it is just a list of stories
+        ((screenHeight / (dimensionResource(id = R.dimen.card_height))) - 1)
+
+    }else{
+        // if there are story details at the top
+        ((screenHeight - dimensionResource(id = R.dimen.details_card_height)) / (dimensionResource(id = R.dimen.card_height))) - 1
+    }.toInt()
+
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val showScrollToTopButton by remember{
@@ -326,7 +344,7 @@ fun PreviewEntityHolderListWithStoryDetails(){
     CharTrackerTheme {
         Surface {
             EntityHolderList(
-                adSpacing = 4,
+//                adSpacing = 4,
                 entities = characters,
                 onClick = {},
                 story = story,
@@ -350,7 +368,7 @@ fun PreviewEntityHolderList(){
     CharTrackerTheme {
         Surface {
             EntityHolderList(
-                adSpacing = 5,
+//                adSpacing = 5,
                 entities = stories,
                 onClick = {},
                 alphaSort = {},
