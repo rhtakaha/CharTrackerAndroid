@@ -81,6 +81,7 @@ class ChipsTest {
             ChipGroupRow(
                 header = "Allies",
                 contentsList = listOf("Aragorn", "Gandalf", "Merry", "Pippin", "Sam", "Frodo"),
+                selectedList = null,
                 onClick = { _, _ ->}
             )
         }
@@ -120,6 +121,7 @@ class ChipsTest {
             ChipGroupRow(
                 header = "Allies",
                 contentsList = listOf("Aragorn", "Gandalf", "Merry", "Pippin", "Sam", "Frodo"),
+                selectedList = null,
                 onClick = { _, _ ->}
             )
         }
@@ -183,6 +185,7 @@ class ChipsTest {
             ChipGroupRow(
                 header = "Allies",
                 contentsList = listOf("Aragorn", "Gandalf", "Merry", "Pippin", "Sam", "Frodo", "Gollum", "Farimir", "Borimir"),
+                selectedList = null,
                 onClick = { _, _ ->}
             )
         }

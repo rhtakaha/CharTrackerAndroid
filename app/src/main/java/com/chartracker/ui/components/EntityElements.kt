@@ -53,10 +53,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun StoryDetails(story: StoryEntity){
     Card(
-        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.primaryContainer,
-//            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
+        colors = CardDefaults.cardColors(),
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
             .height(dimensionResource(id = R.dimen.details_card_height))
@@ -121,10 +118,7 @@ fun StoryDetails(story: StoryEntity){
 @Composable
 fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Unit){
     Card(
-        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.primaryContainer,
-//            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
+        colors = CardDefaults.cardColors(),
         shape = MaterialTheme.shapes.small,
         onClick = { onClick(entityName)},
         modifier = Modifier
@@ -142,7 +136,6 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
                     contentDescription = stringResource(id = R.string.entity_image),
                     loading = placeholder(R.drawable.baseline_downloading_24),
                     failure = placeholder(R.drawable.baseline_broken_image_24),
-//                contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(dimensionResource(id = R.dimen.card_height))
                         .clip(RoundedCornerShape(16.dp))
@@ -162,7 +155,6 @@ fun EntityHolder(imageUrl: String?, entityName: String, onClick: (String) -> Uni
 
 @Composable
 fun EntityHolderList(
-//    adSpacing: Int,
     entities: List<DatabaseEntity>,
     modifier: Modifier=Modifier,
     onClick: (String) -> Unit,
