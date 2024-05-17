@@ -127,4 +127,7 @@
     <string name="cropping_error">Error cropping the image!</string>
     <string name="retrieval_error">Error retrieving the data!</string>
     <string name="selected_chip">Selected option</string>
+    <string name="refresh">Refresh</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="confirm">Confirm</string>
 </resources>

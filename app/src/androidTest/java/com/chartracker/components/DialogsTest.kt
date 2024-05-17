@@ -10,6 +10,7 @@ import com.chartracker.ui.components.MessageDialog
 import org.junit.Rule
 import org.junit.Test
 import com.chartracker.R
+import com.chartracker.ui.components.ConfirmDialog
 import com.chartracker.ui.components.ReAuthDialog
 import com.chartracker.ui.components.RefreshDialog
 
@@ -58,6 +59,30 @@ class DialogsTest {
     }
 
     @Test
+    fun confirmDialogTest(){
+        composeTestRule.setContent {
+            ConfirmDialog(message =  "Are you sure you want to delete your account? This cannot be undone!",
+                confirm = { /**/ }) {
+
+            }
+        }
+
+        composeTestRule
+            .onNodeWithText("Are you sure you want to delete your account? This cannot be undone!")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Cancel")
+            .assertHasClickAction()
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Confirm")
+            .assertHasClickAction()
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun reAuthDialogTest(){
         composeTestRule.setContent {
             ReAuthDialog(
@@ -67,7 +92,7 @@ class DialogsTest {
         }
 
         composeTestRule
-            .onNodeWithText("Enter password")
+            .onNodeWithText("Enter Password")
             .performTextInput("pass123")
 
         composeTestRule
@@ -88,7 +113,7 @@ class DialogsTest {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText("Enter")
+            .onNodeWithText("Submit")
             .assertHasClickAction()
             .assertIsDisplayed()
     }

@@ -3,6 +3,8 @@ package com.chartracker.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,7 +33,7 @@ fun MessageDialog(
             TextButton(
                 onClick = {onDismiss()}
             ) {
-                Text("Dismiss")
+                Text(stringResource(id = R.string.dismiss))
             }
         })
 }
@@ -51,14 +53,43 @@ fun RefreshDialog(
             TextButton(
                 onClick = {onDismiss()}
             ) {
-                Text("Dismiss")
+                Text(stringResource(id = R.string.dismiss))
             }      
         },
         confirmButton = {
             TextButton(
                 onClick = {refresh()}
             ) {
-                Text("Refresh")
+                Text(stringResource(id = R.string.refresh))
+            }
+        })
+}
+
+@Composable
+fun ConfirmDialog(
+    message: String,
+    confirm: () -> Unit,
+    onDismiss: () -> Unit
+){
+    /* Dialog for instances where alerting the user to make sure they really want to perform this action*/
+    AlertDialog(
+        onDismissRequest = { onDismiss()},
+        text = { Text(text = message, textAlign = TextAlign.Center) },
+        dismissButton = {
+            TextButton(
+                onClick = {onDismiss()}
+            ) {
+                Text(stringResource(id = R.string.cancel))
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {confirm()},
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer)
+            ) {
+                Text(stringResource(id = R.string.confirm))
             }
         })
 }
@@ -89,7 +120,7 @@ fun ReAuthDialog(
             TextButton(
                 onClick = { onDismiss() }
             ) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel))
             }
         },
         confirmButton = {
@@ -100,7 +131,7 @@ fun ReAuthDialog(
                     }
                 }
             ) {
-                Text("Enter")
+                Text(stringResource(id = R.string.submit))
             }
 
         }
@@ -136,6 +167,25 @@ fun PreviewRefreshDialog(){
     CharTrackerTheme {
         Surface {
             RefreshDialog(message = "Failed to retrieve characters.", refresh = { /**/ }) {
+                
+            }
+        }
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Dark Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "Light Mode")
+@Composable
+fun PreviewConfirmDialog(){
+    CharTrackerTheme {
+        Surface {
+            ConfirmDialog(
+                message = "Are you sure you want to delete your account? This cannot be undone!",
+                confirm = { /**/ }) {
                 
             }
         }

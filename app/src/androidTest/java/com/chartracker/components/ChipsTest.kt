@@ -1,14 +1,12 @@
 package com.chartracker.components
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import com.chartracker.ui.components.BasicChip
 import com.chartracker.ui.components.ChipGroupRow
 import org.junit.Rule
@@ -44,7 +42,7 @@ class ChipsTest {
             .performClick()
 
         composeTestRule
-            .onNodeWithContentDescription("Selected")
+            .onNodeWithContentDescription("Selected option")
             .assertIsDisplayed()
     }
 
@@ -63,7 +61,7 @@ class ChipsTest {
             .performClick()
 
         composeTestRule
-            .onNodeWithContentDescription("Selected")
+            .onNodeWithContentDescription("Selected option")
             .assertIsDisplayed()
 
         composeTestRule
@@ -71,7 +69,7 @@ class ChipsTest {
             .performClick()
 
         composeTestRule
-            .onNodeWithContentDescription("Selected")
+            .onNodeWithContentDescription("Selected option")
             .assertDoesNotExist()
     }
 
@@ -176,7 +174,7 @@ class ChipsTest {
 
         composeTestRule
             .onNodeWithText("Frodo")
-            .assertIsNotDisplayed()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -217,10 +215,6 @@ class ChipsTest {
         composeTestRule
             .onNodeWithText("Frodo")
             .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("Borimir")
-            .performScrollTo()
 
         composeTestRule
             .onNodeWithText("Gollum")

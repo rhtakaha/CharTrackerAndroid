@@ -2,11 +2,11 @@ package com.chartracker.ui.components
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.FilterChip
@@ -20,11 +20,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.chartracker.R
 import com.chartracker.ui.theme.CharTrackerTheme
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ChipGroupRow(
     header: String,
@@ -33,10 +35,9 @@ fun ChipGroupRow(
     onClick: (String, Boolean) -> Unit){
     Column {
         Text(text = header)
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState())
-        ) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_pad))
+        )  {
             for (item in contentsList){
                 if (selectedList != null) {
                     // if there are some selected check if this is one of them
@@ -53,6 +54,28 @@ fun ChipGroupRow(
                 }
             }
         }
+
+//        Row(
+//            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_pad)),
+//            modifier = Modifier
+//                .horizontalScroll(rememberScrollState())
+//        ) {
+//            for (item in contentsList){
+//                if (selectedList != null) {
+//                    // if there are some selected check if this is one of them
+//                    BasicChip(
+//                        isSelected = item in selectedList,
+//                        text = item,
+//                        onClick = {selected -> onClick(item, selected)}
+//                    )
+//                }else{
+//                    BasicChip(
+//                        text = item,
+//                        onClick = {selected -> onClick(item, selected)}
+//                    )
+//                }
+//            }
+//        }
     }
 }
 
@@ -95,7 +118,7 @@ fun BasicChip(
     name = "Light Mode")
 @Composable
 fun PreviewChipGroupRow(){
-    val characters = listOf("Aragorn", "Gandalf", "Merry", "Pippin", "Sam", "Frodo")
+    val characters = listOf("Aragorn", "Gandalf", "Merry", "Pippin", "Sam", "Frodo", "Sauron", "Tom Bombadil", "Borimir", "Farimir")
     CharTrackerTheme {
         Surface {
             ChipGroupRow(

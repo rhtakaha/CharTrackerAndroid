@@ -10,4 +10,5 @@
     <dimen name="card_image_padding">8dp</dimen>
     <dimen name="details_card_height">100dp</dimen>
     <dimen name="image_to_text_spacing">40dp</dimen>
+    <dimen name="small_pad">2dp</dimen>
 </resources>
