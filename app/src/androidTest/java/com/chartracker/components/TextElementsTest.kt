@@ -5,9 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
 import org.junit.Rule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.chartracker.R
 import com.chartracker.ui.components.TextAndContentHolder
@@ -64,6 +68,59 @@ class TextElementsTest {
         composeTestRule
             .onNodeWithText("Enter password")
             .performTextInput("pass123")
+
+        composeTestRule
+            .onNodeWithText("•••••••")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTextEntryHolderPasswordHideAndRevealTest(){
+        composeTestRule.setContent {
+            var password by remember { mutableStateOf("") }
+            TextEntryHolder(
+                title = R.string.password,
+                label = R.string.passwordHint,
+                text = password,
+                onTyping = {newInput -> password = newInput},
+                isPassword = true)
+        }
+
+        composeTestRule
+            .onNodeWithText("Enter Password")
+            .performTextInput("pass123")
+
+        composeTestRule
+            .onNodeWithText("•••••••")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasContentDescription("Show password")
+                and
+                hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("•••••••")
+            .assertIsNotDisplayed()
+
+        composeTestRule
+            .onNodeWithText("pass123")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasContentDescription("Hide password")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("pass123")
+            .assertIsNotDisplayed()
 
         composeTestRule
             .onNodeWithText("•••••••")

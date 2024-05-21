@@ -18,9 +18,6 @@
           <timeTargetWasSelectedWithDropDown value="2024-05-08T22:31:43.682518200Z" />
         </State>
       </entry>
-      <entry key="confirmDeleteTest() (1)">
-        <State />
-      </entry>
       <entry key="confirmDeleteTest() (2)">
         <State />
       </entry>
@@ -31,6 +28,9 @@
         <State />
       </entry>
       <entry key="confirmUpTest() (1)">
+        <State />
+      </entry>
+      <entry key="testTextEntryHolderPasswordHideAndRevealTest()">
         <State />
       </entry>
     </value>
