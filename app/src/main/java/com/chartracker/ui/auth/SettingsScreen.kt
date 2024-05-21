@@ -31,6 +31,7 @@ import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.UserDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.ConfirmDialog
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.ReAuthDialog
 import com.chartracker.ui.components.TextEntryHolder
@@ -114,6 +115,12 @@ fun SettingsScreen(
     var missingPassword by remember {
         mutableStateOf(false)
     }
+    var initiatingDeleteAccount by remember {
+        mutableStateOf(false)
+    }
+    var initiatingSignOut by remember {
+        mutableStateOf(false)
+    }
     if (readyToNavToSignIn){
         resetReadyToNavToSignIn()
         navToSignIn()
@@ -188,15 +195,33 @@ fun SettingsScreen(
             }
             
             // sign out
-            Button(onClick = { signOut() }) {
+            Button(onClick = { initiatingSignOut = true }) {
                 Text(text = stringResource(id = R.string.sign_out))
             }
             
             // delete account
-            Button(onClick = { deleteAccount() }) {
+            Button(onClick = {  initiatingDeleteAccount = true }) {
                 Text(text = stringResource(id = R.string.delete_account))
             }
 
+        }
+        if (initiatingSignOut){
+            ConfirmDialog(message = stringResource(id = R.string.confirm_sign_out),
+                confirm = {
+                    initiatingSignOut = false
+                    signOut()
+                          },
+                onDismiss = { initiatingSignOut = false}
+            )
+        }
+        if (initiatingDeleteAccount){
+            ConfirmDialog(message = stringResource(id = R.string.confirm_delete_account),
+                confirm = {
+                    initiatingDeleteAccount = false
+                    deleteAccount()
+                          },
+                onDismiss = { initiatingDeleteAccount = false}
+                )
         }
         if (passwordUpdateSuccess){
             MessageDialog(

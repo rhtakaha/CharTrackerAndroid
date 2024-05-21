@@ -3,6 +3,7 @@ package com.chartracker.ui.story
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +59,7 @@ import com.chartracker.database.ImageDBInterface
 import com.chartracker.database.StoryDBInterface
 import com.chartracker.database.StoryEntity
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.ConfirmDialog
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
@@ -132,6 +135,18 @@ fun AddEditStoryScreen(
         mutableStateOf(false)
     }
 
+    var confirmBack by remember {
+        mutableStateOf(false)
+    }
+
+    var confirmDelete by remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler {
+        confirmBack = true
+    }
+
     val context = LocalContext.current
 
     val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
@@ -172,7 +187,7 @@ fun AddEditStoryScreen(
     Scaffold(
         snackbarHost ={ SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-        CharTrackerTopBar(onBackNav=onBackNav, actionButtons = {
+        CharTrackerTopBar(onBackNav= {confirmBack = true}, actionButtons = {
             IconButton(onClick = {
                 if (story.name.value != "" && !croppingInProgress.value) {
                     submitStory(story, localUri.value)
@@ -184,7 +199,7 @@ fun AddEditStoryScreen(
                 )
             }
             if (editing){
-                IconButton(onClick = { deleteStory() }) {
+                IconButton(onClick = { confirmDelete = true }) {
                     Icon(
                         imageVector = Icons.Filled.DeleteForever,
                         contentDescription = stringResource(id = R.string.delete)
@@ -256,6 +271,24 @@ fun AddEditStoryScreen(
                 text = story.type.value,
                 onTyping = {newInput -> story.type.value = newInput})
 
+        }
+        if (confirmBack){
+            ConfirmDialog(message = stringResource(id = R.string.confirm_back),
+                confirm = {
+                    confirmBack = false
+                    onBackNav()
+                },
+                onDismiss = { confirmBack = false}
+            )
+        }
+        if (confirmDelete){
+            ConfirmDialog(message = stringResource(id = R.string.confirm_delete_story),
+                confirm = {
+                    confirmDelete = false
+                    deleteStory()
+                },
+                onDismiss = { confirmDelete = false}
+            )
         }
         if (uploadError){
             MessageDialog(

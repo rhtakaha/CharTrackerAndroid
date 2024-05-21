@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
@@ -268,6 +269,35 @@ class AddCharacterScreenTest{
         composeTestRule
             .onAllNodesWithText("Sauron")
             .assertCountEquals(4)
+    }
+
+    @Test
+    fun confirmUpTest(){
+        composeTestRule
+            .onNodeWithContentDescription("Up button")
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Are you sure you want to go back? All current progress will be lost?")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Cancel")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Are you sure you want to go back? All current progress will be lost?")
+            .assertIsNotDisplayed()
     }
 
     @Test
@@ -572,6 +602,44 @@ class EditCharacterScreenTest{
         composeTestRule
             .onNodeWithText("King of Gondor and Arnor")
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun confirmDeleteTest(){
+        composeTestRule
+            .onNode(
+                hasText("Enter name")
+                        and
+                        hasSetTextAction()
+            )
+            .performTextInput("Sauron")
+
+        composeTestRule
+            .onNodeWithContentDescription("Delete")
+            .assertHasClickAction()
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Are you sure you want to delete this character? It is irreversible!")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Cancel")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Are you sure you want to delete this character? It is irreversible!")
+            .assertIsNotDisplayed()
     }
 
     @Test

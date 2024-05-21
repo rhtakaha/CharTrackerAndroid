@@ -2,6 +2,7 @@ package com.chartracker.screens
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
@@ -516,5 +517,71 @@ class SettingsScreenTest {
                         hasText("Missing email!")
             )
             .assertDoesNotExist()
+    }
+
+    @Test
+    fun confirmSignOutTest(){
+        composeTestRule
+            .onNode(
+                hasText("Sign Out")
+                and
+                hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Are you sure you want to sign out of your account?")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Cancel")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Are you sure you want to sign out of your account?")
+            .assertIsNotDisplayed()
+    }
+
+    @Test
+    fun confirmDeleteTest(){
+        composeTestRule
+            .onNode(
+                hasText("DELETE ACCOUNT")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Are you sure you want to delete your account? It is irreversible!")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Cancel")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Are you sure you want to delete your account? It is irreversible!")
+            .assertIsNotDisplayed()
     }
 }

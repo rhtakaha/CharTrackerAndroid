@@ -3,8 +3,10 @@ package com.chartracker.screens
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
@@ -169,6 +171,35 @@ class AddStoryScreenTest {
     }
 
     @Test
+    fun confirmUpTest(){
+        composeTestRule
+            .onNodeWithContentDescription("Up button")
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Are you sure you want to go back? All current progress will be lost?")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Cancel")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Are you sure you want to go back? All current progress will be lost?")
+            .assertIsNotDisplayed()
+    }
+
+    @Test
     fun uploadErrorTest(){
         // activate the dialog directly
         uploadError.value = true
@@ -252,6 +283,7 @@ class EditStoryScreenTest {
             )
             AddEditStoryScreen(
                 story = story,
+                editing = true,
                 submitStory = {_, _ ->},
                 deleteStory = { /**/ },
                 uploadError = uploadError.value,
@@ -336,6 +368,39 @@ class EditStoryScreenTest {
         composeTestRule
             .onNodeWithText("Orson Scott Card")
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun confirmDeleteTest(){
+        composeTestRule
+            .onNode(
+                hasContentDescription("Delete")
+                and
+                hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Are you sure you want to delete this story? It is irreversible!")
+            )
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasAnyAncestor(isDialog())
+                        and
+                        hasText("Cancel")
+                        and
+                        hasClickAction()
+            )
+            .performClick()
+
+        composeTestRule
+            .onNodeWithText("Are you sure you want to delete this story? It is irreversible!")
+            .assertIsNotDisplayed()
     }
 
     @Test

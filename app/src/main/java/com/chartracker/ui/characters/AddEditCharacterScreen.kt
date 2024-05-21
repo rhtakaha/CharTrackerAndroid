@@ -3,6 +3,7 @@ package com.chartracker.ui.characters
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -56,6 +58,7 @@ import com.chartracker.database.CharacterEntity
 import com.chartracker.database.ImageDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.ChipGroupRow
+import com.chartracker.ui.components.ConfirmDialog
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
@@ -152,6 +155,18 @@ fun AddEditCharacterScreen(
         mutableStateOf(false)
     }
 
+    var confirmBack by remember {
+        mutableStateOf(false)
+    }
+
+    var confirmDelete by remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler {
+        confirmBack = true
+    }
+
     val context = LocalContext.current
 
     val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
@@ -201,7 +216,7 @@ fun AddEditCharacterScreen(
     Scaffold(
         snackbarHost ={ SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-        CharTrackerTopBar(onBackNav=onBackNav, actionButtons = {
+        CharTrackerTopBar(onBackNav= { confirmBack = true }, actionButtons = {
             IconButton(onClick = {
                 if (character.name.value != "" && !croppingInProgress.value) {
                     submitCharacter(character, localUri.value)
@@ -213,7 +228,7 @@ fun AddEditCharacterScreen(
                 )
             }
             if (editing){
-                IconButton(onClick = { deleteCharacter() }) {
+                IconButton(onClick = { confirmDelete = true }) {
                     Icon(
                         imageVector = Icons.Filled.DeleteForever,
                         contentDescription = stringResource(id = R.string.delete)
@@ -347,6 +362,24 @@ fun AddEditCharacterScreen(
                 onClick = updateNeutrals
             )
 
+        }
+        if (confirmBack){
+            ConfirmDialog(message = stringResource(id = R.string.confirm_back),
+                confirm = {
+                    confirmBack = false
+                    onBackNav()
+                          },
+                onDismiss = { confirmBack = false}
+            )
+        }
+        if (confirmDelete){
+            ConfirmDialog(message = stringResource(id = R.string.confirm_delete_character),
+                confirm = {
+                    confirmDelete = false
+                    deleteCharacter()
+                },
+                onDismiss = { confirmDelete = false}
+            )
         }
         if (uploadError){
             MessageDialog(
