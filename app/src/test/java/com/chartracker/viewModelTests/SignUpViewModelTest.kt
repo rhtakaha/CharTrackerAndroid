@@ -31,7 +31,7 @@ class SignUpViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun signUpCollisionTest() = runTest {
-        viewmodel.signUpUserWithEmailPassword("collide", "password")
+        viewmodel.signUpClick("collide", "password")
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -42,7 +42,7 @@ class SignUpViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun signUpWeakPasswordTest() = runTest {
-        viewmodel.signUpUserWithEmailPassword("weak", "password")
+        viewmodel.signUpClick("weak", "password")
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -53,7 +53,7 @@ class SignUpViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun signUpInvalidTest() = runTest {
-        viewmodel.signUpUserWithEmailPassword("invalid", "password")
+        viewmodel.signUpClick("invalid", "password")
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -64,7 +64,7 @@ class SignUpViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun signUpOtherTest() = runTest {
-        viewmodel.signUpUserWithEmailPassword("other", "password")
+        viewmodel.signUpClick("other", "password")
 
         //allows for the internal coroutines to run
         advanceUntilIdle()
@@ -75,7 +75,7 @@ class SignUpViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun signUpTest() = runTest {
-        viewmodel.signUpUserWithEmailPassword("email", "password")
+        viewmodel.signUpClick("email", "password")
 
         //allows for the internal coroutines to run
         advanceUntilIdle()

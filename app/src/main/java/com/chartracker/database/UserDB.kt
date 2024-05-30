@@ -45,11 +45,12 @@ interface UserDBInterface {
         unverifiedEmail: MutableState<Boolean>,
         invalidCredentials: MutableState<Boolean>)
 
-    suspend fun signUpUserWithEmailPassword(
+    suspend fun onSignUpClick(
         email: String,
         password: String,
         signedIn: MutableState<Boolean>,
-        signUpErrorMessage: MutableState<Any?>)
+        signUpErrorMessage: MutableState<Any?>
+    )
 
     suspend fun deleteUser(
         test: String?,
@@ -204,11 +205,29 @@ class UserDB : UserDBInterface {
     }
 
     /*
+    * evaluates whether this is a fresh sign up
+    * or
+    * if this is the result of an account creation and setup failure*/
+    override suspend fun onSignUpClick(
+        email: String,
+        password: String,
+        signedIn: MutableState<Boolean>,
+        signUpErrorMessage: MutableState<Any?>
+    ){
+        if (isSignedIn()){
+            // if we are signed in then the account was created
+            // so just do the setup
+            createUser(UserEntity(auth.currentUser?.email), signedIn)
+        }else{
+            // not signed in so full account creation and setup route
+            signUpUserWithEmailPassword(email, password, signedIn, signUpErrorMessage)
+        }
+    }
+
+    /*
     * signing up user with email and password
-    * return true means it worked
-    * return false means it technically worked, but could not setup the account in db
-    * return string or string resource means sign up failed*/
-    override suspend fun signUpUserWithEmailPassword(
+    * */
+    private fun signUpUserWithEmailPassword(
         email: String,
         password: String,
         signedIn: MutableState<Boolean>,
@@ -219,7 +238,7 @@ class UserDB : UserDBInterface {
                 // Sign in success
                 Timber.tag(tag).d("createUserWithEmail:success")
                 CoroutineScope(Dispatchers.IO).launch {
-                    //try and set up their document here, TODO mitigate failure -do again later?
+                    //try and set up their document here
                     createUser(UserEntity(auth.currentUser?.email), signedIn)
                 }
             }
@@ -240,7 +259,6 @@ class UserDB : UserDBInterface {
     *               AND
     * the story titles document in the stories collection used to ensure unique titles
     * handles the state for signed in*/
-    /** Can call if on sign in too to mitigate failure?**/
     private fun createUser(user: UserEntity, signedIn: MutableState<Boolean>){
 
         // batched operation so atomic
@@ -268,7 +286,6 @@ class UserDB : UserDBInterface {
             }
             .addOnFailureListener { exception ->
                 Timber.tag(tag).w(exception, "Error setting up user")
-                /** EXPONENTIAL BACKOFF?????**/
             }
     }
 
@@ -426,7 +443,7 @@ class MockUserDB: UserDBInterface{
     * "weak" -> sets signUpErrorMessage stat to "weak password"
     * "invalid" -> sets signUpErrorMessage stat to R.string.malformed_email_message
     * else -> sets signUpErrorMessage stat to R.string.unexpected_exception*/
-    override suspend fun signUpUserWithEmailPassword(
+    override suspend fun onSignUpClick(
         email: String,
         password: String,
         signedIn: MutableState<Boolean>,

@@ -52,9 +52,15 @@ class SignUpViewModel(private val userDB: UserDBInterface): ViewModel(){
         _signUpErrorMessage.value = null
     }
 
-    fun signUpUserWithEmailPassword(email: String, password: String){
+    /*
+    * when the sign up button is clicked either:
+    * 1) it works as expected, the account is made and all the setup is performed
+    * 2) it completely fails and they can just click again to do #1
+    * 3) the account was created, but the setup failed on previous click, so just need to perform the setup
+    * */
+    fun signUpClick(email: String, password: String){
         viewModelScope.launch{
-            userDB.signUpUserWithEmailPassword(email, password, _signedIn, _signUpErrorMessage)
+            userDB.onSignUpClick(email, password, _signedIn, _signUpErrorMessage)
         }
     }
 

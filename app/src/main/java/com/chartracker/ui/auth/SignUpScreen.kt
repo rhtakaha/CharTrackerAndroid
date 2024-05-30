@@ -50,7 +50,7 @@ fun SignUpScreen(
         onPassword1Type = {newInput -> signUpViewModel.updateInputPassword1(newInput)},
         password2 = signUpViewModel.password2.value,
         onPassword2Type = {newInput -> signUpViewModel.updateInputPassword2(newInput)},
-        onSignUpClick = {email, password -> signUpViewModel.signUpUserWithEmailPassword(email, password)},
+        onSignUpClick = {email, password -> signUpViewModel.signUpClick(email, password)},
         signedIn = signUpViewModel.signedIn.value,
         resetSignedIn = { signUpViewModel.resetSignedIn() },
         signUpErrorMessage = signUpViewModel.signUpErrorMessage.value,
