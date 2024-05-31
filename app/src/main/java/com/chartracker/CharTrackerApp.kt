@@ -24,6 +24,7 @@ import com.chartracker.ui.characters.AddEditCharacterScreen
 import com.chartracker.ui.characters.CharacterDetailsScreen
 import com.chartracker.ui.characters.CharactersScreen
 import com.chartracker.ui.story.AddEditStoryScreen
+import com.chartracker.ui.story.FactionsScreen
 import com.chartracker.ui.story.StoriesScreen
 
 @Composable
@@ -116,9 +117,26 @@ fun CharTrackerNavHost(
                     navToCharacterDetails = { storyId, title, charName -> navController.navigateSingleTopTo("${CharacterDetails.route}/$storyId/$title/$charName")},
                     navToEditStory = {storyId -> navController.navigateSingleTopTo("${AddEditStory.route}?$storyId")},
                     navToSettings = {navController.navigateSingleTopTo(Settings.route)},
+                    navToFactions = { storyId, title -> navController.navigateSingleTopTo("${Factions.route}/$storyId/$title") },
                     onBackNav = { navController.navigateUp() },
                     storyTitle = storyTitle,
                     storyDB = storyDB,
+                    characterDB = characterDB
+                )
+            }
+        }
+        composable(
+            route= Factions.routeWithArgs,
+            arguments = Factions.arguments
+        ){
+                navBackStackEntry ->
+            val storyId = navBackStackEntry.arguments?.getString(Factions.storyIdArg)
+            val storyTitle = navBackStackEntry.arguments?.getString(Factions.storyTitleArg)
+            if (storyId != null && storyTitle != null) {
+                FactionsScreen(
+                    onBackNav = { navController.navigateUp() },
+                    storyTitle = storyTitle,
+                    storyId = storyId,
                     characterDB = characterDB
                 )
             }

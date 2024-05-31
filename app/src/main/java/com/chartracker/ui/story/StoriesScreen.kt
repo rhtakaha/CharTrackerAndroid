@@ -113,9 +113,9 @@ fun StoriesScreen(
             .pullRefresh(pullRefreshState)
         ){
             EntityHolderList(
-//                adSpacing = 5,
                 entities = stories,
                 onClick = navToCharacters,
+                navToFactions = {},//not doing anything, this is for other uses of the composable
                 alphaSort = alphaSort,
                 reverseAlphaSort = reverseAlphaSort,
                 recentSort = recentSort,

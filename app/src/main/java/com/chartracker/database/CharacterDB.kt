@@ -58,6 +58,11 @@ interface CharacterDBInterface {
         storyId: String,
         currentNames: MutableList<String>,
         error: MutableState<Boolean>)
+
+    suspend fun getCurrentFactions(
+        storyId: String,
+        factions: MutableMap<String, Int>,
+        error: MutableState<Boolean>)
 }
 
 class CharacterDB : CharacterDBInterface {
@@ -324,6 +329,29 @@ class CharacterDB : CharacterDBInterface {
         }
     }
 
+    /* function to get all the in use factions*/
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun getCurrentFactions(
+        storyId: String,
+        factions: MutableMap<String, Int>,
+        error: MutableState<Boolean>){
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .document("names")
+            .get()
+            .addOnSuccessListener {docSnap ->
+                factions.putAll(docSnap.get("factions") as Map<String, Int>)
+                Timber.tag(tag).i("success: got the factions")
+            }
+            .addOnFailureListener {exception ->
+                Timber.tag(tag).d(exception, "Error getting current factions")
+                error.value = true
+            }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun buildCharacterFromDocumentSnapshot(document: DocumentSnapshot): CharacterEntity{
         return CharacterEntity(
@@ -472,14 +500,29 @@ class MockCharacterDB: CharacterDBInterface{
 
     /*
     * mocks get current names
-    * if storyId is "id" returns list of names
-    * else returns null*/
+    * if storyId is "id" adds list of names
+    * else sends error*/
     override suspend fun getCurrentNames(
         storyId: String,
         currentNames: MutableList<String>,
         error: MutableState<Boolean>) {
         if (storyId == "id"){
             currentNames.addAll( mutableListOf("Frodo", "Aragorn", "Sam", "Sauruman", "Witch King"))
+        }else{
+            error.value = true
+        }
+    }
+
+    /*
+    * mocks get current names
+    * if storyId is "id" adds list of names
+    * else sends error*/
+    override suspend fun getCurrentFactions(
+        storyId: String,
+        factions: MutableMap<String, Int>,
+        error: MutableState<Boolean>){
+        if (storyId == "id"){
+            factions.putAll( hashMapOf("Isengard" to 5, "Gondor" to 67))
         }else{
             error.value = true
         }

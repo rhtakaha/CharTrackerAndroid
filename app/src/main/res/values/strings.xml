@@ -137,4 +137,6 @@
     <string name="confirm_back">Are you sure you want to go back? All current progress will be lost?</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>
+    <string name="factions">FACTIONS</string>
+    <string name="failed_get_factions">Issue getting factions. Refresh to try again.</string>
 </resources>

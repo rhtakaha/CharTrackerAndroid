@@ -52,6 +52,7 @@ fun CharactersScreen(
     navToCharacterDetails: (String, String, String) -> Unit,
     navToEditStory: (String) -> Unit,
     navToSettings: () -> Unit,
+    navToFactions: (String, String) -> Unit,
     onBackNav: () -> Unit,
     storyTitle: String,
     storyDB: StoryDBInterface,
@@ -80,6 +81,7 @@ fun CharactersScreen(
             }
         },
         story = charactersViewModel.story.value,
+        navToFactions = { navToFactions(charactersViewModel.storyId, storyTitle) },
         navToAddCharacter = {navToAddCharacter(charactersViewModel.storyId, storyTitle, null)},
         /* convert 2 input lambda into 1 input by adding the storyId here*/
         navToCharacterDetails = {charName -> navToCharacterDetails(charactersViewModel.storyId, storyTitle, charName)},
@@ -100,6 +102,7 @@ fun CharactersScreen(
     resetFailedGetCharacters: () -> Unit,
     refreshCharacters: () -> Unit,
     story: StoryEntity,
+    navToFactions: () -> Unit,
     navToAddCharacter: () -> Unit,
     navToCharacterDetails: (String) -> Unit,
     navToEditStory: () -> Unit,
@@ -142,10 +145,10 @@ fun CharactersScreen(
             .pullRefresh(pullRefreshState)
         ){
             EntityHolderList(
-//                adSpacing = 4,
                 entities = characters,
                 story = story,
                 onClick = navToCharacterDetails,
+                navToFactions = navToFactions,
                 alphaSort = alphaSort,
                 reverseAlphaSort = reverseAlphaSort,
                 recentSort = recentSort,
@@ -193,6 +196,7 @@ fun PreviewCharactersScreen(){
                 resetFailedGetCharacters = {},
                 refreshCharacters = {},
                 story = story,
+                navToFactions = {},
                 navToAddCharacter = {},
                 navToCharacterDetails = {},
                 navToEditStory = {},

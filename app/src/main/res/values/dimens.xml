@@ -11,4 +11,5 @@
     <dimen name="details_card_height">100dp</dimen>
     <dimen name="image_to_text_spacing">40dp</dimen>
     <dimen name="small_pad">2dp</dimen>
+    <dimen name="factions_button_height">35dp</dimen>
 </resources>

@@ -45,6 +45,17 @@ object Characters: Destination{
     val arguments = listOf(navArgument(storyTitleArg) { type = NavType.StringType })
 }
 
+object Factions: Destination{
+    override val route = "factions"
+    const val storyIdArg = "story_id"
+    const val storyTitleArg = "story_title"
+    val routeWithArgs = "${route}/{${storyIdArg}}/{${storyTitleArg}}"
+    val arguments = listOf(
+        navArgument(storyIdArg, builder = {type = NavType.StringType}),
+        navArgument(storyTitleArg, builder = {type = NavType.StringType})
+    )
+}
+
 object CharacterDetails: Destination{
     override val route = "characterDetails"
     const val storyIdArg = "story_id"
@@ -87,6 +98,7 @@ val charTrackerScreens = listOf(
     Stories,
     AddEditStory,
     Characters,
+    Factions,
     CharacterDetails,
     AddEditCharacter,
     Settings

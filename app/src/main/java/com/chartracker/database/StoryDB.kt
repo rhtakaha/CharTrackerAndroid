@@ -6,10 +6,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -351,24 +348,25 @@ class StoryDB : StoryDBInterface {
             .document("titles")
             .get()
             .addOnSuccessListener {docSnap ->
-                if (!docSnap.exists()) {
-                    // if we couldn't find it make it
-                    CoroutineScope(Dispatchers.IO).launch {
-                        db.collection("users")
-                            .document(auth.currentUser!!.uid)
-                            .collection("stories")
-                            .document("titles")
-                            .set(hashMapOf("titles" to listOf<String>()))
-                            .addOnSuccessListener {
-                                // default is empty list so nothing to do
-                            }
-                            .addOnFailureListener {
-                                error.value = true
-                            }
-                    }
-                } else {
-                    titles.addAll(docSnap.get("titles") as MutableList<String>)
-                }
+                titles.addAll(docSnap.get("titles") as MutableList<String>)
+//                if (!docSnap.exists()) {
+//                    // if we couldn't find it make it
+//                    CoroutineScope(Dispatchers.IO).launch {
+//                        db.collection("users")
+//                            .document(auth.currentUser!!.uid)
+//                            .collection("stories")
+//                            .document("titles")
+//                            .set(hashMapOf("titles" to listOf<String>()))
+//                            .addOnSuccessListener {
+//                                // default is empty list so nothing to do
+//                            }
+//                            .addOnFailureListener {
+//                                error.value = true
+//                            }
+//                    }
+//                } else {
+//                    titles.addAll(docSnap.get("titles") as MutableList<String>)
+//                }
                 Timber.tag(tag).i("success")
             }
             .addOnFailureListener {exception ->
@@ -502,8 +500,7 @@ class MockStoryDB: StoryDBInterface{
         return
     }
 
-    /*mocked get current titles
-    this always returns a list of titles (strings)*/
+    /*mocked get current titles*/
     override suspend fun getCurrentTitles(titles: MutableList<String>, error: MutableState<Boolean>) {
         titles.addAll(mutableListOf("Lord of the Rings", "Dune", "Star Wars"))
     }

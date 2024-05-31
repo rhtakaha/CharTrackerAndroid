@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -159,6 +161,7 @@ fun EntityHolderList(
     modifier: Modifier=Modifier,
     onClick: (String) -> Unit,
     story: StoryEntity?=null,
+    navToFactions: () -> Unit,
     alphaSort: () -> Unit,
     reverseAlphaSort: () -> Unit,
     recentSort: () -> Unit,
@@ -200,6 +203,22 @@ fun EntityHolderList(
                     if (story != null) {
                         item {
                             StoryDetails(story = story)
+                        }
+                        
+                        item {
+                            Button(
+                                onClick = { navToFactions() },
+                                colors = ButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    disabledContainerColor = MaterialTheme.colorScheme.errorContainer,
+                                    disabledContentColor = MaterialTheme.colorScheme.error
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Text(text = stringResource(id = R.string.factions))
+                            }
                         }
                     }
                     //adding the ads to the list
@@ -336,10 +355,10 @@ fun PreviewEntityHolderListWithStoryDetails(){
     CharTrackerTheme {
         Surface {
             EntityHolderList(
-//                adSpacing = 4,
                 entities = characters,
                 onClick = {},
                 story = story,
+                navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
                 recentSort = {},
@@ -360,9 +379,9 @@ fun PreviewEntityHolderList(){
     CharTrackerTheme {
         Surface {
             EntityHolderList(
-//                adSpacing = 5,
                 entities = stories,
                 onClick = {},
+                navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
                 recentSort = {},
