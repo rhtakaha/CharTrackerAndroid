@@ -139,4 +139,5 @@
     <string name="hide_password">Hide password</string>
     <string name="factions">FACTIONS</string>
     <string name="failed_get_factions">Issue getting factions. Refresh to try again.</string>
+    <string name="add">Add</string>
 </resources>
