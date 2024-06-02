@@ -19,7 +19,7 @@ class FactionsViewModel(private val storyId: String, private val characterDB: Ch
         _failedGetFactions.value = false
     }
 
-    val factions = mutableMapOf<String, Int>()
+    val factions = mutableMapOf<String, Long>()
 
     init {
         viewModelScope.launch {
@@ -33,6 +33,10 @@ class FactionsViewModel(private val storyId: String, private val characterDB: Ch
     suspend fun getFactions(){
         factions.clear()
         characterDB.getCurrentFactions(storyId, factions, _failedGetFactions)
+    }
+
+    fun updateFaction(originalName: String, currentName: String, color: Long){
+        //TODO
     }
 }
 

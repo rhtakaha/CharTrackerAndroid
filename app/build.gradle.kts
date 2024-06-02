@@ -129,6 +129,9 @@ dependencies {
     //Image compressor
     implementation("id.zelory:compressor:3.0.1")
 
+    //Color picker
+    implementation("com.github.skydoves:colorpicker-compose:1.0.8")
+
     // Credential Manager
     implementation("androidx.credentials:credentials:1.3.0-alpha01")
 

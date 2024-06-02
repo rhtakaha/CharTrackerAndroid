@@ -61,7 +61,7 @@ interface CharacterDBInterface {
 
     suspend fun getCurrentFactions(
         storyId: String,
-        factions: MutableMap<String, Int>,
+        factions: MutableMap<String, Long>,
         error: MutableState<Boolean>)
 }
 
@@ -333,7 +333,7 @@ class CharacterDB : CharacterDBInterface {
     @Suppress("UNCHECKED_CAST")
     override suspend fun getCurrentFactions(
         storyId: String,
-        factions: MutableMap<String, Int>,
+        factions: MutableMap<String, Long>,
         error: MutableState<Boolean>){
         db.collection("users")
             .document(auth.currentUser!!.uid)
@@ -343,7 +343,7 @@ class CharacterDB : CharacterDBInterface {
             .document("names")
             .get()
             .addOnSuccessListener {docSnap ->
-                factions.putAll(docSnap.get("factions") as Map<String, Int>)
+                factions.putAll(docSnap.get("factions") as Map<String, Long>)
                 Timber.tag(tag).i("success: got the factions")
             }
             .addOnFailureListener {exception ->
@@ -519,10 +519,14 @@ class MockCharacterDB: CharacterDBInterface{
     * else sends error*/
     override suspend fun getCurrentFactions(
         storyId: String,
-        factions: MutableMap<String, Int>,
+        factions: MutableMap<String, Long>,
         error: MutableState<Boolean>){
         if (storyId == "id"){
-            factions.putAll( hashMapOf("Isengard" to 5, "Gondor" to 67))
+            factions.putAll( hashMapOf(
+                "Straw Hat Pirates" to 0xFF0000FF,
+                "Silver Fox Pirates" to 0xff949494,
+                "World Government" to 0xffa4ffa4,
+            ))
         }else{
             error.value = true
         }

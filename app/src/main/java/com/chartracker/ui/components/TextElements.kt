@@ -4,30 +4,44 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +58,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.chartracker.R
 import com.chartracker.ui.theme.CharTrackerTheme
+import com.chartracker.ui.theme.shapes
+import kotlinx.coroutines.launch
 
 @Composable
 fun TextAndContentHolder(
@@ -223,58 +239,166 @@ fun TextEntryAndAddHolder(
 }
 
 @Composable
+fun FactionItemsList(
+    factions: Map<String, Long>,
+    modifier: Modifier=Modifier,
+    onUpdate: (String, String, Long) -> Unit
+){
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val showScrollToTopButton by remember{
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex > 0
+        }
+    }
+    Surface {
+        Box(modifier= modifier.fillMaxSize()) {
+            Column(horizontalAlignment = Alignment.End) {
+                LazyColumn(
+                    contentPadding = PaddingValues(4.dp),
+                    state = lazyListState,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    factions.forEach { (name, color) ->
+                        item {
+                            FactionItem(
+                                originalName = name,
+                                initColor = color,
+                                onUpdate = onUpdate)
+                        }
+                    }
+                }
+
+            }
+            if (showScrollToTopButton) {
+                SmallFloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            lazyListState.animateScrollToItem(0)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowUpward,
+                        contentDescription = stringResource(id = R.string.scroll_to_top)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun FactionItem(
-    @StringRes label: Int,
-    text: String,
-    color: Long,
-    onTyping: (String) -> Unit,
-    onUpdate: (String, Int) -> Unit
+    originalName: String,
+    initColor: Long? = null,
+    onUpdate: (String, String, Long) -> Unit
 ) {
     var editing by rememberSaveable { mutableStateOf(false) }
+    var pickingColor by rememberSaveable { mutableStateOf(false) }
+    val currName = remember { mutableStateOf(originalName) }
+
+    val color = if (initColor != null){
+        remember { mutableLongStateOf(initColor) }
+    }else{
+        remember { mutableLongStateOf(0xFF0000FF) }
+    }
+
     Row(
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        IconButton(onClick = {editing = true}){
+        IconButton(
+            onClick = {editing = true},
+            modifier = Modifier
+                .padding(2.dp)
+                .weight(2f, fill = false)
+            ){
             Icon(imageVector  = Icons.Filled.Edit, stringResource(id = R.string.edit))
         }
         if (editing){
             TextField(
-                value = text,
-                onValueChange = onTyping,
-                label = { Text(stringResource(id = label)) },
+                value = currName.value,
+                onValueChange = { newInput -> currName.value = newInput },
+                label = { Text(stringResource(id = R.string.faction_hint)) },
                 singleLine = true,
                 textStyle = TextStyle(),
                 shape = MaterialTheme.shapes.small,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = Modifier
+                    .padding(2.dp)
+                    .weight(6f, fill = false)
             )
         }else{
-            Text(text = text)
+            Text(text = currName.value)
         }
-        Spacer(modifier = Modifier.width(8.dp))
 
-        //Color block
-        Surface(color = Color(color), modifier = Modifier.size(25.dp)) {
+        if (!pickingColor){
+            //Color block
+            Button(
+                onClick = { if (editing) {pickingColor = true} },
+                colors = ButtonColors(
+                    containerColor = Color(color.longValue),
+                    contentColor = ButtonDefaults.buttonColors().contentColor,
+                    disabledContainerColor = ButtonDefaults.buttonColors().disabledContainerColor,
+                    disabledContentColor = ButtonDefaults.buttonColors().disabledContentColor
+                ),
+                shape = shapes.extraSmall,
+                modifier = Modifier
+                    .padding(2.dp)
+                    .weight(1f, fill = false)
+            ) {
 
+            }
+        }else{
+            ColorPickerDialog(
+                onDismiss = { pickingColor = false},
+                color = color
+            )
         }
+
         //TODO: add the color selector here by clicking on the color square
 
         if (editing){
             IconButton(
-                onClick = { /*TODOonUpdate(text, color)*/ },
-                modifier = Modifier.size(20.dp)
+                onClick = { onUpdate(originalName, currName.value, color.longValue) },
+                colors = IconButtonColors(
+                    containerColor = IconButtonDefaults.filledIconButtonColors().containerColor,
+                    contentColor = IconButtonDefaults.filledIconButtonColors().contentColor,
+                    disabledContainerColor = IconButtonDefaults.filledIconButtonColors().disabledContainerColor,
+                    disabledContentColor = IconButtonDefaults.filledIconButtonColors().disabledContentColor
+                ),
+                modifier = Modifier
+                    .padding(2.dp)
+                    .weight(1f, fill = false)
             ){
                 Icon(imageVector  = Icons.Filled.Done, stringResource(id = R.string.submit))
             }
             IconButton(
                 onClick = {editing = false},
-                modifier = Modifier.size(20.dp)
+                colors = IconButtonColors(
+                    containerColor = IconButtonDefaults.filledIconButtonColors().containerColor,
+                    contentColor = IconButtonDefaults.filledIconButtonColors().contentColor,
+                    disabledContainerColor = IconButtonDefaults.filledIconButtonColors().disabledContainerColor,
+                    disabledContentColor = IconButtonDefaults.filledIconButtonColors().disabledContentColor
+                ),
+                modifier = Modifier
+                    .padding(2.dp)
+                    .weight(1f, fill = false)
             ){
                 Icon(imageVector  = Icons.Filled.Cancel, stringResource(id = R.string.cancel))
             }
         }else{
-            Spacer(modifier = Modifier.size(20.dp))
-            Spacer(modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(20.dp)
+                .padding(2.dp)
+                .weight(1f, fill = false))
+            Spacer(modifier = Modifier.size(20.dp)
+                .padding(2.dp)
+                .weight(1f, fill = false))
         }
     }
 }
@@ -306,16 +430,32 @@ fun PreviewTextEntryAndAddHolder(){
     name = "Regular Light Mode")
 @Composable
 fun PreviewFactionItem(){
-    var text by remember { mutableStateOf("Straw Hat Pirates") }
+    val text by remember { mutableStateOf("Straw Hat Pirates") }
     CharTrackerTheme {
         Surface {
             FactionItem(
-                label = R.string.faction_hint,
-                text = text,
-                color = 0xFF0000FF,
-                onTyping = { newInput -> text = newInput }
-            ) { _, _ -> }
+                originalName = text,
+            ) { _, _, _ -> }
         }
+    }
+}
 
+@Preview(
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "Regular Dark Mode")
+@Preview(
+    uiMode = UI_MODE_NIGHT_NO,
+    name = "Regular Light Mode")
+@Composable
+fun PreviewFactionItemsList(){
+    val factions = hashMapOf(
+        "Straw Hat Pirates" to 0xFF0000FF,
+        "Silver Fox Pirates" to 0xff949494,
+        "World Government" to 0xffa4ffa4,
+    )
+    CharTrackerTheme {
+        Surface {
+            FactionItemsList(factions = factions, onUpdate = {_, _, _ ->})
+        }
     }
 }

@@ -2,9 +2,9 @@ package com.chartracker.ui.story
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,7 +27,9 @@ import com.chartracker.ConnectivityStatus
 import com.chartracker.R
 import com.chartracker.database.CharacterDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
+import com.chartracker.ui.components.FactionItemsList
 import com.chartracker.ui.components.MessageDialog
+import com.chartracker.ui.components.TextEntryAndAddHolder
 import com.chartracker.ui.theme.CharTrackerTheme
 import com.chartracker.viewmodels.story.FactionsViewModel
 import com.chartracker.viewmodels.story.FactionsViewModelFactory
@@ -56,6 +59,7 @@ fun FactionsScreen(
                 factionsViewModel.getFactions()
             }
         },
+        onUpdate = { originalName: String, currentName: String, color: Long -> factionsViewModel.updateFaction(originalName, currentName, color)},
         storyTitle = storyTitle,
         onBackNav = onBackNav)
 }
@@ -63,13 +67,15 @@ fun FactionsScreen(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun FactionsScreen(
-    factions: Map<String, Int>,
+    factions: Map<String, Long>,
     failedGetFactions: Boolean,
     resetFailedGetFactions: () -> Unit,
     refreshFactions: () -> Unit,
+    onUpdate: (String, String, Long) -> Unit,
     storyTitle: String,
     onBackNav: () -> Unit,
 ){
+    var text by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val refreshing by remember { mutableStateOf(false) }
@@ -88,7 +94,18 @@ fun FactionsScreen(
             .padding(paddingValue)
             .pullRefresh(pullRefreshState)
         ){
-            Text(text = storyTitle)
+            Column {
+                TextEntryAndAddHolder(
+                    label = R.string.faction_hint,
+                    text = text,
+                    onTyping = { newInput -> text = newInput },
+                    onAdd = {/*TODO*/}
+                )
+                FactionItemsList(
+                    factions = factions,
+                    onUpdate = onUpdate
+                )
+            }
 
             PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
         }
@@ -110,7 +127,11 @@ fun FactionsScreen(
     name = "Regular Light Mode")
 @Composable
 fun PreviewFactionsScreen(){
-    val factions = hashMapOf("Isengard" to 5, "Gondor" to 67)
+    val factions = hashMapOf(
+        "Straw Hat Pirates" to 0xFF0000FF,
+        "Silver Fox Pirates" to 0xff949494,
+        "World Government" to 0xffa4ffa4,
+    )
     CharTrackerTheme {
         Surface {
             FactionsScreen(
@@ -118,6 +139,7 @@ fun PreviewFactionsScreen(){
                 failedGetFactions = false,
                 resetFailedGetFactions = {},
                 refreshFactions = {},
+                onUpdate = { _, _, _ ->},
                 storyTitle = "Lord of the Rings",
                 onBackNav = { /**/ })
         }
