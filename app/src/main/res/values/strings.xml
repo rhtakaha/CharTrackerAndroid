@@ -140,4 +140,8 @@
     <string name="factions">FACTIONS</string>
     <string name="failed_get_factions">Issue getting factions. Refresh to try again.</string>
     <string name="add">Add</string>
+    <string name="edit_factions">Edit factions</string>
+    <string name="submit_factions">Submit factions changes</string>
+    <string name="delete_faction">Delete faction</string>
+    <string name="confirm_submit_factions">Are you sure you want to submit all changes? All changes are irreversible!</string>
 </resources>

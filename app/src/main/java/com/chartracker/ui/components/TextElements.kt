@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,9 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -45,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -240,9 +236,11 @@ fun TextEntryAndAddHolder(
 
 @Composable
 fun FactionItemsList(
+    editing: Boolean,
     factions: Map<String, Long>,
     modifier: Modifier=Modifier,
-    onUpdate: (String, String, Long) -> Unit
+    onUpdate: (String, String, Long) -> Unit,
+    onDelete: (String) -> Unit
 ){
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -262,9 +260,12 @@ fun FactionItemsList(
                     factions.forEach { (name, color) ->
                         item {
                             FactionItem(
+                                editing = editing,
                                 originalName = name,
                                 initColor = color,
-                                onUpdate = onUpdate)
+                                onUpdate = onUpdate,
+                                onDelete = onDelete
+                            )
                         }
                     }
                 }
@@ -293,11 +294,13 @@ fun FactionItemsList(
 
 @Composable
 fun FactionItem(
+    editing: Boolean,
     originalName: String,
     initColor: Long? = null,
-    onUpdate: (String, String, Long) -> Unit
+    onUpdate: (String, String, Long) -> Unit,
+    onDelete: (String) -> Unit
 ) {
-    var editing by rememberSaveable { mutableStateOf(false) }
+//    var editing by rememberSaveable { mutableStateOf(false) }
     var pickingColor by rememberSaveable { mutableStateOf(false) }
     val currName = remember { mutableStateOf(originalName) }
 
@@ -312,14 +315,6 @@ fun FactionItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        IconButton(
-            onClick = {editing = true},
-            modifier = Modifier
-                .padding(2.dp)
-                .weight(2f, fill = false)
-            ){
-            Icon(imageVector  = Icons.Filled.Edit, stringResource(id = R.string.edit))
-        }
         if (editing){
             TextField(
                 value = currName.value,
@@ -361,8 +356,6 @@ fun FactionItem(
             )
         }
 
-        //TODO: add the color selector here by clicking on the color square
-
         if (editing){
             IconButton(
                 onClick = { onUpdate(originalName, currName.value, color.longValue) },
@@ -379,26 +372,19 @@ fun FactionItem(
                 Icon(imageVector  = Icons.Filled.Done, stringResource(id = R.string.submit))
             }
             IconButton(
-                onClick = {editing = false},
+                onClick = { onDelete(originalName) },
                 colors = IconButtonColors(
                     containerColor = IconButtonDefaults.filledIconButtonColors().containerColor,
                     contentColor = IconButtonDefaults.filledIconButtonColors().contentColor,
                     disabledContainerColor = IconButtonDefaults.filledIconButtonColors().disabledContainerColor,
                     disabledContentColor = IconButtonDefaults.filledIconButtonColors().disabledContentColor
                 ),
-                modifier = Modifier
-                    .padding(2.dp)
-                    .weight(1f, fill = false)
-            ){
-                Icon(imageVector  = Icons.Filled.Cancel, stringResource(id = R.string.cancel))
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = stringResource(id = R.string.delete_faction)
+                )
             }
-        }else{
-            Spacer(modifier = Modifier.size(20.dp)
-                .padding(2.dp)
-                .weight(1f, fill = false))
-            Spacer(modifier = Modifier.size(20.dp)
-                .padding(2.dp)
-                .weight(1f, fill = false))
         }
     }
 }
@@ -434,8 +420,11 @@ fun PreviewFactionItem(){
     CharTrackerTheme {
         Surface {
             FactionItem(
+                editing = false,
                 originalName = text,
-            ) { _, _, _ -> }
+                onUpdate = { _, _, _ -> },
+                onDelete = {}
+            )
         }
     }
 }
@@ -455,7 +444,12 @@ fun PreviewFactionItemsList(){
     )
     CharTrackerTheme {
         Surface {
-            FactionItemsList(factions = factions, onUpdate = {_, _, _ ->})
+            FactionItemsList(
+                editing = false,
+                factions = factions,
+                onUpdate = {_, _, _ ->},
+                onDelete = {}
+                )
         }
     }
 }
