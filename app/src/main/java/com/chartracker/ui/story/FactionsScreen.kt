@@ -64,6 +64,10 @@ fun FactionsScreen(
         factions = factions,
         failedGetFactions = factionsViewModel.failedGetFactions.value,
         resetFailedGetFactions = { factionsViewModel.resetFailedGetFactions() },
+        duplicateNameError = factionsViewModel.duplicateNameError.value,
+        resetDuplicateNameError = { factionsViewModel.resetDuplicateNameError() },
+        failedUpdateFactions = factionsViewModel.failedUpdateFactions.value,
+        resetFailedUpdateFactions = { factionsViewModel.resetFailedUpdateFactions() },
         refreshFactions = {
             scope.launch {
                 factionsViewModel.getFactions()
@@ -83,6 +87,10 @@ fun FactionsScreen(
     factions: Map<String, Long>,
     failedGetFactions: Boolean,
     resetFailedGetFactions: () -> Unit,
+    duplicateNameError: Boolean,
+    resetDuplicateNameError: () -> Unit,
+    failedUpdateFactions: Boolean,
+    resetFailedUpdateFactions: () -> Unit,
     refreshFactions: () -> Unit,
     onCreate: (String) -> Unit,
     onUpdate: (String, String, Long) -> Unit,
@@ -146,7 +154,10 @@ fun FactionsScreen(
                     label = R.string.faction_hint,
                     text = text,
                     onTyping = { newInput -> text = newInput },
-                    onAdd = onCreate
+                    onAdd = {s ->
+                        onCreate(s)
+                        text = ""
+                    }
                 )
                 FactionItemsList(
                     editing = editing,
@@ -157,6 +168,18 @@ fun FactionsScreen(
             }
 
             PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+        }
+        if (failedUpdateFactions){
+            MessageDialog(
+                message = stringResource(id = R.string.failed_update_factions),
+                onDismiss = { resetFailedUpdateFactions() }
+            )
+        }
+        if (duplicateNameError){
+            MessageDialog(
+                message = stringResource(id = R.string.duplicate_faction_error),
+                onDismiss = { resetDuplicateNameError() }
+            )
         }
         if (failedGetFactions){
             MessageDialog(
@@ -205,6 +228,10 @@ fun PreviewFactionsScreen(){
             FactionsScreen(
                 factions = factions,
                 failedGetFactions = false,
+                duplicateNameError = false,
+                resetDuplicateNameError = {},
+                failedUpdateFactions = false,
+                resetFailedUpdateFactions = {},
                 resetFailedGetFactions = {},
                 refreshFactions = {},
                 onCreate = {},

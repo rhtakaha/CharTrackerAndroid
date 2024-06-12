@@ -68,10 +68,12 @@ class EntityElementsTest {
             EntityHolderList(
                 entities = characters,
                 onClick = {},
+                navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
                 recentSort = {},
-                reverseRecentSort = {})
+                reverseRecentSort = {}
+            )
         }
 
         composeTestRule
@@ -118,6 +120,7 @@ class EntityElementsTest {
                 entities = characters,
                 onClick = {},
                 story = story,
+                navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
                 recentSort = {},
@@ -176,6 +179,7 @@ class EntityElementsTest {
             EntityHolderList(
                 entities = stories,
                 onClick = {},
+                navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
                 recentSort = {},

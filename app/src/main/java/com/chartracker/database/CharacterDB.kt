@@ -63,6 +63,11 @@ interface CharacterDBInterface {
         storyId: String,
         factions: MutableMap<String, Long>,
         error: MutableState<Boolean>)
+
+    suspend fun updateFactions(
+        storyId: String,
+        factions: MutableMap<String, Long>,
+        error: MutableState<Boolean>)
 }
 
 class CharacterDB : CharacterDBInterface {
@@ -352,6 +357,27 @@ class CharacterDB : CharacterDBInterface {
             }
     }
 
+    /* function to update all the factions for this story*/
+    override suspend fun updateFactions(
+        storyId: String,
+        factions: MutableMap<String, Long>,
+        error: MutableState<Boolean>){
+        db.collection("users")
+            .document(auth.currentUser!!.uid)
+            .collection("stories")
+            .document(storyId)
+            .collection("characters")
+            .document("names")
+            .update("factions", factions)
+            .addOnSuccessListener {
+                Timber.tag(tag).i("success: updated factions")
+            }
+            .addOnFailureListener {exception ->
+                Timber.tag(tag).d(exception, "Error updating current factions")
+                error.value = true
+            }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun buildCharacterFromDocumentSnapshot(document: DocumentSnapshot): CharacterEntity{
         return CharacterEntity(
@@ -514,8 +540,8 @@ class MockCharacterDB: CharacterDBInterface{
     }
 
     /*
-    * mocks get current names
-    * if storyId is "id" adds list of names
+    * mocks get current factions
+    * if storyId is "id" adds list of factions
     * else sends error*/
     override suspend fun getCurrentFactions(
         storyId: String,
@@ -528,6 +554,18 @@ class MockCharacterDB: CharacterDBInterface{
                 "World Government" to 0xffa4ffa4,
             ))
         }else{
+            error.value = true
+        }
+    }
+
+    /*
+    * mocks update current factions
+    * if storyId is NOT "id" sends error*/
+    override suspend fun updateFactions(
+        storyId: String,
+        factions: MutableMap<String, Long>,
+        error: MutableState<Boolean>){
+        if (storyId != "id"){
             error.value = true
         }
     }

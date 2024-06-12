@@ -51,6 +51,7 @@ class CharactersScreenTest {
                 resetFailedGetCharacters = {failedGetCharacters.value = false},
                 refreshCharacters = {},
                 story = story,
+                navToFactions = {},
                 navToAddCharacter = { /**/ },
                 navToCharacterDetails = {},
                 navToEditStory = { /**/ },

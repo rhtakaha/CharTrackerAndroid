@@ -144,4 +144,6 @@
     <string name="submit_factions">Submit factions changes</string>
     <string name="delete_faction">Delete faction</string>
     <string name="confirm_submit_factions">Are you sure you want to submit all changes? All changes are irreversible!</string>
+    <string name="duplicate_faction_error">Duplicate faction! Ensure each faction in each story is unique.</string>
+    <string name="failed_update_factions">Issue updating factions.</string>
 </resources>

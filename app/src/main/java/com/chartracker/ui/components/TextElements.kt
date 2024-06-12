@@ -300,7 +300,6 @@ fun FactionItem(
     onUpdate: (String, String, Long) -> Unit,
     onDelete: (String) -> Unit
 ) {
-//    var editing by rememberSaveable { mutableStateOf(false) }
     var pickingColor by rememberSaveable { mutableStateOf(false) }
     val currName = remember { mutableStateOf(originalName) }
 
