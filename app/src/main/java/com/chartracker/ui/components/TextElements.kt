@@ -47,9 +47,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.chartracker.R
@@ -122,7 +124,10 @@ fun TextEntryHolder(
             } else if (isEmail) {
                 KeyboardOptions(keyboardType = KeyboardType.Password)
             } else {
-                KeyboardOptions(imeAction = ImeAction.Next)
+                KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Next
+                )
             },
             trailingIcon = {
                 if (isPassword){
@@ -224,12 +229,19 @@ fun TextEntryAndAddHolder(
             singleLine = true,
             textStyle = TextStyle(),
             shape = MaterialTheme.shapes.small,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences
+            ),
             modifier = Modifier
+                .weight(3f)
                 .padding(8.dp)
         )
-        Button(onClick = { onAdd(text) }) {
-            Text(text = stringResource(id = R.string.add))
+        Button(onClick = { onAdd(text) }, modifier = Modifier.weight(1f)) {
+            Text(text = stringResource(
+                id = R.string.add),
+                softWrap = false,
+                overflow = TextOverflow.Visible
+            )
         }
     }
 }
@@ -322,7 +334,9 @@ fun FactionItem(
                 singleLine = true,
                 textStyle = TextStyle(),
                 shape = MaterialTheme.shapes.small,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Characters
+                ),
                 modifier = Modifier
                     .padding(2.dp)
                     .weight(6f, fill = false)
