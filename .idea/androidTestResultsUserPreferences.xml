@@ -1833,6 +1833,7 @@
                   <entry key="Pixel_3a_API_34" value="120" />
                   <entry key="Pixel_7_API_30" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="samsung SM-G970U1" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

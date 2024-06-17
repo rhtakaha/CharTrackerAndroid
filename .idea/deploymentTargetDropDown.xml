@@ -2,6 +2,12 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="AddCharacterScreenTest">
+        <State />
+      </entry>
+      <entry key="CharacterDetailsScreenTest">
+        <State />
+      </entry>
       <entry key="FactionsScreenTest">
         <State>
           <targetSelectedWithDropDown>
@@ -38,12 +44,6 @@
         <State />
       </entry>
       <entry key="factionsContentTestEditing()">
-        <State />
-      </entry>
-      <entry key="testFactionItemNotEditing()">
-        <State />
-      </entry>
-      <entry key="testTextEntryAndAddHolder()">
         <State />
       </entry>
     </value>

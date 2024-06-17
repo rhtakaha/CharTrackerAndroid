@@ -41,6 +41,11 @@ class AddCharacterScreenTest{
                 updateAllies = {_, _ ->},
                 updateEnemies = {_, _ ->},
                 updateNeutrals = {_, _ ->},
+                currentFactions = hashMapOf(
+                    "Lorien" to 0xFF0000FF,
+                    "Mordor" to 0xff949494,
+                ),
+                updateFactions = { _, _ ->},
                 submitCharacter = {_, _ ->},
                 deleteCharacter = { /**/ },
                 uploadError = uploadError.value,
@@ -223,12 +228,13 @@ class AddCharacterScreenTest{
         composeTestRule
             .onNodeWithText("Faction:")
             .assertIsDisplayed()
+
         composeTestRule
-            .onNode(
-                hasText("Enter faction")
-                        and
-                        hasSetTextAction()
-            )
+            .onNodeWithText("Lorien")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Mordor")
             .assertIsDisplayed()
 
         composeTestRule
@@ -368,6 +374,11 @@ class EditCharacterScreenTest{
                 updateAllies = {_, _ ->},
                 updateEnemies = {_, _ ->},
                 updateNeutrals = {_, _ ->},
+                currentFactions = hashMapOf(
+                    "Lorien" to 0xFF0000FF,
+                    "Mordor" to 0xff949494,
+                ),
+                updateFactions = {_, _ ->},
                 submitCharacter = {_, _ ->},
                 deleteCharacter = { /**/ },
                 uploadError = uploadError.value,
@@ -554,13 +565,6 @@ class EditCharacterScreenTest{
 
         composeTestRule
             .onNodeWithText("Faction:")
-            .assertIsDisplayed()
-        composeTestRule
-            .onNode(
-                hasText("Enter faction")
-                        and
-                        hasSetTextAction()
-            )
             .assertIsDisplayed()
 
         composeTestRule

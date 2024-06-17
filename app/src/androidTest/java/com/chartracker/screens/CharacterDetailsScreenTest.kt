@@ -28,7 +28,7 @@ class CharacterDetailsScreenTest {
             home = "Mordor",
             race = "Maiar",
             weapons = "rings of power",
-            faction = "Mordor",
+            faction = listOf("Mordor"),
             bio = "Former Lieutenant of the first Dark Lord (Morgoth). After Morgoth's fall in the First Age, Sauron feigned repentance and then hid in Middle Earth to continue his master's plans",
             imagePublicUrl = "https://th.bing.com/th/id/OIP.hDXdPpm97mwk0wIDSDtQwQAAAA?rs=1&pid=ImgDetMain",
             imageFilename = "SauronImage"
@@ -42,6 +42,7 @@ class CharacterDetailsScreenTest {
                 alliesList = null,
                 enemiesList = null,
                 neutralList = null,
+                factionList = "Mordor",
                 navToEditCharacter = { /**/ }) {
             }
         }
