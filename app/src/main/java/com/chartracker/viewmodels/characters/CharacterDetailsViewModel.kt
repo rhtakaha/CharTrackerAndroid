@@ -19,7 +19,9 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
     var alliesList: String? = null
     var enemiesList: String? = null
     var neutralList: String? = null
+    var factionsList: String? = null
     private var currentNames: MutableList<String> = mutableListOf()
+    private var currentFactions: MutableMap<String, Long> = mutableMapOf()
 
     /* event for failing to get the character*/
     private val _failedGetCharacter = mutableStateOf(false)
@@ -38,9 +40,6 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
         viewModelScope.launch {
             getCharacter()
             verifyAssociatesLists()
-            alliesList = character.value.allies.value?.let { formatAssociatesList(it) }
-            enemiesList = character.value.enemies.value?.let { formatAssociatesList(it) }
-            neutralList = character.value.neutral.value?.let { formatAssociatesList(it) }
         }
     }
 
@@ -49,11 +48,12 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
             characterDB.getCharacter(storyId,charName,_character, _failedGetCharacter)
 
             characterDB.getCurrentNames(storyId, currentNames, _failedGetCharacter)
+            characterDB.getCurrentFactions(storyId, currentFactions, _failedGetCharacter)
         }.join()
-        Timber.tag("Details").i("finished getting character: ${_character.value.name.value} and found current names: $currentNames")
+        Timber.tag("Details").i("finished getting character: ${_character.value.name.value} and found current factions: $currentFactions")
     }
 
-    private suspend fun verifyAssociatesLists(){
+    private fun verifyAssociatesLists(){
         /* rely on a "we'll get them next time" approach since
         as long as the user facing info is correct,
         the db can be wrong for a bit longer until they come back to this page
@@ -66,49 +66,29 @@ class CharacterDetailsViewModel(private val storyId: String, private val charNam
 
         /* performing the set operation: associates - (associates - currentNames)*/
         val allies = character.value.allies.value
-        var updatedAllies: List<String> = listOf()
         if (allies != null){
-            updatedAllies = allies.subtract(allies.subtract(currentNames.toSet())).toList()
-            character.value.allies.value = updatedAllies
-            Timber.tag("details").d("allies changed")
+            character.value.allies.value = allies.subtract(allies.subtract(currentNames.toSet())).toList()
         }
 
         val enemies = character.value.enemies.value
-        var updatedEnemies: List<String> = listOf()
         if (enemies != null){
-            updatedEnemies = enemies.subtract(enemies.subtract(currentNames.toSet())).toList()
-            character.value.enemies.value = updatedEnemies
-            Timber.tag("details").d("enemies changed")
+            character.value.enemies.value = enemies.subtract(enemies.subtract(currentNames.toSet())).toList()
         }
 
         val neutrals = character.value.neutral.value
-        var updatedNeutrals: List<String> = listOf()
         if (neutrals != null){
-            updatedNeutrals = neutrals.subtract(neutrals.subtract(currentNames.toSet())).toList()
-            character.value.neutral.value = updatedNeutrals
-            Timber.tag("details").d("neutrals changed")
+            character.value.neutral.value = neutrals.subtract(neutrals.subtract(currentNames.toSet())).toList()
         }
 
-
-        if ((allies != updatedAllies && allies != null) ||
-            (enemies != updatedEnemies && enemies != null) ||
-            (neutrals != updatedNeutrals && neutrals != null)){
-            // if there was a difference then update
-
-            val charId = characterDB.getCharacterId(storyId, charName)
-            if (charId != ""){
-                // again, if it fails no need to report to the user
-                characterDB.updateCharacter(
-                    storyId,
-                    charId,
-                    character.value,
-                    currentNames,
-                    false,
-                    hasImage = false,
-                    deleteImage = {}
-                    )
-            }
+        val factions = character.value.faction.value
+        if (factions != null){
+            character.value.faction.value = factions.subtract(factions.subtract(currentFactions.keys)).toList()
         }
+
+        alliesList = character.value.allies.value?.let { formatAssociatesList(it) }
+        enemiesList = character.value.enemies.value?.let { formatAssociatesList(it) }
+        neutralList = character.value.neutral.value?.let { formatAssociatesList(it) }
+        factionsList = character.value.faction.value?.let { formatAssociatesList(it) }
     }
 
     private fun formatAssociatesList(associates: List<String>): String{

@@ -59,6 +59,7 @@ import com.chartracker.database.ImageDBInterface
 import com.chartracker.ui.components.CharTrackerTopBar
 import com.chartracker.ui.components.ChipGroupRow
 import com.chartracker.ui.components.ConfirmDialog
+import com.chartracker.ui.components.FactionsChipGroup
 import com.chartracker.ui.components.MessageDialog
 import com.chartracker.ui.components.TextEntryHolder
 import com.chartracker.ui.theme.CharTrackerTheme
@@ -98,6 +99,8 @@ fun AddEditCharacterScreen(
         updateAllies = { name, selected -> addEditCharacterViewModel.alliesUpdated(name, selected) },
         updateEnemies = { name, selected -> addEditCharacterViewModel.enemiesUpdated(name, selected) },
         updateNeutrals = { name, selected -> addEditCharacterViewModel.neutralsUpdated(name, selected) },
+        currentFactions = addEditCharacterViewModel.currentFactions,
+        updateFactions = {name: String, selected: Boolean -> addEditCharacterViewModel.factionsUpdated(name, selected)},
         submitCharacter = {character: CharacterEntity, localUri: Uri? -> addEditCharacterViewModel.submitCharacter(character, localUri)},
         deleteCharacter = { addEditCharacterViewModel.submitCharacterDelete() },
         uploadError = addEditCharacterViewModel.uploadError.value,
@@ -123,6 +126,8 @@ fun AddEditCharacterScreen(
     updateAllies: (String, Boolean) -> Unit,
     updateEnemies: (String, Boolean) -> Unit,
     updateNeutrals: (String, Boolean) -> Unit,
+    currentFactions: Map<String, Long>,
+    updateFactions: (String, Boolean) -> Unit,
     submitCharacter: (CharacterEntity, Uri?) -> Unit,
     deleteCharacter: () -> Unit,
     uploadError: Boolean,
@@ -338,11 +343,11 @@ fun AddEditCharacterScreen(
                 label = R.string.bio_hint,
                 text = character.bio.value,
                 onTyping = {newInput -> character.bio.value = newInput})
-            TextEntryHolder(
-                title = R.string.faction,
-                label = R.string.faction_hint,
-                text = character.faction.value,
-                onTyping = {newInput -> character.faction.value = newInput})
+            FactionsChipGroup(
+                header = stringResource(id = R.string.faction),
+                contentsList = currentFactions,
+                selectedList = character.faction.value,
+                onClick = updateFactions)
             ChipGroupRow(
                 header = stringResource(id = R.string.allies),
                 contentsList = charactersStringList,
@@ -421,6 +426,10 @@ fun PreviewAddCharacterScreen(){
     }
 
     val charactersList = listOf("Gandalf", "Aragorn", "Frodo Baggins")
+    val factions = mapOf(
+        "Straw Hat Pirates" to 0xFF0000FF,
+        "Silver Fox Pirates" to 0xff949494,
+        "World Government" to 0xffa4ffa4,)
     CharTrackerTheme {
         Surface {
             AddEditCharacterScreen(
@@ -429,6 +438,8 @@ fun PreviewAddCharacterScreen(){
                 updateAllies = {_, _ ->},
                 updateEnemies = {_, _ ->},
                 updateNeutrals = {_, _ ->},
+                currentFactions = factions,
+                updateFactions = { _, _ ->},
                 submitCharacter = {_, _ ->},
                 deleteCharacter = {},
                 uploadError = false,

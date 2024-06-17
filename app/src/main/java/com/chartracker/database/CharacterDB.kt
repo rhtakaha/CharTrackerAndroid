@@ -340,21 +340,20 @@ class CharacterDB : CharacterDBInterface {
         storyId: String,
         factions: MutableMap<String, Long>,
         error: MutableState<Boolean>){
-        db.collection("users")
-            .document(auth.currentUser!!.uid)
-            .collection("stories")
-            .document(storyId)
-            .collection("characters")
-            .document("names")
-            .get()
-            .addOnSuccessListener {docSnap ->
-                factions.putAll(docSnap.get("factions") as Map<String, Long>)
-                Timber.tag(tag).i("success: got the factions")
-            }
-            .addOnFailureListener {exception ->
-                Timber.tag(tag).d(exception, "Error getting current factions")
-                error.value = true
-            }
+        try {
+            factions.putAll(db.collection("users")
+                .document(auth.currentUser!!.uid)
+                .collection("stories")
+                .document(storyId)
+                .collection("characters")
+                .document("names")
+                .get()
+                .await().get("factions") as Map<String, Long>)
+        }catch (exception: Exception){
+            Timber.tag(tag).d(exception, "Error getting current factions")
+            error.value = true
+        }
+
     }
 
     /* function to update all the factions for this story*/
@@ -393,7 +392,7 @@ class CharacterDB : CharacterDBInterface {
             weapons = document.data!!["weapons"].toString(),
             toolsEquipment = document.data!!["toolsEquipment"].toString(),
             bio = document.data!!["bio"].toString(),
-            faction = document.data!!["faction"].toString(),
+            faction = document.data!!["faction"] as List<String>?,
             allies = document.data!!["allies"] as List<String>? ,
             enemies = document.data!!["enemies"] as List<String>?,
             neutral = document.data!!["neutral"] as List<String>?,

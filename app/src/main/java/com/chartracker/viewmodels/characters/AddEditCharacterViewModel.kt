@@ -31,6 +31,7 @@ class AddEditCharacterViewModel(
     private lateinit var originalCharacterName: String
     private var charId: String? = null
     private var currentNames: MutableList<String> = mutableListOf()
+    var currentFactions: MutableMap<String, Long> = mutableMapOf()
 
     private val _character = mutableStateOf(CharacterEntity())
     val character: MutableState<CharacterEntity>
@@ -48,6 +49,8 @@ class AddEditCharacterViewModel(
 
     @VisibleForTesting
     val neutralList = mutableListOf<String>()
+
+    private val factionsList = mutableListOf<String>()
 
     /*navigate back to characters event*/
     private val _readyToNavToCharacters = mutableStateOf(false)
@@ -88,6 +91,7 @@ class AddEditCharacterViewModel(
     init {
         viewModelScope.launch {
             characterDB.getCurrentNames(storyId, currentNames, _retrievalError)
+            characterDB.getCurrentFactions(storyId, currentFactions, _retrievalError)
             if (currentNames.isEmpty()){
                 return@launch
             }
@@ -108,6 +112,10 @@ class AddEditCharacterViewModel(
                 originalCharacterName = character.value.name.value
                 originalFilename = character.value.imageFilename.value
                 _charactersStringList = currentNames.filter { name -> name != charName }.toMutableList()
+                _character.value.allies.value?.let { alliesList.addAll(it) }
+                _character.value.enemies.value?.let { enemiesList.addAll(it) }
+                _character.value.neutral.value?.let { neutralList.addAll(it) }
+                _character.value.faction.value?.let { factionsList.addAll(it) }
             }
         }else{
             _retrievalError.value = true
@@ -117,17 +125,25 @@ class AddEditCharacterViewModel(
     }
 
     /*function that calls a database access method to create the character in Firebase
-        also calls navigation*/
+        also calls navigation
+
+        sanitizing the allies/enemies/neutrals/faction lists
+        (in case a one of the ones contained in this character was deleted)
+        */
     fun submitCharacter(newCharacter: CharacterEntity, localImageURI: Uri?){
         newCharacter.accessDate.value = Timestamp(Date())
         if (alliesList.size > 0){
-            newCharacter.allies.value = alliesList
+            newCharacter.allies.value = alliesList.subtract(alliesList.subtract(currentNames.toSet())).toList()
         }
         if(enemiesList.size > 0){
-            newCharacter.enemies.value = enemiesList
+
+            newCharacter.enemies.value = enemiesList.subtract(enemiesList.subtract(currentNames.toSet())).toList()
         }
         if (neutralList.size > 0){
-            newCharacter.neutral.value = neutralList
+            newCharacter.neutral.value = neutralList.subtract(neutralList.subtract(currentNames.toSet())).toList()
+        }
+        if (factionsList.size > 0){
+            newCharacter.faction.value = factionsList.subtract(factionsList.subtract(currentFactions.keys)).toList()
         }
         viewModelScope.launch {
             if (charId == null){
@@ -260,6 +276,16 @@ class AddEditCharacterViewModel(
         }else{
             // if unselected then remove
             neutralList.remove(charName)
+        }
+    }
+
+    fun factionsUpdated(factionName: String, selected: Boolean){
+        if (selected){
+            //if selected add
+            factionsList.add(factionName)
+        }else{
+            // if unselected then remove
+            factionsList.remove(factionName)
         }
     }
 }

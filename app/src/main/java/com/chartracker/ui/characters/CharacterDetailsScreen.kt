@@ -69,6 +69,7 @@ fun CharacterDetailsScreen(
         alliesList = characterDetailsViewModel.alliesList,
         enemiesList = characterDetailsViewModel.enemiesList,
         neutralList = characterDetailsViewModel.neutralList,
+        factionList = characterDetailsViewModel.factionsList,
         navToEditCharacter={navToEditCharacter(storyId, storyTitle, charName)},
         onBackNav = onBackNav)
 }
@@ -83,6 +84,7 @@ fun CharacterDetailsScreen(
     alliesList: String?,
     enemiesList: String?,
     neutralList: String?,
+    factionList: String?,
     navToEditCharacter: () -> Unit,
     onBackNav: () -> Unit
 ){
@@ -199,10 +201,10 @@ fun CharacterDetailsScreen(
                     body = character.bio.value
                 )
             }
-            if (character.faction.value != ""){
+            if (!factionList.isNullOrEmpty()){
                 TextAndContentHolder(
                     title = R.string.faction,
-                    body = character.faction.value
+                    body = factionList
                 )
             }
             if (!alliesList.isNullOrEmpty()){
@@ -262,7 +264,7 @@ fun PreviewCharacterDetailsScreen(){
                 weapons = "Andúril",
                 toolsEquipment = "",
                 bio = "The ranger from the North who would be king and unite the kingdoms",
-                faction = "Men of the West",
+                faction = listOf("Men of the West"),
                 allies = listOf("Frodo Baggins", "Gandalf", "Gimli", "Legolas", "Farimir"),
                 enemies = listOf("Sauron", "Sauruman", "Corsairs of Umbar"),
                 neutral = listOf("Someone"),
@@ -277,6 +279,7 @@ fun PreviewCharacterDetailsScreen(){
                 alliesList = "Frodo Baggins, Gandalf, Gimli, Legolas, Farimir",
                 enemiesList = "Sauron, Sauruman, Corsairs of Umbar",
                 neutralList = null,
+                factionList = "Men of the West",
                 navToEditCharacter = {},
                 onBackNav = {}
                 )

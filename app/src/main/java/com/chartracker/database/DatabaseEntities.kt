@@ -55,7 +55,7 @@ class CharacterEntity(
     weapons: String = "",
     toolsEquipment: String = "",
     bio: String = "",
-    faction: String = "", //might want to make faction objects down the line
+    faction: List<String>? = null,
     allies: List<String>? = null,
     enemies: List<String>? = null,
     neutral: List<String>? = null,
@@ -73,7 +73,7 @@ class CharacterEntity(
     val weapons: MutableState<String> = mutableStateOf(weapons)
     val toolsEquipment: MutableState<String> = mutableStateOf(toolsEquipment)
     val bio: MutableState<String> = mutableStateOf(bio)
-    val faction: MutableState<String> = mutableStateOf(faction)
+    val faction: MutableState<List<String>?> = mutableStateOf(faction)
     val allies: MutableState<List<String>?> = mutableStateOf(allies)
     val enemies: MutableState<List<String>?> = mutableStateOf(enemies)
     val neutral: MutableState<List<String>?> = mutableStateOf(neutral)
