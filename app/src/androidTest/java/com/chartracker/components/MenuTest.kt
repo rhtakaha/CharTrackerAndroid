@@ -21,9 +21,8 @@ class MenuTest {
             SortingMenu(
                 alphaSort = { /**/ },
                 reverseAlphaSort = { /**/ },
-                recentSort = { /**/ }) {
-
-            }
+                recentSort = { /**/ },
+                reverseRecentSort = {})
         }
     }
 

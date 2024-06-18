@@ -68,6 +68,7 @@ class EntityElementsTest {
             EntityHolderList(
                 entities = characters,
                 onClick = {},
+                refresh = {},
                 navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
@@ -119,6 +120,7 @@ class EntityElementsTest {
             EntityHolderList(
                 entities = characters,
                 onClick = {},
+                refresh = {},
                 story = story,
                 navToFactions = {},
                 alphaSort = {},
@@ -179,6 +181,7 @@ class EntityElementsTest {
             EntityHolderList(
                 entities = stories,
                 onClick = {},
+                refresh = {},
                 navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},
