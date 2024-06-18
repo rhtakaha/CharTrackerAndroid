@@ -160,6 +160,7 @@ fun EntityHolderList(
     entities: List<DatabaseEntity>,
     modifier: Modifier=Modifier,
     onClick: (String) -> Unit,
+    refresh: () -> Unit,
     story: StoryEntity?=null,
     navToFactions: () -> Unit,
     alphaSort: () -> Unit,
@@ -188,13 +189,23 @@ fun EntityHolderList(
     Surface {
         Box(modifier= modifier.fillMaxSize()) {
 
-            Column(horizontalAlignment = Alignment.End) {
-                SortingMenu(
-                    alphaSort = alphaSort,
-                    reverseAlphaSort = reverseAlphaSort,
-                    recentSort = recentSort,
-                    reverseRecentSort = reverseRecentSort
-                )
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    Button(onClick = { refresh() }, modifier = Modifier.weight(1f)) {
+                        Text(text = stringResource(id = R.string.refresh))
+                    }
+
+                    SortingMenu(
+                        alphaSort = alphaSort,
+                        reverseAlphaSort = reverseAlphaSort,
+                        recentSort = recentSort,
+                        reverseRecentSort = reverseRecentSort,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                
                 LazyColumn(
                     contentPadding = PaddingValues(4.dp),
                     state = lazyListState,
@@ -357,6 +368,7 @@ fun PreviewEntityHolderListWithStoryDetails(){
             EntityHolderList(
                 entities = characters,
                 onClick = {},
+                refresh = {},
                 story = story,
                 navToFactions = {},
                 alphaSort = {},
@@ -381,6 +393,7 @@ fun PreviewEntityHolderList(){
             EntityHolderList(
                 entities = stories,
                 onClick = {},
+                refresh = {},
                 navToFactions = {},
                 alphaSort = {},
                 reverseAlphaSort = {},

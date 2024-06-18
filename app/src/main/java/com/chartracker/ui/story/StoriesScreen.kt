@@ -115,6 +115,7 @@ fun StoriesScreen(
             EntityHolderList(
                 entities = stories,
                 onClick = navToCharacters,
+                refresh = refreshStories,
                 navToFactions = {},//not doing anything, this is for other uses of the composable
                 alphaSort = alphaSort,
                 reverseAlphaSort = reverseAlphaSort,

@@ -88,7 +88,7 @@ class StoryDB : StoryDBInterface {
                 storyRef
                     .collection("characters")
                     .document("names"),
-                hashMapOf("names" to listOf<String>())
+                hashMapOf("names" to listOf<String>(), "factions" to mapOf<String, Long>())
             )
 
 

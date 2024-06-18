@@ -5,8 +5,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -32,16 +32,16 @@ fun SortingMenu(
     reverseAlphaSort: () -> Unit,
     recentSort: () -> Unit,
     reverseRecentSort: () -> Unit,
+    modifier: Modifier = Modifier
     ){
     var expanded by remember { mutableStateOf(false) }
     Box(
-        modifier = Modifier
-//            .fillMaxSize()
+        modifier = modifier
             .wrapContentSize(Alignment.TopEnd)
     ) {
 
         IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Default.Sort, contentDescription = stringResource(id = R.string.sorting_menu_desc))
+            Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = stringResource(id = R.string.sorting_menu_desc))
         }
         DropdownMenu(
             expanded = expanded,
@@ -113,9 +113,8 @@ fun PreviewFilteringMenu(){
             SortingMenu(
                 alphaSort = { /**/ },
                 reverseAlphaSort = { /**/ },
-                recentSort = { /**/ }) {
-                
-            }
+                recentSort = { /**/ },
+                reverseRecentSort = {})
         }
     }
 }

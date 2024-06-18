@@ -148,6 +148,7 @@ fun CharactersScreen(
                 entities = characters,
                 story = story,
                 onClick = navToCharacterDetails,
+                refresh = refreshCharacters,
                 navToFactions = navToFactions,
                 alphaSort = alphaSort,
                 reverseAlphaSort = reverseAlphaSort,
