@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,10 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.chartracker.R
 import com.chartracker.ui.theme.CharTrackerTheme
+import com.github.skydoves.colorpicker.compose.AlphaSlider
+import com.github.skydoves.colorpicker.compose.AlphaTile
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import timber.log.Timber
 
 
 @Composable
@@ -163,13 +167,10 @@ fun ColorPickerDialog(
 ) {
     val controller = rememberColorPickerController()
     var currColor = color.value
-//    controller.setPaletteContentScale(PaletteContentScale.FIT) // scale the image to fit width and height.
-//    controller.setPaletteContentScale(PaletteContentScale.CROP) // center crop the image.
-//    controller.setWheelRadius(20.dp)
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             modifier = Modifier
-                .height(400.dp)
+                .height(500.dp)
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
@@ -186,16 +187,32 @@ fun ColorPickerDialog(
                     controller = controller,
                     onColorChanged = { colorEnvelope: ColorEnvelope ->
                         // do something
-//                    color.value = colorEnvelope.color.value
                         currColor = colorEnvelope.hexCode.toLong(16)
-                        Timber.tag("color").i(
-                            "${colorEnvelope.color.value} and hex: ${
-                                colorEnvelope.hexCode.toLong(16)
-                            }"
-                        )
+//                        Timber.tag("color").i(
+//                            "${colorEnvelope.color.value} and hex: ${colorEnvelope.hexCode} and curr color: $currColor"
+//                        )
 
                     }
                 )
+                AlphaSlider(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .height(35.dp),
+                    controller = controller,
+                )
+                BrightnessSlider(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .height(35.dp),
+                    controller = controller,
+                )
+                AlphaTile(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(6.dp)),
+                    controller = controller
+                )
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),

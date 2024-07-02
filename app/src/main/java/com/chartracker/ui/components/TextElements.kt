@@ -236,7 +236,12 @@ fun TextEntryAndAddHolder(
                 .weight(3f)
                 .padding(8.dp)
         )
-        Button(onClick = { onAdd(text) }, modifier = Modifier.weight(1f)) {
+        Button(onClick = {
+            if (text != ""){
+                // prevents a random click from from trying to make an empty faction
+                onAdd(text)
+            }
+                         }, modifier = Modifier.weight(1f)) {
             Text(text = stringResource(
                 id = R.string.add),
                 softWrap = false,
