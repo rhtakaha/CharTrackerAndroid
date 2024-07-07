@@ -50,6 +50,8 @@ import com.chartracker.database.CharacterEntity
 import com.chartracker.database.DatabaseEntity
 import com.chartracker.database.StoryEntity
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -177,7 +179,10 @@ fun EntityHolderList(
     }else{
         // if there are story details at the top
         ((screenHeight - dimensionResource(id = R.dimen.details_card_height)) / (dimensionResource(id = R.dimen.card_height))) - 1
-    }.toInt()
+    }.roundToInt()
+
+    Timber.tag("flip").i("new")
+    Timber.tag("flip").i("screenHeight: $screenHeight adSpacing: $adSpacing")
 
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -239,6 +244,7 @@ fun EntityHolderList(
                     var numAds = 0
                     while (i <= itemList.size) {
                         // determines where the ads belong
+                        Timber.tag("flip").i("i: $i adspacing: $adSpacing numAds: $numAds")
                         if (i != 0 && i % (adSpacing + ((adSpacing + 1) * numAds)) == 0) {
                             itemList.add(i, "ad")
                             numAds++

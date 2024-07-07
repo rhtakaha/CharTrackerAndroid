@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -70,7 +71,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("com.google.android.material:material:1.12.0")
 
     //Compose
     implementation ("androidx.compose.runtime:runtime")
@@ -91,15 +92,15 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
-    val lifecycleVersion = "2.7.0"
+    val lifecycleVersion = "2.8.3"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
 
     //Testing
     testImplementation("com.google.truth:truth:1.4.1")
-    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    testImplementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("androidx.test.ext:junit-ktx:1.2.1")
+    testImplementation("androidx.test:core-ktx:1.6.1")
     testImplementation("org.robolectric:robolectric:4.11.1")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1-Beta")
@@ -116,12 +117,14 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
     // FirebaseUI Storage only (for downloading images easily)
     implementation("com.firebaseui:firebase-ui-storage:7.2.0")
 
     //AdMob
-    implementation ("com.google.android.gms:play-services-ads:23.0.0")
+    implementation ("com.google.android.gms:play-services-ads:23.2.0")
 
     //Image cropper
     implementation("com.vanniktech:android-image-cropper:4.5.0")
@@ -133,7 +136,7 @@ dependencies {
     implementation("com.github.skydoves:colorpicker-compose:1.0.8")
 
     // Credential Manager
-    implementation("androidx.credentials:credentials:1.3.0-alpha01")
+    implementation("androidx.credentials:credentials:1.3.0-beta02")
 
     //Glide for showing images
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
